@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FONTS */
+@import url('../../../public/fonts/Luciole/stylesheet.css');
+@import url('../../../public/fonts/Outfit/stylesheet.css');
+@import url('../../../public/fonts/DM/stylesheet.css');
+
+:root {
+  --background: 29 100% 95%;
+  --foreground: 29 5% 0%;
+  --card: 29 50% 90%;
+  --card-foreground: 29 5% 10%;
+  --popover: 29 100% 95%;
+  --popover-foreground: 29 100% 0%;
+  --primary: 29 67% 30%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 29 30% 70%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: -9 30% 85%;
+  --muted-foreground: 29 5% 35%;
+  --accent: -9 30% 80%;
+  --accent-foreground: 29 5% 10%;
+  --destructive: 0 100% 30%;
+  --destructive-foreground: 29 5% 90%;
+  --border: 29 30% 50%;
+  --input: 29 30% 18%;
+  --ring: 29 67% 30%;
+  --radius: 0.5rem;
+}
+.dark {
+  --background: 29 50% 5%;
+  --foreground: 29 5% 90%;
+  --card: 29 50% 0%;
+  --card-foreground: 29 5% 90%;
+  --popover: 29 50% 5%;
+  --popover-foreground: 29 5% 90%;
+  --primary: 29 67% 30%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 29 30% 10%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: -9 30% 15%;
+  --muted-foreground: 29 5% 60%;
+  --accent: -9 30% 15%;
+  --accent-foreground: 29 5% 90%;
+  --destructive: 0 100% 30%;
+  --destructive-foreground: 29 5% 90%;
+  --border: 29 30% 18%;
+  --input: 29 30% 18%;
+  --ring: 29 67% 30%;
+  --radius: 0.5rem;
+}
+
+html,
+body {
+  /* overscroll-behavior: none; */
+  padding: 0;
+  margin: 0;
+}
+
+.kIQkHS {
+  min-width: 100% !important;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.scrollbar-white::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.scrollbar-white::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 5em;
+}

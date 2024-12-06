@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-Black.ttf');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-BlackItalic.ttf');
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-ExtraBold.ttf');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-ExtraBoldItalic.ttf');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-Bold.ttf');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM';
+  src: url('DMSans-BlackItalic.ttf');
+  font-weight: bold;
+  font-style: italic;
+}

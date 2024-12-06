@@ -1,0 +1,30 @@
+{
+  "remove": {
+    "success": {
+      "title": "Suppression réussie",
+      "description": "L'élément a bien été supprimé"
+    },
+    "error": "Erreur lors de la suppression"
+  },
+  "fetch": {
+    "error": "Erreur lors de la récupération des données"
+  },
+  "login": {
+    "error": "Connexion impossible"
+  },
+  "copy": "Copié dans le presse-papier",
+  "new": {
+    "success": "Nouveau élément créé",
+    "error": "Erreur lors de la création"
+  },
+  "update": {
+    "success": "Mise à jour réussie",
+    "error": "Erreur lors de la mise à jour"
+  },
+  "file": {
+    "upload": {
+      "success": "Fichier téléchargé",
+      "error": "Erreur lors du téléchargement"
+    }
+  }
+}

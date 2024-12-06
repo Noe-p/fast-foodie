@@ -1,0 +1,75 @@
+{
+  "language": "en",
+  "home": {
+    "name": "home",
+    "subTitle": "This is the home page",
+    "title": "Welcome to the starter-template! 👋",
+    "link": "About"
+  },
+  "about": {
+    "name": "About",
+    "title": "About",
+    "subtitle": "This is the about page",
+    "link": "Back to Home"
+  },
+  "generics": {
+    "copyright": "Copyright © 2023 - Starter-template - All rights reserved",
+    "designed": "Designed and developed by ",
+    "logout": "Logout"
+  },
+  "fields": {
+    "generics": {
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name"
+    },
+    "validations": {
+      "email": {
+        "invalid": "The email is not valid",
+        "required": "Email is required"
+      },
+      "password": {
+        "required": "Password is required",
+        "min": "Password must be at least 8 characters long",
+        "uppercase": "Password must contain at least one uppercase letter",
+        "lowercase": "Password must contain at least one lowercase letter",
+        "digit": "Password must contain at least one digit",
+        "specialCharacter": "Password must contain at least one special character",
+        "noSpaces": "Password must not contain spaces"
+      }
+    }
+  },
+  "errors": {
+    "api": {
+      "INTERNAL_SERVER_ERROR": "Internal server error",
+      "USER_NOT_FOUND": "User not found",
+      "FIRSTNAME_REQUIRED": "First name is required",
+      "LASTNAME_REQUIRED": "Last name is required",
+      "EMAIL_REQUIRED": "Email is required",
+      "FIRSTNAME_NOT_STRING": "First name must be a string",
+      "LASTNAME_NOT_STRING": "Last name must be a string",
+      "NOT_VALID_EMAIL": "Email is not valid",
+      "PASSWORD_REQUIRED": "Password is required",
+      "PASSWORD_NOT_STRING": "Password must be a string",
+      "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
+      "PASSWORD_NO_LETTER": "Password must contain at least one letter",
+      "PASSWORD_NO_DIGIT": "Password must contain at least one digit",
+      "PASSWORD_NO_SPECIAL_CHARACTER": "Password must contain at least one special character",
+      "PASSWORD_HAS_SPACES": "Password must not contain spaces",
+      "PASSWORD_NO_UPPERCASE": "Password must contain at least one uppercase letter",
+      "NOT_ADMIN": "You are not an administrator",
+      "CANNOT_CHANGE_OWN_STATUS": "You cannot change your own status",
+      "USER_NOT_ADMIN": "User is not an administrator",
+      "ADDRESS_NOT_FOUND": "Address not found",
+      "STREET_REQUIRED": "Street is required",
+      "CITY_REQUIRED": "City is required",
+      "COUNTRY_REQUIRED": "Country is required",
+      "ZIPCODE_REQUIRED": "Zip code is required",
+      "STREET_NOT_STRING": "Street must be a string",
+      "CITY_NOT_STRING": "City must be a string",
+      "COUNTRY_NOT_STRING": "Country must be a string",
+      "ZIPCODE_NOT_STRING": "Zip code must be a string"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "generics": {
+    "addData": "Ajouter une valeur"
+  },
+  "password": {
+    "label": "Mot de passe",
+    "placeholder": "Entrez votre mot de passe",
+    "errors": {
+      "required": "Le mot de passe est requis",
+      "notString": "Le mot de passe doit être une chaîne de caractères",
+      "tooShort": "Le mot de passe doit contenir au moins 8 caractères",
+      "noLetter": "Le mot de passe doit contenir au moins une lettre",
+      "noDigit": "Le mot de passe doit contenir au moins un chiffre",
+      "noSpecialCharacter": "Le mot de passe doit contenir au moins un caractère spécial",
+      "hasSpaces": "Le mot de passe ne doit pas contenir d'espaces",
+      "noUppercase": "Le mot de passe doit contenir au moins une majuscule"
+    }
+  },
+  "firstName": {
+    "label": "Prénom",
+    "placeholder": "Entrez votre prénom",
+    "errors": {
+      "required": "Le prénom est requis",
+      "notString": "Le prénom doit être une chaîne de caractères"
+    }
+  },
+  "lastName": {
+    "label": "Nom",
+    "placeholder": "Entrez votre nom",
+    "errors": {
+      "required": "Le nom est requis",
+      "notString": "Le nom doit être une chaîne de caractères"
+    }
+  },
+  "confirmPassword": {
+    "label": "Confirmer le mot de passe",
+    "placeholder": "Confirmez votre mot de passe",
+    "errors": {
+      "notMatch": "Les mots de passe ne sont pas identiques"
+    }
+  },
+  "email": {
+    "label": "Email",
+    "placeholder": "Entrez votre email",
+    "errors": {
+      "required": "L'email est requis",
+      "notString": "L'email doit être une chaîne de caractères",
+      "notValid": "L'email n'est pas valide"
+    }
+  },
+  "street": {
+    "label": "Rue",
+    "placeholder": "Entrez votre rue",
+    "errors": {
+      "required": "La rue est requise",
+      "notString": "La rue doit être une chaîne de caractères"
+    }
+  },
+  "city": {
+    "label": "Ville",
+    "placeholder": "Entrez votre ville",
+    "errors": {
+      "required": "La ville est requise",
+      "notString": "La ville doit être une chaîne de caractères"
+    }
+  },
+  "country": {
+    "label": "Pays",
+    "placeholder": "Entrez votre pays",
+    "errors": {
+      "required": "Le pays est requis",
+      "notString": "Le pays doit être une chaîne de caractères"
+    }
+  },
+  "zipCode": {
+    "label": "Code postal",
+    "placeholder": "Entrez votre code postal",
+    "errors": {
+      "required": "Le code postal est requis",
+      "notString": "Le code postal doit être une chaîne de caractères"
+    }
+  },
+
+  "profilePicture": {
+    "label": "Photo de profil",
+    "placeholder": "Choisissez une photo"
+  }
+}

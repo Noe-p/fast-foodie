@@ -1,0 +1,67 @@
+{
+  "langage": "fr",
+  "generics": {
+    "appName": "Backoffice Template",
+    "copyright": "Copyright © 2024 - Backoffice Template - Tous droits réservés",
+    "designed": "Conçu et développé par ",
+    "logout": "Déconnexion",
+    "next": "Suivant",
+    "back": "Retour",
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "step": "Étape",
+    "update": "Mettre à jour",
+    "cancel": "Annuler",
+    "add": "Ajouter",
+    "yes": "Oui",
+    "no": "Non",
+    "previous": "Précédent",
+    "noResults": "Aucun résultat",
+    "search": "Rechercher...",
+    "actions": "Actions",
+    "remove": "Supprimer",
+    "continue": "Continuer",
+    "file": "Fichier",
+    "edit": "Modifier",
+    "visible": "Visible",
+    "favorite": "Favori",
+    "in": "dans",
+    "days": "jours",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "place": "Lieu",
+    "today": "Aujourd'hui",
+    "noData": "Aucune donnée",
+    "tomorrow": "Demain"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Connectez-vous à votre compte"
+    }
+  },
+  "home": {
+    "name": "home",
+    "subTitle": "C'est la page d'accueil",
+    "title": "Bienvenu sur le starter-template ! 👋",
+    "link": "A propos"
+  },
+  "login": {
+    "notHaveAccount": "Vous n'avez pas de compte ?"
+  },
+  "register": {
+    "haveAccount": "Vous avez déjà un compte ?"
+  },
+  "user": {
+    "detail": {
+      "general": "Informations générales",
+      "address": "Adresse"
+    }
+  },
+  "file": {
+    "upload": {
+      "drag": "Déposer des fichiers",
+      "description": "Cliquer ou déposer des fichiers ici pour les télécharger"
+    },
+    "filesUploaded": "Fichiers téléchargés"
+  }
+}

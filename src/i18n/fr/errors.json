@@ -1,0 +1,25 @@
+{
+  "generics": {
+    "internalServerError": "Erreur interne du serveur"
+  },
+  "api": {
+    "validation": {
+      "single": "Erreur sur le champ : {{field}}",
+      "multiple": "Erreurs sur les champs suivants : {{fields}}"
+    },
+    "user": {
+      "notFound": "Utilisateur non trouvé",
+      "exist": "L'utilisateur existe déjà",
+      "notFoundOrWrongPassword": "Utilisateur non trouvé ou mot de passe incorrect",
+      "notUpdated": "L'utilisateur n'a pas été mis à jour"
+    },
+    "admin": {
+      "notAdmin": "Vous n'êtes pas administrateur",
+      "cannotChangeOwnStatus": "Vous ne pouvez pas changer votre propre statut",
+      "userNotAdmin": "L'utilisateur n'est pas administrateur"
+    },
+    "file": {
+      "undefined": "Le fichier n'est pas trouvé"
+    }
+  }
+}
