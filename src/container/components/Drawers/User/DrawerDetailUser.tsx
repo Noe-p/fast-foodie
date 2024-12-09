@@ -26,9 +26,9 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
       <Content className={className}>
         <Col className='gap-4'>
           <Col>
-            <Label>{t('fields:firstName.label')}</Label>
-            <Text $empty={!currentUser?.firstName}>
-              {currentUser?.firstName}
+            <Label>{t('fields:userName.label')}</Label>
+            <Text $empty={!currentUser?.userName}>
+              {currentUser?.userName}
             </Text>
           </Col>
           <Col>

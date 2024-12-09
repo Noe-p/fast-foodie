@@ -1,23 +1,23 @@
 export const API_ROUTES = {
   auth: {
-    register: '/auth/register',
-    login: '/auth/login',
-    logout: '/auth/logout',
+    register: '/api/auth/register',
+    login: '/api/auth/login',
+    logout: '/api/auth/logout',
   },
   users: {
-    me: '/users/me',
-    update: '/users/me',
-    delete: '/users/me',
+    me: '/api/users/me',
+    update: '/api/users/me',
+    delete: '/api/users/me',
     deleteById: (id: string) => `/users/${id}`,
     updateById: (id: string) => `/users/${id}`,
   },
   address: {
-    create: '/address',
+    create: '/api/address',
     getById: (id: string) => `/address/${id}`,
     deleteById: (id: string) => `/address/${id}`,
     updateById: (id: string) => `/address/${id}`,
   },
   media: {
-    upload: '/file-upload',
+    upload: '/api/file-upload',
   },
 };

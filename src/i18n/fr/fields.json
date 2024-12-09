@@ -16,12 +16,12 @@
       "noUppercase": "Le mot de passe doit contenir au moins une majuscule"
     }
   },
-  "firstName": {
-    "label": "Prénom",
-    "placeholder": "Entrez votre prénom",
+  "userName": {
+    "label": "Pseudo",
+    "placeholder": "Entrez votre Pseudo",
     "errors": {
-      "required": "Le prénom est requis",
-      "notString": "Le prénom doit être une chaîne de caractères"
+      "required": "Le Pseudo est requis",
+      "notString": "Le Pseudo doit être une chaîne de caractères"
     }
   },
   "lastName": {

@@ -74,7 +74,7 @@ export function SideMenu(props: SideMenuProps): JSX.Element {
                   : 'text-background'
               )}
             >
-              {`${currentUser?.firstName} ${currentUser?.lastName}`}
+              {`${currentUser?.userName} ${currentUser?.lastName}`}
             </P12>
           </Col>
         </MenuItem>

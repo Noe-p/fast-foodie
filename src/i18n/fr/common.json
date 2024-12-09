@@ -37,12 +37,16 @@
   "auth": {
     "login": {
       "subtitle": "Connectez-vous à votre compte"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Entrer vos informations pour vous inscrire"
     }
   },
   "home": {
     "name": "home",
     "subTitle": "C'est la page d'accueil",
-    "title": "Bienvenu sur le starter-template ! 👋",
+    "title": "Bienvenu sur le starter-fast-foodie ! 👋",
     "link": "A propos"
   },
   "login": {

@@ -3,7 +3,7 @@
   "home": {
     "name": "home",
     "subTitle": "This is the home page",
-    "title": "Welcome to the starter-template! 👋",
+    "title": "Welcome to the starter-fast-foodie! 👋",
     "link": "About"
   },
   "about": {
@@ -13,7 +13,7 @@
     "link": "Back to Home"
   },
   "generics": {
-    "copyright": "Copyright © 2023 - Starter-template - All rights reserved",
+    "copyright": "Copyright © 2023 - Starter-fast-foodie - All rights reserved",
     "designed": "Designed and developed by ",
     "logout": "Logout"
   },
@@ -21,7 +21,7 @@
     "generics": {
       "email": "Email",
       "password": "Password",
-      "firstName": "First Name",
+      "userName": "First Name",
       "lastName": "Last Name"
     },
     "validations": {

@@ -1,10 +1,14 @@
 import { BaseDto } from './BaseDto';
 import { MediaDto } from './Media';
 
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN'
+}
+
 export interface UserDto extends BaseDto {
-  firstName: string;
+  userName: string;
   email: string;
-  lastName: string;
   profilePicture?: MediaDto;
-  isAdmin: boolean;
+  role: UserRole;
 }

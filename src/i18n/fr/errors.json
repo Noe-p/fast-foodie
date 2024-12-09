@@ -1,17 +1,21 @@
 {
   "generics": {
-    "internalServerError": "Erreur interne du serveur"
+    "internalServerError": "Erreur interne du serveur",
+    "connexion": "Erreur de connexion"
   },
   "api": {
     "validation": {
       "single": "Erreur sur le champ : {{field}}",
-      "multiple": "Erreurs sur les champs suivants : {{fields}}"
+      "multiple": "Erreurs sur les champs suivants : {{fields}}",
+      "error": "Erreur de validation"
     },
     "user": {
       "notFound": "Utilisateur non trouvé",
       "exist": "L'utilisateur existe déjà",
       "notFoundOrWrongPassword": "Utilisateur non trouvé ou mot de passe incorrect",
-      "notUpdated": "L'utilisateur n'a pas été mis à jour"
+      "notUpdated": "L'utilisateur n'a pas été mis à jour",
+      "invalide": "Identifiants invalides",
+      "alreadyCreated": "Utilisateur déjà existant"
     },
     "admin": {
       "notAdmin": "Vous n'êtes pas administrateur",

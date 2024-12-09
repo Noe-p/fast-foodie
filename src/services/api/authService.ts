@@ -4,12 +4,12 @@ import { HttpService } from '../httpService';
 
 const register = async (payload: RegisterApi): Promise<string> => {
   return (await HttpService.post(API_ROUTES.auth.register, payload)).data
-    .access_token;
+    .token;
 };
 
 const login = async (payload: AuthLoginApi): Promise<string> => {
   return (await HttpService.post(API_ROUTES.auth.login, payload)).data
-    .access_token;
+    .token;
 };
 
 export const AuthApiService = {

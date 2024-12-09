@@ -1,13 +1,20 @@
-import { H1, P14 } from '@/components/Texts';
-import { Button } from '@/components/ui/button';
-import { useAuthContext } from '@/contexts';
-import { ROUTES } from '@/routes';
-import { ApiService } from '@/services/api';
-import { authValidation } from '@/validations';
+import {
+  Col,
+  ColCenter,
+  Grid2,
+  H1,
+  InputPassword,
+  P14,
+  Row,
+} from '../../components';
+import { useAuthContext } from '../../contexts';
+import { ROUTES } from '../../routes';
 import { useTranslation } from 'next-i18next';
 import router from 'next/router';
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import 'swiper/swiper.min.css';
+import tw from 'tailwind-styled-components';
+import { Button } from '../../components/ui/button';
 import {
   Form,
   FormControl,
@@ -15,31 +22,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { AuthLoginApi } from '@/types';
-import { Col, ColCenter, Grid2, InputPassword, Row } from '@/components';
-import tw from 'tailwind-styled-components';
-import { useMutation } from '@tanstack/react-query';
+} from '../../components/ui/form';
+import { useForm } from 'react-hook-form';
+import { AuthRegisterUi } from '../../types';
+import { ApiService } from '../../services/api';
+import { userValidationUi } from '../../validations';
 import {
   formatApiErrorMessage,
   formatValidationErrorMessage,
-} from '@/services/error';
+} from '../../services/error';
+import { Input } from '../../components/ui/input';
+import { useMutation } from '@tanstack/react-query';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from '../../components/ui/use-toast';
 
-export default function LoginPage(): React.JSX.Element {
+export default function RegisterPage(): React.JSX.Element {
   const { t } = useTranslation();
   const { currentUser, setToken } = useAuthContext();
-  const { toast } = useToast();
 
-  const {
-    mutate: loginUser,
+  const { 
+    mutate: registerUser,
     isPending,
     isError,
     error,
   } = useMutation({
-    mutationFn: ApiService.auth.login,
+    mutationFn: ApiService.auth.register,
     onSuccess: (data) => {
       setToken(data);
       router.push(ROUTES.home);
@@ -51,8 +58,8 @@ export default function LoginPage(): React.JSX.Element {
     router.push(ROUTES.home);
   }, [currentUser]);
 
-  const form = useForm<AuthLoginApi>({
-    resolver: yupResolver(authValidation.login),
+  const form = useForm<AuthRegisterUi>({
+    resolver: yupResolver(userValidationUi.create),
     mode: 'onTouched',
   });
 
@@ -78,22 +85,22 @@ export default function LoginPage(): React.JSX.Element {
         <Row className='justify-end'>
           <Button
             variant='ghost'
-            onClick={() => router.push(ROUTES.auth.register)}
+            onClick={() => router.push(ROUTES.auth.login)}
           >
-            {t('generics.register')}
+            {t('generics.login')}
           </Button>
         </Row>
         <ColCenter className='h-full justify-center'>
           <Col className='lg:w-1/2 w-full gap-2'>
             <H1 className='font-bold text-center text-3xl'>
-              {t('generics.login')}
+              {t('auth.register.title')}
             </H1>
             <P14 className='text-center text-primary/40'>
-              {t('auth.login.subtitle')}
+              {t('auth.register.subtitle')}
             </P14>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit((values) => loginUser(values))}
+                onSubmit={form.handleSubmit((values) => registerUser(values))}
                 className='space-y-3 mt-2'
               >
                 <FormField
@@ -114,6 +121,25 @@ export default function LoginPage(): React.JSX.Element {
                     </FormItem>
                   )}
                 />
+                <Grid2>
+                  <FormField
+                    control={form.control}
+                    name='userName'
+                    isRequired
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('fields:userName.label')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t('fields:userName.placeholder')}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </Grid2>
                 <FormField
                   control={form.control}
                   name='password'
@@ -131,13 +157,30 @@ export default function LoginPage(): React.JSX.Element {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name='confirmPassword'
+                  isRequired
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('fields:confirmPassword.label')}</FormLabel>
+                      <FormControl>
+                        <InputPassword
+                          placeholder={t('fields:confirmPassword.placeholder')}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button
                   disabled={isPending}
                   className='w-full'
                   isLoading={isPending}
                   type='submit'
                 >
-                  {t('generics.login')}
+                  {t('generics.register')}
                 </Button>
               </form>
             </Form>

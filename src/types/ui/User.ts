@@ -1,6 +1,6 @@
 
 export interface UpdateUserUi {
   email?: string;
-  firstName?: string;
+  userName?: string;
   lastName?: string;
 }

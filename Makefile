@@ -13,15 +13,22 @@ clean-merged-branches: ## Supprime les branches mergées
 component.add: ## Ajoute un composant de shadcn
 	npx shadcn-ui@latest add 
 
+#-- DATABASE
+db.start: ## Start database
+	brew services restart postgresql@14
+	
+db.stop: ## Stop database
+	brew services stop postgresql
+
 #-- DOCKER
 docker.build: ## Build docker image
-	docker build --platform=linux/amd64 -t template-backoffice:latest .  
+	docker build --platform=linux/amd64 -t fast-foodie-backoffice:latest .  
 
 docker.tag: ## Tag docker image
-	docker tag template-backoffice:latest noephilippe/template-backoffice:latest
+	docker tag fast-foodie-backoffice:latest noephilippe/fast-foodie-backoffice:latest
 
 docker.push: ## Push docker image
-	docker push noephilippe/template-backoffice:latest
+	docker push noephilippe/fast-foodie-backoffice:latest
 
 docker.new: ## Build, tag and push docker image
 	make docker.build

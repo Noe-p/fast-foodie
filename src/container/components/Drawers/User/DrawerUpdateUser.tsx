@@ -54,7 +54,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       refreshUser();
       toast({
         title: t('toast:update.success'),
-        description: t('toast:success.update', { name: data.firstName }),
+        description: t('toast:success.update', { name: data.userName }),
       });
       form.reset();
       queryClient.refetchQueries({
@@ -81,7 +81,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
     if (currentUser) {
       form.reset({
         ...currentUser,
-        firstName: currentUser.firstName ?? '',
+        userName: currentUser.userName ?? '',
         lastName: currentUser.lastName ?? '',
         email: currentUser.email ?? '',
         profilePicture: currentUser.profilePicture?.id ?? '',
@@ -105,14 +105,14 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
           >
             <FormField
               control={form.control}
-              name='firstName'
+              name='userName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('fields:firstName.label')}</FormLabel>
+                  <FormLabel>{t('fields:userName.label')}</FormLabel>
                   <FormControl>
                     <InputStyled
                       isRemovable
-                      placeholder={t('fields:firstName.placeholder')}
+                      placeholder={t('fields:userName.placeholder')}
                       enterKeyHint='next'
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {

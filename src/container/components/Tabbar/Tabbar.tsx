@@ -45,7 +45,7 @@ export function Tabbar(props: TabbarProps): JSX.Element {
         </Avatar>
       ),
       action: () => setDrawerOpen(DrawerType.DETAIL_USER),
-      name: currentUser?.firstName,
+      name: currentUser?.userName,
     },
   ];
 

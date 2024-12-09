@@ -8,12 +8,7 @@ const update: yup.ObjectSchema<UpdateUserApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
-  firstName: yup
-    .string()
-    .optional()
-    .transform((value) => (value === '' ? undefined : value))
-    .default(undefined),
-  lastName: yup
+  userName: yup
     .string()
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -32,28 +27,13 @@ const create: yup.ObjectSchema<RegisterApi> = yup.object({
   password: genericsValidation.password.required(
     errorMessage.fields('password').REQUIRED
   ),
-  lastName: yup
+  userName: yup
     .string()
-    .required(errorMessage.fields('lastName').REQUIRED)
-    .typeError(errorMessage.fields('lastName').NOT_STRING),
-  firstName: yup
-    .string()
-    .required(errorMessage.fields('firstName').REQUIRED)
-    .typeError(errorMessage.fields('firstName').NOT_STRING),
-});
-
-const login = yup.object<AuthLoginApi>().shape({
-  email: yup
-    .string()
-    .required(errorMessage.fields('email').REQUIRED)
-    .typeError(errorMessage.fields('email').NOT_STRING),
-  password: genericsValidation.password.required(
-    errorMessage.fields('password').REQUIRED
-  ),
+    .required(errorMessage.fields('userName').REQUIRED)
+    .typeError(errorMessage.fields('userName').NOT_STRING),
 });
 
 export const userValidation = {
   update,
-  login,
   create,
 };
