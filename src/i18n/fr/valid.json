@@ -1,0 +1,8 @@
+{
+  "api":  {
+    "collaborator": {
+      "addedSuccess": "Collaborateur ajouté avec succès",
+      "deletedSuccess": "Collaborateur supprimé avec succès"
+    }
+  }
+}

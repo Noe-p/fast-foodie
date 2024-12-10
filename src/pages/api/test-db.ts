@@ -1,9 +1,11 @@
 // src/pages/api/test-db.ts
+import { verifyApiKey } from '@/middleware/verifyApiKey';
 import { PrismaClient } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     // Test simple pour voir si la connexion fonctionne
     const users = await prisma.user.findMany();
@@ -14,3 +16,5 @@ export default async function handler(req, res) {
     await prisma.$disconnect();
   }
 }
+
+export default verifyApiKey(handler);

@@ -6,10 +6,11 @@ import { errorMessage } from '../../../errors';
 import { UserRole } from '../../../types'
 import { i18n } from 'next-i18next';
 import jwt from 'jsonwebtoken';
+import { verifyApiKey } from '@/middleware/verifyApiKey';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if(!i18n) return 
   try {
     if (req.method === 'POST') {
@@ -78,3 +79,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await prisma.$disconnect();
   }
 }
+
+export default verifyApiKey(handler);

@@ -30,9 +30,21 @@ const api = (item: string) => ({
   UNDEFINED: `errors:api.${item}.undefined`,
   ALREADY_CREATED: `errors:api.${item}.alreadyCreated`,
   ALREADY_DONE: `errors:api.${item}.alreadyDone`,
+  INVALID: `errors:api.${item}.invalid`,
+  NOT_ALLOWED: `errors:api.${item}.notAllowed`,
+  EMAIL_REQUIRED: `errors:api.${item}.emailRequired`,
+  ALREADY_ADDED: `errors:api.${item}.alreadyAdded`,
+});
+
+const valid = (item: string) => ({
+  ADDED_SUCCESS: `valid:api.${item}.addedSuccess`,
+  UPDATED_SUCCESS: `valid:api.${item}.updatedSuccess`,
+  DELETED_SUCCESS: `valid:api.${item}.deletedSuccess`,
+  CHANGED_STATUS: `valid:api.${item}.changedStatus`,
 });
 
 export const errorMessage = {
   fields,
   api,
+  valid,
 };

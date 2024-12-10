@@ -8,11 +8,22 @@ generator client {
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  role      String   @default("USER")
-  userName String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String         @id @default(cuid())
+  email           String         @unique
+  password        String
+  role            String         @default("USER")
+  userName        String
+  collaborators   Collaborator[] @relation("UserToCollaborators")
+  asCollaborator  Collaborator[] @relation("CollaboratorToUser")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Collaborator {
+  id             String   @id @default(cuid())
+  userId         String
+  collaboratorId String
+  user           User     @relation("UserToCollaborators", fields: [userId], references: [id], onDelete: Cascade)
+  collaborator   User     @relation("CollaboratorToUser", fields: [collaboratorId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
 }

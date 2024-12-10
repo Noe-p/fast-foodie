@@ -9,13 +9,37 @@
       "multiple": "Erreurs sur les champs suivants : {{fields}}",
       "error": "Erreur de validation"
     },
+    "apiKey": {
+      "notFound": "Clé API non trouvée",
+      "exist": "La clé API existe déjà",
+      "notUpdated": "La clé API n'a pas été mise à jour",
+      "invalid": "Clé API invalide"
+    },
+    "methode":{
+      "notFound": "Méthode non trouvée",
+      "exist": "La méthode existe déjà",
+      "notUpdated": "La méthode n'a pas été mise à jour",
+      "invalid": "Méthode invalide",
+      "notAllowed": "Méthode non autorisée"
+    },
+    "token": {
+      "invalid": "Token invalide"
+    },
+    "collaborator": {
+      "notFound": "Collaborateur non trouvé",
+      "exist": "Le collaborateur existe déjà",
+      "notUpdated": "Le collaborateur n'a pas été mis à jour",
+      "invalid": "Collaborateur invalide",
+      "emailRequired": "L'email est requis",
+      "alreadyAdded": "Le collaborateur a déjà été ajouté"
+    },
     "user": {
       "notFound": "Utilisateur non trouvé",
       "exist": "L'utilisateur existe déjà",
       "notFoundOrWrongPassword": "Utilisateur non trouvé ou mot de passe incorrect",
       "notUpdated": "L'utilisateur n'a pas été mis à jour",
-      "invalide": "Identifiants invalides",
-      "alreadyCreated": "Utilisateur déjà existant"
+      "invalide": "Utilisateur invalide",
+      "alreadyCreated": "L'utilisateur a déjà été créé"
     },
     "admin": {
       "notAdmin": "Vous n'êtes pas administrateur",

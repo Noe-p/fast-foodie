@@ -1,19 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import { verifyApiKey } from '@/middleware/verifyApiKey';
+import { i18n } from 'next-i18next';
+import { errorMessage } from '@/errors';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if(!i18n) return res.status(500).json({ error: errorMessage.api('me').INTERNAL_SERVER_ERROR });
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ error:  i18n.t(errorMessage.api('method').NOT_ALLOWED) });
   }
 
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Authentication token not provided' });
+    return res.status(401).json({ error: i18n.t(errorMessage.api('me').INVALID_FORMAT) });
   }
 
   const token = authHeader.split(' ')[1]; // Récupère le token après "Bearer"
@@ -27,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ error: i18n.t(errorMessage.api('user').NOT_FOUND) });
     }
 
     // Exclut le mot de passe avant de retourner l'objet utilisateur
@@ -35,6 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ user: userWithoutPassword });
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    return res.status(401).json({ error: i18n.t(errorMessage.api('token').INVALID) });
   }
 }
+
+export default verifyApiKey(handler);
