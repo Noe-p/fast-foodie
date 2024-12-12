@@ -1,3 +1,4 @@
 export * from './BaseDto';
-export * from './Media';
 export * from './User';
+export * from './Collaborators';
+export * from './Food';

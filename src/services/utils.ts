@@ -1,4 +1,4 @@
-import { AddressDto, UserDto } from '@/types';
+import { AddressDto, User } from '@/types';
 import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

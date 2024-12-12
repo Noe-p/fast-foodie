@@ -1,10 +1,10 @@
 import { BaseDto } from "./BaseDto";
-import { UserDto } from "./User";
+import { User } from "./User";
 
 export interface Collaborator {
   id: string;
   createdAt: Date;
   collaboratorId: string;
   userId: string;
-  collaborator : UserDto;
+  collaborator : User;
 }

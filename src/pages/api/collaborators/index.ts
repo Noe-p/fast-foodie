@@ -73,7 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
        where: { userId: user.id },
         include: {
           collaborator: {
-            select: { // On sélectionne uniquement les champs nécessaires pour l'objet `UserDto`
+            select: { // On sélectionne uniquement les champs nécessaires pour l'objet `User`
               id: true,
               email: true,
               role: true,
@@ -89,8 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });
-  } catch (error) {
-      console.error('Token verification error:', error); // Affiche l'erreur dans la console pour débogage
+  } catch (error: any) {
       return res.status(401).json({ error: i18n.t(errorMessage.api('token').INVALID), details: error.message });
   } finally {
     await prisma.$disconnect();

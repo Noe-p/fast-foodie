@@ -27,3 +27,12 @@ model Collaborator {
   collaborator   User     @relation("CollaboratorToUser", fields: [collaboratorId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
 }
+
+model Food {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  name       String
+  aisle      String
+  icon       String?
+}

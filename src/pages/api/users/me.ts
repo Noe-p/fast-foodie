@@ -1,45 +1,104 @@
+import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-import { verifyApiKey } from '@/middleware/verifyApiKey';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 import { i18n } from 'next-i18next';
-import { errorMessage } from '@/errors';
+import { errorMessage } from '../../../errors';
+import { userValidation } from '@/validations';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if(!i18n) return res.status(500).json({ error: errorMessage.api('me').INTERNAL_SERVER_ERROR });
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error:  i18n.t(errorMessage.api('method').NOT_ALLOWED) });
+  if (!i18n) {
+    return res
+      .status(500)
+      .json({ error: errorMessage.api('user').INTERNAL_SERVER_ERROR });
   }
 
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: i18n.t(errorMessage.api('me').INVALID_FORMAT) });
+    return res
+      .status(401)
+      .json({ error: i18n.t(errorMessage.api('user').INVALID_FORMAT) });
   }
 
-  const token = authHeader.split(' ')[1]; // Récupère le token après "Bearer"
+  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as { id: string };
-
-    // Récupère les informations complètes de l'utilisateur depuis la base
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
 
     if (!user) {
-      return res.status(404).json({ error: i18n.t(errorMessage.api('user').NOT_FOUND) });
+      return res
+        .status(404)
+        .json({ error: i18n.t(errorMessage.api('user').NOT_FOUND) });
     }
 
-    // Exclut le mot de passe avant de retourner l'objet utilisateur
-    const { password, ...userWithoutPassword } = user;
+    if (req.method === 'GET') {
+      const { password, ...userWithoutPassword } = user;
+      return res.status(200).json({ user: userWithoutPassword });
+    }
 
-    return res.status(200).json({ user: userWithoutPassword });
-  } catch (error) {
-    return res.status(401).json({ error: i18n.t(errorMessage.api('token').INVALID) });
+    if (req.method === 'PATCH') {
+      // Validation des données avec Yup
+      try {
+        await userValidation.update.validate(req.body, { abortEarly: false });
+      } catch (validationError: any) {
+        return res.status(400).json({
+          error: i18n.t(errorMessage.api('validation').VALIDATION),
+          details: validationError.errors.map((error: string) => i18n?.t(error)),
+        });
+      }
+
+      const { email, userName } = req.body;
+
+      if (email && (await prisma.user.findUnique({ where: { email } }))) {
+        return res.status(400).json({
+          error: i18n.t(errorMessage.api('user').EXIST),
+        });
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          ...(email && { email }),
+          ...(userName && { userName }),
+        },
+      });
+
+      const { password, ...userWithoutPassword } = updatedUser;
+
+      return res.status(200).json({
+        message: i18n.t(errorMessage.valid('user').UPDATED_SUCCESS),
+        user: userWithoutPassword,
+      });
+    }
+
+    if (req.method === 'DELETE') {
+      await prisma.user.delete({
+        where: { id: user.id },
+      });
+
+      return res.status(200).json({
+        message: i18n.t(errorMessage.valid('user').DELETED_SUCCESS),
+      });
+    }
+
+    return res
+      .status(405)
+      .json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });
+  } catch (error: any) {
+    console.error('Error:', error);
+    return res.status(401).json({
+      error: i18n.t(errorMessage.api('token').INVALID),
+      details: error.message,
+    });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

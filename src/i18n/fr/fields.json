@@ -24,6 +24,14 @@
       "notString": "Le Pseudo doit être une chaîne de caractères"
     }
   },
+  "name":{
+    "label": "Nom",
+    "placeholder": "Entrez votre nom",
+    "errors": {
+      "required": "Le nom est requis",
+      "notString": "Le nom doit être une chaîne de caractères"
+    }
+  },
   "lastName": {
     "label": "Nom",
     "placeholder": "Entrez votre nom",

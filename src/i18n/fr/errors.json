@@ -33,6 +33,12 @@
       "emailRequired": "L'email est requis",
       "alreadyAdded": "Le collaborateur a déjà été ajouté"
     },
+    "food":{
+      "notFound": "Aliment non trouvé",
+      "exist": "L'aliment existe déjà",
+      "notUpdated": "L'aliment n'a pas été mis à jour",
+      "invalid": "Aliment invalide"
+    },
     "user": {
       "notFound": "Utilisateur non trouvé",
       "exist": "L'utilisateur existe déjà",

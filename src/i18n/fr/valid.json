@@ -3,6 +3,16 @@
     "collaborator": {
       "addedSuccess": "Collaborateur ajouté avec succès",
       "deletedSuccess": "Collaborateur supprimé avec succès"
+    },
+    "user": {
+      "addedSuccess": "Utilisateur ajouté avec succès",
+      "deletedSuccess": "Utilisateur supprimé avec succès",
+      "updatedSuccess": "Utilisateur mis à jour avec succès"
+    },
+    "food": {
+      "addedSuccess": "Aliment ajouté avec succès",
+      "deletedSuccess": "Aliment supprimé avec succès",
+      "updatedSuccess": "Aliment mis à jour avec succès"
     }
   }
 }

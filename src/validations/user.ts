@@ -14,11 +14,6 @@ const update: yup.ObjectSchema<UpdateUserApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
-  profilePicture: yup
-    .string()
-    .optional()
-    .transform((value) => (value === '' ? undefined : value))
-    .default(undefined),
 });
 
 const create: yup.ObjectSchema<RegisterApi> = yup.object({

@@ -1,11 +1,11 @@
 import { ApiService } from '@/services/api';
 import { HttpService } from '@/services/httpService';
-import { UserDto } from '@/types';
+import { User } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { PageLoader } from '../components';
 
 interface State {
-  currentUser: UserDto | null;
+  currentUser: User | null;
   token: string;
   isLoaded: boolean;
 }
@@ -41,7 +41,7 @@ const AuthContext = React.createContext<Context>({
 
 function useAuthProvider() {
   const [token, setStateToken] = useState('');
-  const [currentUser, setCurrentUser] = useState<UserDto | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   HttpService.setToken(token);
