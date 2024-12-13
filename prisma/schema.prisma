@@ -17,6 +17,7 @@ model User {
   asCollaborator  Collaborator[] @relation("CollaboratorToUser")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+  dishes          Dish[]         @relation("UserToDish") // Pas besoin de fields ou references ici
 }
 
 model Collaborator {
@@ -35,4 +36,37 @@ model Food {
   name       String
   aisle      String
   icon       String?
+  ingredients Ingredient[] // Relation avec les ingrédients
+}
+
+model Dish {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String       // Nom du plat
+  description String?      // Description du plat
+  instructions String?     // Instructions de préparation
+  chefId      String?      // Créateur du plat (relation optionnelle avec User)
+  chef        User?        @relation("UserToDish", fields: [chefId], references: [id], onDelete: SetNull) // Relation avec User
+  ingredients Ingredient[] // Relation avec les ingrédients
+  tags        String[]     // Tableau de tags sous forme de chaînes de caractères
+  images      Image[]      // Images associées au plat
+}
+
+model Ingredient {
+  id       String   @id @default(cuid())
+  quantity String   // Exemple : "300g", "2", "3 morceaux"
+  dishId   String
+  foodId   String
+  dish     Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  food     Food     @relation(fields: [foodId], references: [id], onDelete: Cascade)
+}
+
+model Image {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  url         String   // URL de l'image
+  dishId      String?  // Relation avec un plat
+  dish        Dish?    @relation(fields: [dishId], references: [id], onDelete: Cascade)
 }

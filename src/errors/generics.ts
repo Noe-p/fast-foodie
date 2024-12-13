@@ -12,6 +12,7 @@ const fields = (item: string) => {
     NOT_MATCH: `fields:${item}.errors.notMatch`,
     NOT_NUMBER: `fields:${item}.errors.notNumber`,
     NOT_URL: `fields:${item}.errors.notUrl`,
+    NOT_ARRAY: `fields:${item}.errors.notArray`,
   };
 };
 
@@ -34,6 +35,7 @@ const api = (item: string) => ({
   NOT_ALLOWED: `errors:api.${item}.notAllowed`,
   EMAIL_REQUIRED: `errors:api.${item}.emailRequired`,
   ALREADY_ADDED: `errors:api.${item}.alreadyAdded`,
+  NOT_URL: `errors:api.${item}.notUrl`,
 });
 
 const valid = (item: string) => ({

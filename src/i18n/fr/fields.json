@@ -32,6 +32,14 @@
       "notString": "Le nom doit être une chaîne de caractères"
     }
   },
+  "quantity":{
+    "label": "Quantité",
+    "placeholder": "Entrez la quantité",
+    "errors": {
+      "required": "La quantité est requise",
+      "notString": "La quantité doit être une chaîne de caractères"
+    }
+  },
   "lastName": {
     "label": "Nom",
     "placeholder": "Entrez votre nom",

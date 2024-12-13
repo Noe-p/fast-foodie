@@ -5,7 +5,6 @@ import { verifyApiKey } from '../../../middleware/verifyApiKey';
 import { i18n } from 'next-i18next';
 import { errorMessage } from '../../../errors';
 import { foodValidation } from '../../../validations/food';
-import * as emojilib from 'emojilib';
 import { getFoodIcon } from '@/services/getFoodIcon';
 
 const prisma = new PrismaClient();
