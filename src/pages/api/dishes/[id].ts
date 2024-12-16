@@ -6,9 +6,22 @@ import { i18n } from 'next-i18next';
 import { errorMessage } from '../../../errors';
 import { foodValidation } from '../../../validations/food';
 import { dishValidation } from '@/validations/dish';
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
+
+// Fonction de suppression du fichier physique du disque
+const deleteImageFromDisk = (filePath: string) => {
+  const fileFullPath = path.join(process.cwd(), 'public', filePath);
+
+  if (fs.existsSync(fileFullPath)) {
+    fs.unlinkSync(fileFullPath);
+  } else {
+    console.error('File not found:', fileFullPath);
+  }
+};
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!i18n) {
@@ -47,7 +60,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             select: {
               id: true,
               quantity: true,
-              food: true, // Inclure l'objet Food
+              food: true,
             },
           },
           chef: {
@@ -61,7 +74,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               password: false,
             },
           },
-          images: true, // Inclure les images du plat
+          images: true,
         },
       });
 
@@ -69,7 +82,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ error: i18n.t(errorMessage.api('dish').NOT_FOUND) });
       }
 
-      // Supprimer le champ chefId de la réponse
       const { chefId, ...dishWithoutChefId } = dish;
       return res.status(200).json(dishWithoutChefId);
     }
@@ -84,7 +96,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const { name, description, instructions, ingredients, tags, imageUrls } = req.body;
+      const { name, description, instructions, ingredients, tags, imageIds } = req.body;
 
       const dish = await prisma.dish.findUnique({
         where: { id },
@@ -94,12 +106,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ error: i18n.t(errorMessage.api('dish').NOT_FOUND) });
       }
 
-      // Réinitialisation des ingrédients : suppression de tous les anciens ingrédients
+      // Suppression des ingrédients existants avant mise à jour
       await prisma.ingredient.deleteMany({
         where: { dishId: id },
       });
 
-      // Ajout des nouveaux ingrédients
       const updatedIngredients = ingredients ? await Promise.all(
         ingredients.map(async (ingredient: { foodId: string; quantity: string }) => {
           const food = await prisma.food.findUnique({
@@ -107,7 +118,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           });
 
           if (!food) {
-            if(!i18n) return res.status(500).json({ error: errorMessage.api('dish').INTERNAL_SERVER_ERROR });
+            if (!i18n) return res.status(500).json({ error: errorMessage.api('dish').INTERNAL_SERVER_ERROR });
             return res.status(404).json({ error: i18n.t(errorMessage.api('food').NOT_FOUND) });
           }
 
@@ -118,17 +129,43 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         })
       ) : [];
 
-      // Mise à jour du plat avec les nouveaux ingrédients
+      // Gérer les images si `imageIds` est fourni
+      const imageUpdateData: any = {};
+      if (imageIds) {
+        // Récupérer les images existantes du plat
+        const existingImages = await prisma.image.findMany({
+          where: { dishId: id },
+        });
+
+        // Identifiants des images qui seront supprimées du disque
+        const imagesToDeleteFromDisk = existingImages.filter(image => {
+          return !imageIds.includes(image.id);  // Les images qui ne sont pas dans `imageIds`
+        });
+
+        // Supprimer les images du disque
+        imagesToDeleteFromDisk.forEach(image => {
+          deleteImageFromDisk(image.url);
+        });
+
+        imageUpdateData.images = {
+          connect: imageIds.map((id: string) => ({ id })), // Connecte les images par leur ID
+          deleteMany: { // Supprime les images qui ne sont pas dans `imageIds`
+            id: {
+              notIn: imageIds,
+            },
+          },
+        };
+      }
+
+      // Mettre à jour le plat
       const updatedDish = await prisma.dish.update({
         where: { id },
         data: {
           ...(name && { name }),
           ...(description && { description }),
           ...(instructions && { instructions }),
-          ...(tags && { tags }),  // Mettre à jour les tags
-          images: {
-            create: imageUrls?.map((url: string) => ({ url })), // Ajouter les nouvelles images
-          },
+          ...(tags && { tags }),
+          ...imageUpdateData,  // Mettre à jour les images si nécessaire
           ingredients: {
             create: updatedIngredients,
           },
@@ -152,7 +189,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               password: false,
             },
           },
-          images: true, // Inclure les images mises à jour
+          images: true,
         },
       });
 
@@ -161,6 +198,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         dish: updatedDish,
       });
     }
+
+
 
     if (req.method === 'DELETE') {
       const dish = await prisma.dish.findUnique({
@@ -171,7 +210,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ error: i18n.t(errorMessage.api('dish').NOT_FOUND) });
       }
 
-      // Supprimer les images associées
+      // Supprimer les images associées et leur fichier physique
+      const imagesToDelete = await prisma.image.findMany({
+        where: { dishId: id },
+      });
+
+      imagesToDelete.forEach(image => {
+        deleteImageFromDisk(image.url);
+      });
+
       await prisma.image.deleteMany({
         where: { dishId: id },
       });
@@ -179,6 +226,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       await prisma.dish.delete({
         where: { id },
       });
+
+      const unusedImages = await prisma.image.findMany({
+        where: { dishId: null },
+      });
+
+      if (unusedImages.length > 0) {
+        unusedImages.forEach(image => {
+          deleteImageFromDisk(image.url);
+        });
+
+        await prisma.image.deleteMany({
+          where: { id: { in: unusedImages.map(image => image.id) } },
+        });
+      }
 
       return res.status(200).json({
         message: i18n.t(errorMessage.valid('dish').DELETED_SUCCESS),

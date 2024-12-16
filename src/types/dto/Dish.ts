@@ -1,7 +1,6 @@
 import { BaseDto } from "./BaseDto";
-import { Image } from "./Image";
 import { Ingredient } from "./Ingredient";
-import { Tag } from "./Tags";
+import { MediaDto } from "./Media";
 
 export interface Dish extends BaseDto {
   name: string;
@@ -10,5 +9,5 @@ export interface Dish extends BaseDto {
   ingredients: Ingredient[];
   chefId: string;
   tags: string[];
-  images: Image[];
+  images: MediaDto[];
 } 

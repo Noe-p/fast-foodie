@@ -42,7 +42,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const { name, description, instructions, ingredients, tags, images } = req.body;
+      const { name, description, instructions, ingredients, tags, imageIds } = req.body;
+
+      // Vérifier si imageIds est défini et n'est pas vide
+      if (!imageIds || !Array.isArray(imageIds) || imageIds.length === 0) {
+        return res.status(400).json({
+          error: i18n.t(errorMessage.api('image').INVALID),
+          details: "Image IDs are required and should be a non-empty array.",
+        });
+      }
 
       // Validation et création des ingrédients
       const NewIngredients = await Promise.all(
@@ -52,7 +60,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           });
 
           if (!food) {
-            if (!i18n) return res.status(500).json({ error: errorMessage.api('dish').INTERNAL_SERVER_ERROR });
+            if (!i18n) {
+              return res.status(500).json({ error: errorMessage.api('food').INTERNAL_SERVER_ERROR });
+            }
             return res.status(404).json({ error: i18n.t(errorMessage.api('food').NOT_FOUND) });
           }
 
@@ -60,18 +70,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         }),
       );
 
-      // Validation et ajout des images
-      const imageUrls = images ? await Promise.all(
-        images.map(async (imageUrl: string) => {
-          return await prisma.image.create({
-            data: {
-              url: imageUrl,
-            },
-          });
-        })
-      ) : [];
+      // Vérification des imageIds dans la base de données
+      const existingImages = await prisma.image.findMany({
+        where: {
+          id: { in: imageIds }, // Vérifie que les IDs des images sont valides
+        },
+      });
 
-      // Création du plat avec les ingrédients, tags (en tant que strings), et images
+      // Si certains imageIds n'existent pas
+      if (existingImages.length !== imageIds.length) {
+        return res.status(404).json({
+          error: i18n.t(errorMessage.api('upload').NOT_FOUND),
+        });
+      }
+
+      // Création du plat avec les ingrédients, tags et images
       const newDish = await prisma.dish.create({
         data: {
           name,
@@ -83,7 +96,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
           tags,
           images: {
-            connect: imageUrls.map(image => ({ id: image.id })),
+            connect: imageIds.map((id: string) => ({ id })), // Connecte les images par leur ID sans utiliser 'dishId'
           },
         },
         include: {
@@ -122,43 +135,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         message: i18n.t(errorMessage.valid('dish').ADDED_SUCCESS),
         dish: dishWithTagsAsStrings,
       });
-    }
-
-    if (req.method === 'GET') {
-      const dishes = await prisma.dish.findMany({
-        include: {
-          ingredients: {
-            select: {
-              id: true,
-              quantity: true,
-              food: true,
-            },
-          },
-          chef: {
-            select: {
-              id: true,
-              userName: true,
-              email: true,
-              role: true,
-              createdAt: true,
-              updatedAt: true,
-              password: false,
-            },
-          },
-          images: true, // Inclure les images avec toutes leurs propriétés
-        },
-      });
-
-      // Reformater les tags pour qu'ils soient des chaînes de caractères
-      const dishesWithTagsAsStrings = dishes.map(dish => {
-        const { chefId, ...dishWithoutChefId } = dish;
-        return {
-          ...dishWithoutChefId,
-          tags: dish.tags, // Les tags sont déjà des chaînes de caractères
-        };
-      });
-
-      return res.status(200).json({ dishes: dishesWithTagsAsStrings });
     }
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });

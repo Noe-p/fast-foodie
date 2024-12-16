@@ -15,7 +15,7 @@ import { fr } from 'date-fns/locale';
 import { Col, RowCenter } from '@/components/Helpers/Helpers';
 
 export interface ImageUploadProps {
-  onImageUpload: (files: string[]) => void;
+  onImageUpload: (files: MediaDto[]) => void;
   defaultValue?: MediaDto[];
   favorite?: string;
   onFavoriteChange?: (favorite: string) => void;
@@ -59,7 +59,7 @@ export default function ImageUpload(props: ImageUploadProps) {
   }, []);
 
   useEffect(() => {
-    onImageUpload(uploadedFiles.map((file) => file.id));
+    onImageUpload(uploadedFiles.map((file) => file));
     const favoriteFile = uploadedFiles.find((file) => file.id === favorite);
     if (!favoriteFile && uploadedFiles.length > 0 && onFavoriteChange) {
       onFavoriteChange(uploadedFiles[0].id);
@@ -137,14 +137,14 @@ export default function ImageUpload(props: ImageUploadProps) {
                   <Image src={file.url} alt={file.filename} />
                   <RowCenter className='w-full ml-2'>
                     <Col className='justify-between'>
-                      <P14 className='text-foreground/80'>
-                        {file.filename.slice(0, 25)}
-                      </P14>
-                      <P10 className='text-foreground/60'>
+                      {/* <P14 className='text-foreground/80'>
+                        {file?.filename.slice(0, 25)}
+                      </P14> */}
+                      {/* <P10 className='text-foreground/60'>
                         {format(file.createdAt, 'dd MMMM yyyy, HH:mm', {
                           locale: fr,
                         })}
-                      </P10>
+                      </P10> */}
                     </Col>
                   </RowCenter>
 

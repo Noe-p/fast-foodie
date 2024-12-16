@@ -66,7 +66,9 @@ model Image {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  filename    String   // Nom du fichier
   url         String   // URL de l'image
+  size        Int      // Taille du fichier en octets
   dishId      String?  // Relation avec un plat
   dish        Dish?    @relation(fields: [dishId], references: [id], onDelete: Cascade)
 }

@@ -15,7 +15,7 @@ const fileUpload = async (
       },
       ...params,
     })
-  ).data;
+  ).data.image;
 };
 
 export const MediaApiService = {

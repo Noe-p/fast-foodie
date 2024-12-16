@@ -25,12 +25,11 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       .optional()
       .transform((value) => (value === '' ? undefined : value))
       .default(undefined),
-    images: yup
+    imageIds: yup
       .array()
       .of(
         yup
           .string()
-          .url(errorMessage.fields('images').NOT_URL)
           .required(errorMessage.fields('images').REQUIRED)
           .typeError(errorMessage.fields('images').NOT_STRING)
       )
@@ -87,12 +86,11 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
-  images: yup
+  imageIds: yup
     .array()
     .of(
       yup
         .string()
-        .url(errorMessage.fields('images').NOT_URL)
         .required(errorMessage.fields('images').REQUIRED)
         .typeError(errorMessage.fields('images').NOT_STRING)
     )

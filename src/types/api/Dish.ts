@@ -6,7 +6,7 @@ export interface CreateDishApi {
   instructions?: string;
   ingredients: CreateIngredientApi[];
   tags?: string[];
-  images?: string[];
+  imageIds?: string[];
 }
 
 export interface UpdateDishApi {
@@ -15,5 +15,5 @@ export interface UpdateDishApi {
   instructions?: string;
   ingredients?: UpdateIngredientApi[];
   tags?: string[];
-  images?: string[];
+  imageIds?: string[];
 }

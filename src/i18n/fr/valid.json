@@ -18,6 +18,11 @@
       "addedSuccess": "Plat ajouté avec succès",
       "deletedSuccess": "Plat supprimé avec succès",
       "updatedSuccess": "Plat mis à jour avec succès"
+    },
+    "upload": {
+      "addedSuccess": "Fichier ajouté avec succès",
+      "deletedSuccess": "Fichier supprimé avec succès",
+      "updatedSuccess": "Fichier mis à jour avec succès"
     }
   }
 }

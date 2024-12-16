@@ -9,6 +9,13 @@
       "multiple": "Erreurs sur les champs suivants : {{fields}}",
       "error": "Erreur de validation"
     },
+    "upload":{
+      "notFound": "Fichier non trouvé",
+      "exist": "Le fichier existe déjà",
+      "notUpdated": "Le fichier n'a pas été mis à jour",
+      "invalid": "Fichier invalide",
+      "notCreated": "Le fichier n'a pas été créé"
+    },
     "apiKey": {
       "notFound": "Clé API non trouvée",
       "exist": "La clé API existe déjà",
@@ -38,6 +45,12 @@
       "exist": "L'aliment existe déjà",
       "notUpdated": "L'aliment n'a pas été mis à jour",
       "invalid": "Aliment invalide"
+    },
+    "dish":{
+      "notFound": "Plat non trouvé",
+      "exist": "Le plat existe déjà",
+      "notUpdated": "Le plat n'a pas été mis à jour",
+      "invalid": "Plat invalide"
     },
     "user": {
       "notFound": "Utilisateur non trouvé",

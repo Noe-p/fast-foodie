@@ -18,6 +18,6 @@ export const API_ROUTES = {
     updateById: (id: string) => `/address/${id}`,
   },
   media: {
-    upload: '/api/file-upload',
+    upload: '/api/upload',
   },
 };
