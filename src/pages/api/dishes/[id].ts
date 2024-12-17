@@ -68,7 +68,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               id: true,
               userName: true,
               email: true,
-              role: true,
               createdAt: true,
               updatedAt: true,
               password: false,
@@ -183,7 +182,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               id: true,
               userName: true,
               email: true,
-              role: true,
               createdAt: true,
               updatedAt: true,
               password: false,
@@ -193,10 +191,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       });
 
-      return res.status(200).json({
-        message: i18n.t(errorMessage.valid('dish').UPDATED_SUCCESS),
-        dish: updatedDish,
-      });
+      return res.status(200).json(updatedDish);
     }
 
 

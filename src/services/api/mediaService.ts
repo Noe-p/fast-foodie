@@ -15,9 +15,14 @@ const fileUpload = async (
       },
       ...params,
     })
-  ).data.image;
+  ).data;
 };
+
+const fileRemove = async (id: string): Promise<void> => {
+  await HttpService.delete(API_ROUTES.media.delete, id);
+}
 
 export const MediaApiService = {
   fileUpload,
+  fileRemove,
 };

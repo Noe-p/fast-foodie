@@ -11,13 +11,13 @@ model User {
   id              String         @id @default(cuid())
   email           String         @unique
   password        String
-  role            String         @default("USER")
-  userName        String
+  userName        String         @unique  
   collaborators   Collaborator[] @relation("UserToCollaborators")
   asCollaborator  Collaborator[] @relation("CollaboratorToUser")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  dishes          Dish[]         @relation("UserToDish") // Pas besoin de fields ou references ici
+  dishes          Dish[]         @relation("UserToDish")
+  foods           Food[]         // Relation inverse avec Food
 }
 
 model Collaborator {
@@ -36,26 +36,29 @@ model Food {
   name       String
   aisle      String
   icon       String?
-  ingredients Ingredient[] // Relation avec les ingrédients
+  ingredients Ingredient[]
+  userId     String   // ID de l'utilisateur qui a créé cet aliment
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Dish {
   id          String       @id @default(cuid())
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  name        String       // Nom du plat
-  description String?      // Description du plat
-  instructions String?     // Instructions de préparation
-  chefId      String?      // Créateur du plat (relation optionnelle avec User)
-  chef        User?        @relation("UserToDish", fields: [chefId], references: [id], onDelete: SetNull) // Relation avec User
-  ingredients Ingredient[] // Relation avec les ingrédients
-  tags        String[]     // Tableau de tags sous forme de chaînes de caractères
-  images      Image[]      // Images associées au plat
+  name        String
+  description String?
+  instructions String?
+  chefId      String
+  chef        User         @relation("UserToDish", fields: [chefId], references: [id], onDelete: Cascade)
+  ingredients Ingredient[]
+  tags        String[]
+  images      Image[]
+  status      String       @default("PRIVATE") // Status: "PRIVATE" or "SHARED"
 }
 
 model Ingredient {
   id       String   @id @default(cuid())
-  quantity String   // Exemple : "300g", "2", "3 morceaux"
+  quantity String
   dishId   String
   foodId   String
   dish     Dish     @relation(fields: [dishId], references: [id], onDelete: Cascade)
@@ -66,9 +69,9 @@ model Image {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  filename    String   // Nom du fichier
-  url         String   // URL de l'image
-  size        Int      // Taille du fichier en octets
-  dishId      String?  // Relation avec un plat
+  filename    String
+  url         String
+  size        Int
+  dishId      String?
   dish        Dish?    @relation(fields: [dishId], references: [id], onDelete: Cascade)
 }

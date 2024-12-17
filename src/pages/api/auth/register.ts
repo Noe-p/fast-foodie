@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import { errorMessage } from '../../../errors';
-import { UserRole } from '../../../types'
 import { i18n } from 'next-i18next';
 import jwt from 'jsonwebtoken';
 import { verifyApiKey } from '@/middleware/verifyApiKey';
@@ -25,14 +24,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const { email, password, userName } = req.body;
 
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { email },        // Vérifier si l'email existe déjà
+            { userName },     // Vérifier si le userName existe déjà
+          ],
+        },
       });
+
       if (existingUser) {
-        return res.status(409).json({ 
-          error: i18n.t(errorMessage.api('user').ALREADY_CREATED),
-        });
+        if (existingUser.email === email) {
+          return res.status(409).json({ 
+            error: i18n.t(errorMessage.api('email').ALREADY_CREATED),
+          });
+        }
+
+        if (existingUser.userName === userName) {
+          return res.status(409).json({ 
+            error: i18n.t(errorMessage.api('userName').ALREADY_CREATED), // Nouveau message pour userName
+          });
+        }
       }
 
       // Hacher le mot de passe
@@ -43,7 +55,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         data: {
           email,
           password: hashedPassword,
-          role: UserRole.USER,
           userName,
         },
       });
@@ -53,7 +64,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         { 
           id: user.id,
           email: user.email,
-          role: user.role
+          userName: user.userName,
         },
         process.env.JWT_SECRET!,
         { expiresIn: '90d' } 
@@ -65,7 +76,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         user: {
           id: user.id,
           email: user.email,
-          role: user.role,
+          userName: user.userName,
         }
       });
     }

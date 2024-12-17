@@ -53,17 +53,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           name,
           aisle,
           icon,
+          userId: user.id,
         },
       });
 
-      return res.status(201).json({
-        message: i18n.t(errorMessage.valid('food').ADDED_SUCCESS),
-        food: newFood,
-      });
+      return res.status(201).json(newFood);
     }
 
     if (req.method === 'GET') {
-      const foods = await prisma.food.findMany();
+      const foods = await prisma.food.findMany(
+        {
+          where: {
+            userId: user.id,
+          },
+        },
+      );
       return res.status(200).json({ foods });
     }
 

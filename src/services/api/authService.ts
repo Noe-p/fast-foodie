@@ -12,7 +12,12 @@ const login = async (payload: AuthLoginApi): Promise<string> => {
     .token;
 };
 
+const logout = async (): Promise<void> => {
+  await HttpService.post(API_ROUTES.auth.logout);
+}
+
 export const AuthApiService = {
   login,
   register,
+  logout,
 };

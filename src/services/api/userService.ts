@@ -14,22 +14,8 @@ const deleteMe = async (): Promise<void> => {
   await HttpService.delete(API_ROUTES.users.delete);
 };
 
-const deleteById = async (id: string): Promise<void> => {
-  await HttpService.delete(API_ROUTES.users.deleteById(id));
-};
-
-const updateById = async (
-  id: string,
-  payload: UpdateUserApi
-): Promise<User> => {
-  return (await HttpService.patch(API_ROUTES.users.updateById(id), payload))
-    .data;
-};
-
 export const UserApiService = {
   me,
   updateMe,
   deleteMe,
-  deleteById,
-  updateById,
 };

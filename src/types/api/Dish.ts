@@ -1,5 +1,9 @@
 import { CreateIngredientApi, UpdateIngredientApi } from "./Ingredient";
 
+export enum DishStatus {
+  PRIVATE = 'PRIVATE',
+  SHARED = 'SHARED',
+}
 export interface CreateDishApi {
   name: string;
   description?: string;
@@ -7,6 +11,7 @@ export interface CreateDishApi {
   ingredients: CreateIngredientApi[];
   tags?: string[];
   imageIds?: string[];
+  status?: DishStatus; 
 }
 
 export interface UpdateDishApi {
@@ -16,4 +21,5 @@ export interface UpdateDishApi {
   ingredients?: UpdateIngredientApi[];
   tags?: string[];
   imageIds?: string[];
+  status?: DishStatus;
 }

@@ -43,6 +43,7 @@ const valid = (item: string) => ({
   UPDATED_SUCCESS: `valid:api.${item}.updatedSuccess`,
   DELETED_SUCCESS: `valid:api.${item}.deletedSuccess`,
   CHANGED_STATUS: `valid:api.${item}.changedStatus`,
+  SUCCESS: `valid:api.${item}.success`,
 });
 
 export const errorMessage = {

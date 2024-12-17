@@ -9,6 +9,12 @@
       "multiple": "Erreurs sur les champs suivants : {{fields}}",
       "error": "Erreur de validation"
     },
+    "email":{
+      "alreadyCreated": "L'email a déjà été utilisé"
+    },
+    "userName":{
+      "alreadyCreated": "Le nom d'utilisateur a déjà été utilisé"
+    },
     "upload":{
       "notFound": "Fichier non trouvé",
       "exist": "Le fichier existe déjà",

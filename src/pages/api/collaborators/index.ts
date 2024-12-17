@@ -58,10 +58,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: i18n.t(errorMessage.api('collaborator').ALREADY_ADDED) });
       }
 
+      // Création de la relation bidirectionnelle
       await prisma.collaborator.create({
         data: {
           userId: user.id,
           collaboratorId: collaborator.id,
+        },
+      });
+
+      // Créer également l'entrée inverse pour le collaborateur
+      await prisma.collaborator.create({
+        data: {
+          userId: collaborator.id,
+          collaboratorId: user.id,
         },
       });
 
@@ -73,10 +82,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
        where: { userId: user.id },
         include: {
           collaborator: {
-            select: { // On sélectionne uniquement les champs nécessaires pour l'objet `User`
+            select: { // Sélectionner uniquement les champs nécessaires
               id: true,
               email: true,
-              role: true,
               userName: true,
               createdAt: true,
               updatedAt: true,

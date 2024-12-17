@@ -11,3 +11,8 @@ export interface ApiSearchResponse<T> {
   total: number;
   page: number;
 }
+
+export interface ApiResponse<T> {
+  data: T;
+  message: string;
+}

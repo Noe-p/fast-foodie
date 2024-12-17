@@ -91,10 +91,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    return res.status(200).json({
-      message: i18n.t(errorMessage.valid('upload').ADDED_SUCCESS),
-      image,
-    });
+    return res.status(200).json(image);
   } catch (error: any) {
     console.error('Upload error:', error);
     return res.status(500).json({

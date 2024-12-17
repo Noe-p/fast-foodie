@@ -86,22 +86,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (req.method === 'DELETE') {
-      const food = await prisma.food.findUnique({
+      const dish = await prisma.dish.findUnique({
         where: { id },
       });
 
-      if (!food) {
-        return res.status(404).json({ error: i18n.t(errorMessage.api('food').NOT_FOUND) });
+      if (!dish) {
+        return res.status(404).json({ error: i18n.t(errorMessage.api('dish').NOT_FOUND) });
       }
 
-      await prisma.food.delete({
+      // Vérifier si l'utilisateur courant est le chef du plat
+      if (dish.chefId !== user.id) {
+        return res.status(403).json({ 
+          error: i18n.t(errorMessage.api('dish').NOT_ADMIN),
+        });
+      }
+
+      // Supprimer le plat
+      await prisma.dish.delete({
         where: { id },
       });
 
       return res.status(200).json({
-        message: i18n.t(errorMessage.valid('food').DELETED_SUCCESS),
+        message: i18n.t(errorMessage.valid('dish').DELETED_SUCCESS),
       });
     }
+
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });
   } catch (error: any) {

@@ -5,6 +5,6 @@ export interface RegisterApi {
 }
 
 export interface AuthLoginApi {
-  email: string;
+  login: string;
   password: string;
 }

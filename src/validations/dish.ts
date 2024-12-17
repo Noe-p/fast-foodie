@@ -1,5 +1,5 @@
 import { errorMessage } from '../errors';
-import { AuthLoginApi, CollaboratorApi, CreateDishApi, CreateIngredientApi, RegisterApi, UpdateDishApi, UpdateIngredientApi, UpdateUserApi } from '../types/api';
+import { AuthLoginApi, CollaboratorApi, CreateDishApi, CreateIngredientApi, DishStatus, RegisterApi, UpdateDishApi, UpdateIngredientApi, UpdateUserApi } from '../types/api';
 import * as yup from 'yup';
 import { genericsValidation } from './generics';
 import { ta } from 'date-fns/locale';
@@ -14,6 +14,12 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       .optional()
       .transform((value) => (value === '' ? undefined : value))
       .default(undefined),
+    status: yup
+      .string()
+      .oneOf(Array.from(Object.values(DishStatus)))
+      .optional()
+      .transform((value) => (value === '' ? undefined : value))
+      .default(DishStatus.SHARED),
     tags: yup
       .array()
       .of(
@@ -65,6 +71,12 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
+      status: yup
+      .string()
+      .oneOf(Array.from(Object.values(DishStatus)))
+      .optional()
+      .transform((value) => (value === '' ? undefined : value))
+      .default(DishStatus.SHARED),
   description: yup
     .string()
     .optional()

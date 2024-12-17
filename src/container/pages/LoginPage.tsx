@@ -98,14 +98,14 @@ export default function LoginPage(): React.JSX.Element {
               >
                 <FormField
                   control={form.control}
-                  name='email'
+                  name='login'
                   isRequired
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('fields:email.label')}</FormLabel>
                       <FormControl>
                         <Input
-                          type='email'
+                          type='text'
                           placeholder={t('fields:email.placeholder')}
                           {...field}
                         />

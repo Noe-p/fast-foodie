@@ -1,3 +1,7 @@
+import collaborators from "@/pages/api/collaborators";
+import foods from "@/pages/api/foods";
+import { get } from "http";
+
 export const API_ROUTES = {
   auth: {
     register: '/api/auth/register',
@@ -8,16 +12,26 @@ export const API_ROUTES = {
     me: '/api/users/me',
     update: '/api/users/me',
     delete: '/api/users/me',
-    deleteById: (id: string) => `/users/${id}`,
-    updateById: (id: string) => `/users/${id}`,
-  },
-  address: {
-    create: '/api/address',
-    getById: (id: string) => `/address/${id}`,
-    deleteById: (id: string) => `/address/${id}`,
-    updateById: (id: string) => `/address/${id}`,
   },
   media: {
     upload: '/api/upload',
+    delete: (id: string) => `/api/upload/${id}`,
+  },
+  dishes: {
+    get: '/api/dishes',
+    create: '/api/dishes',
+    update: (id: string) => `/api/dishes/${id}`,
+    delete: (id: string) => `/api/dishes/${id}`,
+  },
+  foods: {
+    get: '/api/foods',
+    create: '/api/foods',
+    update: (id: string) => `/api/foods/${id}`,
+    delete: (id: string) => `/api/foods/${id}`,
+  },
+  collaborators: {
+    get: '/api/collaborators',
+    create: '/api/collaborators',
+    delete: (id: string) => `/api/collaborators/${id}`,
   },
 };

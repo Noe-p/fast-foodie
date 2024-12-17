@@ -32,6 +32,46 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(404).json({ error: i18n.t(errorMessage.api('user').NOT_FOUND) });
     }
 
+    if (req.method === 'GET') {
+      const filters: any = {
+        OR: [
+          { chefId: user.id },  // Plats de l'utilisateur courant
+          {
+            status: 'SHARED',
+            chef: {
+              collaborators: {
+                some: { collaboratorId: user.id },  // Plats des collaborateurs de l'utilisateur
+              },
+            },
+          },
+        ],
+      };
+
+      const dishes = await prisma.dish.findMany({
+        where: filters,
+        include: {
+          ingredients: {
+            select: {
+              id: true,
+              quantity: true,
+              food: {
+                select: {
+                  id: true,
+                  name: true,
+                  aisle: true,
+                  icon: true,
+                },
+              },
+            },
+          },
+          images: true,
+          chef: true,
+        },
+      });
+
+      return res.status(200).json({ dishes });
+    }
+
     if (req.method === 'POST') {
       try {
         await dishValidation.add.validate(req.body, { abortEarly: false });
@@ -48,7 +88,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (!imageIds || !Array.isArray(imageIds) || imageIds.length === 0) {
         return res.status(400).json({
           error: i18n.t(errorMessage.api('image').INVALID),
-          details: "Image IDs are required and should be a non-empty array.",
         });
       }
 
@@ -95,6 +134,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             create: NewIngredients,
           },
           tags,
+          status: 'SHARED',
           images: {
             connect: imageIds.map((id: string) => ({ id })), // Connecte les images par leur ID sans utiliser 'dishId'
           },
@@ -104,7 +144,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             select: {
               id: true,
               quantity: true,
-              food: true,
+              food: {
+                select: {
+                  id: true,
+                  name: true,
+                  aisle: true,
+                  icon: true,
+                },
+              },
             },
           },
           chef: {
@@ -112,7 +159,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               id: true,
               userName: true,
               email: true,
-              role: true,
               createdAt: true,
               updatedAt: true,
               password: false,
@@ -131,10 +177,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         tags: newDish.tags, // Les tags sont déjà des chaînes de caractères
       };
 
-      return res.status(201).json({
-        message: i18n.t(errorMessage.valid('dish').ADDED_SUCCESS),
-        dish: dishWithTagsAsStrings,
-      });
+      return res.status(201).json(dishWithTagsAsStrings);
     }
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });

@@ -4,10 +4,10 @@ import * as yup from 'yup';
 import { genericsValidation } from './generics';
 
 const login = yup.object<AuthLoginApi>().shape({
-  email: yup
+  login: yup
     .string()
-    .required(errorMessage.fields('email').REQUIRED)
-    .typeError(errorMessage.fields('email').NOT_STRING),
+    .required(errorMessage.fields('login').REQUIRED)
+    .typeError(errorMessage.fields('login').NOT_STRING),
   password: genericsValidation.password.required(
     errorMessage.fields('password').REQUIRED
   ),
