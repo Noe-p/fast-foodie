@@ -2,12 +2,13 @@ import { DrawerMotion } from '@/components/Drawer';
 import { useTranslation } from 'next-i18next';
 import tw from 'tailwind-styled-components';
 import { Col } from '@/components/Helpers';
-import { Edit } from 'lucide-react';
+import { Edit, LogOutIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
 import { P14 } from '@/components';
-import { AVATAR_PLACEHOLDER_URL } from '@/static/constants';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { ApiService } from '@/services/api';
+import { useState } from 'react';
+
 
 interface DrawerDetailUserProps {
   className?: string;
@@ -18,11 +19,20 @@ interface DrawerDetailUserProps {
 export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
   const { className, isOpen, onClose } = props;
   const { t } = useTranslation();
-  const { currentUser } = useAuthContext();
+  const { currentUser, removeToken } = useAuthContext();
   const { setDrawerOpen } = useAppContext();
+  const [ isLoading, setIsLoading ] = useState<boolean>(false);
+
+  async function handleLogout() {
+    setIsLoading(true);
+    await ApiService.auth.logout();
+    removeToken();
+    onClose();
+    setIsLoading(false);
+  }
 
   return (
-    <DrawerMotion isOpen={isOpen} onClose={onClose} title={t('user:detail')}>
+    <DrawerMotion className='lain_background' isOpen={isOpen} onClose={onClose} title={t('user:detail.title')}>
       <Content className={className}>
         <Col className='gap-4'>
           <Col>
@@ -32,23 +42,10 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
             </Text>
           </Col>
           <Col>
-            <Label>{t('fields:lastName.label')}</Label>
-            <Text $empty={!currentUser?.lastName}>{currentUser?.lastName}</Text>
-          </Col>
-          <Col>
             <Label>{t('fields:email.label')}</Label>
             <Text $empty={!currentUser?.email}>
               {currentUser?.email ?? t('generics.noData')}
             </Text>
-          </Col>
-          <Col>
-            <Label>{t('fields:profilePicture.label')}</Label>
-            <Avatar className='border w-[30px] h-[30px]'>
-              <AvatarImage
-                src={currentUser?.profilePicture?.url ?? AVATAR_PLACEHOLDER_URL}
-                alt='Profile picture'
-              />
-            </Avatar>
           </Col>
         </Col>
 
@@ -58,6 +55,15 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
         >
           <Edit size={20} className='mr-2' />
           {t('generics.edit')}
+        </Button>
+        <Button
+          className='w-full mt-2'
+          onClick={() => handleLogout()}
+          isLoading={isLoading}
+          variant={'destructive'}
+        >
+          <LogOutIcon size={20} className='mr-2' />
+          {t('generics.logout')}
         </Button>
       </Content>
     </DrawerMotion>

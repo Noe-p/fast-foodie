@@ -40,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (req.method === 'GET') {
       const { password, ...userWithoutPassword } = user;
-      return res.status(200).json({ user: userWithoutPassword });
+      return res.status(200).json(userWithoutPassword);
     }
 
     if (req.method === 'PATCH') {
@@ -56,12 +56,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const { email, userName } = req.body;
 
-      if (email && (await prisma.user.findUnique({ where: { email } }))) {
+      if (email && (await prisma.user.findFirst({ where: { email, id: { not: user.id } } }))) {
         return res.status(400).json({
           error: i18n.t(errorMessage.api('user').EXIST),
         });
       }
 
+      // Vérification de l'unicité du userName
+      if (
+        userName &&
+        (await prisma.user.findFirst({
+          where: { userName, id: { not: user.id } }, // Exclut l'utilisateur actuel
+        }))
+      ) {
+        return res.status(400).json({
+          error: i18n.t(errorMessage.api('user').EXIST),
+        });
+      }
+
+      // Mise à jour des données
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {

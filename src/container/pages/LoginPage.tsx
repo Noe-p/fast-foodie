@@ -42,13 +42,13 @@ export default function LoginPage(): React.JSX.Element {
     mutationFn: ApiService.auth.login,
     onSuccess: (data) => {
       setToken(data);
-      router.push(ROUTES.home);
+      router.push(ROUTES.dishes.index);
     },
   });
 
   useEffect(() => {
     if (!currentUser) return;
-    router.push(ROUTES.home);
+    router.push(ROUTES.dishes.index);
   }, [currentUser]);
 
   const form = useForm<AuthLoginApi>({
@@ -77,7 +77,7 @@ export default function LoginPage(): React.JSX.Element {
       <Col className='p-6 md:p-4'>
         <Row className='justify-end'>
           <Button
-            variant='ghost'
+            variant='outline'
             onClick={() => router.push(ROUTES.auth.register)}
           >
             {t('generics.register')}
@@ -102,11 +102,11 @@ export default function LoginPage(): React.JSX.Element {
                   isRequired
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('fields:email.label')}</FormLabel>
+                      <FormLabel>{t('fields:login.label')}</FormLabel>
                       <FormControl>
                         <Input
                           type='text'
-                          placeholder={t('fields:email.placeholder')}
+                          placeholder={t('fields:login.placeholder')}
                           {...field}
                         />
                       </FormControl>

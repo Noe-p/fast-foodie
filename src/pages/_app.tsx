@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <AppProvider>
           <Component {...pageProps} />
           <Toaster />
-          <ReactQueryDevtools initialIsOpen={false} />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </AppProvider>
       </AuthProvider>
     </QueryClientProvider>

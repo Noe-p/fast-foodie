@@ -49,13 +49,13 @@ export default function RegisterPage(): React.JSX.Element {
     mutationFn: ApiService.auth.register,
     onSuccess: (data) => {
       setToken(data);
-      router.push(ROUTES.home);
+      router.push(ROUTES.dishes.index);
     },
   });
 
   useEffect(() => {
     if (!currentUser) return;
-    router.push(ROUTES.home);
+    router.push(ROUTES.dishes.index);
   }, [currentUser]);
 
   const form = useForm<AuthRegisterUi>({
@@ -84,7 +84,7 @@ export default function RegisterPage(): React.JSX.Element {
       <Col className='p-6 md:p-4'>
         <Row className='justify-end'>
           <Button
-            variant='ghost'
+            variant='outline'
             onClick={() => router.push(ROUTES.auth.login)}
           >
             {t('generics.login')}

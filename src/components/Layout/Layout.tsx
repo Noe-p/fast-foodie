@@ -20,13 +20,13 @@ export function Layout(props: LayoutProps): React.JSX.Element {
         <Page $isDesktop={true} className={className}>
           {children}
         </Page>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </Main>
   ) : (
     <Main $isDesktop={isDesktop}>
       <Page className={className}>{children}</Page>
-      <Footer />
+      {/* <Footer /> */}
       <Tabbar />
     </Main>
   );

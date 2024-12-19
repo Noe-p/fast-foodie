@@ -160,6 +160,10 @@ const config = {
       spacing: {
         ...sizesList,
       },
+      fontFamily: {
+        sans: ['Luciole', 'Outfit'],
+        title: ['Spicy Rice','DM', 'Outfit'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

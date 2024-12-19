@@ -21,7 +21,7 @@ class MyDocument extends Document {
           ></link>
           {/* <!-- End Google Fonts --> */}
         </Head>
-        <body className='bg-background'>
+        <body className='background'>
           <Main />
           <NextScript />
         </body>

@@ -1,10 +1,11 @@
 export const ROUTES = {
-  home: '/',
-  dynamicPage: '/dynamic-page',
-  users: {
-    index: '/users',
-    detail: (id: string) => `/users/${id}`,
+  dishes: {
+    index: '/',
+    detail: (id: string) => `/dishes/${id}`,
+    week: '/dishes/week',
   },
+  shoppingList: '/shopping-list',
+  user: '/user',
   auth: {
     login: '/login',
     register: '/register',

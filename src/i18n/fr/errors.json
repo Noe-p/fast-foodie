@@ -3,6 +3,9 @@
     "internalServerError": "Erreur interne du serveur",
     "connexion": "Erreur de connexion"
   },
+  "fetch":{
+    "dishes": "Erreur lors de la récupération des plats"
+  },
   "api": {
     "validation": {
       "single": "Erreur sur le champ : {{field}}",

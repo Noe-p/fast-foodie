@@ -49,12 +49,11 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
 
   const { mutate: updateEvent, isPending } = useMutation({
     mutationFn: (data: UpdateUserApi) =>
-      ApiService.users.updateById(currentUser?.id ?? '', data),
+      ApiService.users.updateMe(data),
     onSuccess: (data) => {
       refreshUser();
       toast({
-        title: t('toast:update.success'),
-        description: t('toast:success.update', { name: data.userName }),
+        title: t('valid:api.user.updatedSuccess'),
       });
       form.reset();
       queryClient.refetchQueries({
@@ -71,7 +70,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       formatValidationErrorMessage(error.data.message, form.setError);
       toast({
         title: t('toast:update.error'),
-        description: `${error.message} : ${error.name}`,
+        description: error.data.error,
         variant: 'destructive',
       });
     },
@@ -82,9 +81,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       form.reset({
         ...currentUser,
         userName: currentUser.userName ?? '',
-        lastName: currentUser.lastName ?? '',
         email: currentUser.email ?? '',
-        profilePicture: currentUser.profilePicture?.id ?? '',
       });
     }
 
@@ -96,7 +93,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
   }
 
   return (
-    <DrawerMotion isOpen={isOpen} onClose={onClose} title={t('user:update')}>
+    <DrawerMotion className='lain_background' isOpen={isOpen} onClose={onClose} title={t('user:update.title')}>
       <Content className={className}>
         <Form {...form}>
           <form
@@ -128,30 +125,6 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
             />
             <FormField
               control={form.control}
-              name='lastName'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('fields:lastName.label')}</FormLabel>
-                  <FormControl>
-                    <InputStyled
-                      isRemovable
-                      placeholder={t('fields:lastName.placeholder')}
-                      enterKeyHint='next'
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                        }
-                      }}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name='email'
               render={({ field }) => (
                 <FormItem>
@@ -169,25 +142,6 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='profilePicture'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('fields:profilePicture.label')}</FormLabel>
-                  <ImageUpload
-                    onFavoriteChange={(v) => form.setValue('profilePicture', v)}
-                    favorite={form.watch('profilePicture')}
-                    onImageUpload={(v) => {
-                      form.setValue('profilePicture', v[0]);
-                    }}
-                    multiple={false}
-                  />
                   <FormMessage />
                 </FormItem>
               )}

@@ -10,3 +10,4 @@ export * from './Progress';
 export * from './Selects';
 export * from './Tooltip';
 export * from './Modal';
+export * from './Avatar'

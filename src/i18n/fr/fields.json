@@ -24,6 +24,14 @@
       "notString": "Le Pseudo doit être une chaîne de caractères"
     }
   },
+  "login":{
+    "label": "Pseudo/Email",
+    "placeholder": "Entrez votre Pseudo ou votre Email",
+    "errors": {
+      "required": "Le Pseudo ou l'email est requis",
+      "notString": "Le Pseudo ou l'email doit être une chaîne de caractères"
+    }
+  },
   "name":{
     "label": "Nom",
     "placeholder": "Entrez votre nom",

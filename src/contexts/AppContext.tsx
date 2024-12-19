@@ -8,6 +8,7 @@ import {
 export enum DrawerType {
   DETAIL_USER = 'DETAIL_USER',
   UPDATE_USER = 'UPDATE_USER',
+  CREATE_DISH = 'CREATE_DISH',
 }
 
 interface State {
@@ -65,7 +66,6 @@ export const AppProvider = ({ children }: Props): JSX.Element => {
   return (
     <AppContext.Provider value={context}>
       {children}
-
       <DrawerDetailUser
         isOpen={context.drawerOpen === DrawerType.DETAIL_USER}
         onClose={() => context.setDrawerOpen(undefined)}

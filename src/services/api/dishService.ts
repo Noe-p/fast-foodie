@@ -3,7 +3,7 @@ import { API_ROUTES } from '../apiRoutes';
 import { HttpService } from '../httpService';
 import { Dish } from '@/types/dto/Dish';
 
-const get = async (): Promise<Dish> => {
+const get = async (): Promise<Dish[]> => {
   return (await HttpService.get(API_ROUTES.dishes.get)).data;
 };
 

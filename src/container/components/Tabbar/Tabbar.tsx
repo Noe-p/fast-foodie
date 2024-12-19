@@ -1,15 +1,13 @@
-import { P10 } from '@/components';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, P10 } from '@/components';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
 import { ROUTES } from '@/routes';
-import { Home } from 'lucide-react';
+import { CalendarDays, CalendarFoldIcon, Home, PenTool, PlusCircle, SaladIcon, ShoppingCartIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { ColCenter, Row, RowCenter } from '@/components/Helpers';
 
 import tw from 'tailwind-styled-components';
 import { cn } from '@/services/utils';
-import { AVATAR_PLACEHOLDER_URL } from '@/static/constants';
 
 interface TabbarProps {
   className?: string;
@@ -24,28 +22,29 @@ export function Tabbar(props: TabbarProps): JSX.Element {
 
   const KEYS = [
     {
-      path: ROUTES.home,
-      icon: <Home size={22} />,
-      action: () => router.push(ROUTES.home),
-      name: t('home.title'),
+      path: ROUTES.dishes.index,
+      icon: <SaladIcon size={22} />,
+      action: () => router.push(ROUTES.dishes.index),
+      name: t('dishes:title'),
     },
     {
-      path: ROUTES.users.detail,
+      path: ROUTES.dishes.week,
+      icon: <CalendarFoldIcon size={22} />,
+      action: () => router.push(ROUTES.dishes.week),
+      name: t('dishes:week.title'),
+    },
+    {
+      path: ROUTES.shoppingList,
+      icon: <ShoppingCartIcon size={22} />,
+      action: () => router.push(ROUTES.shoppingList),
+      name: t('shoppingList:title'),
+    },
+    {
+      path: ROUTES.user,
       icon: (
-        <Avatar
-          className={cn(
-            'border border-muted w-[25px] h-[25px]',
-            drawerOpen === DrawerType.DETAIL_USER && 'border-background'
-          )}
-        >
-          <AvatarImage
-            src={currentUser?.profilePicture?.url ?? AVATAR_PLACEHOLDER_URL}
-            alt='Profile picture'
-          />
-        </Avatar>
+        <Avatar />
       ),
       action: () => setDrawerOpen(DrawerType.DETAIL_USER),
-      name: currentUser?.userName,
     },
   ];
 
