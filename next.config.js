@@ -1,8 +1,4 @@
-/** @type {import('next').NextConfig} */
-/* eslint-disable @typescript-eslint/no-var-requires, no-undef */
-
 const { i18n } = require('./next-i18next.config');
-
 const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
@@ -10,6 +6,19 @@ const withPWA = require('next-pwa')({
   cacheOnFrontEndNav: true,
   reloadOnOnline: true,
   disable: process.env.NODE_ENV === 'development',
+  runtimeCaching: [
+    {
+      urlPattern: /^\/files\/.*\.(png|jpg|jpeg|svg|gif)$/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'local-images-cache',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
+        },
+      },
+    },
+  ],
 });
 
 const settings = {
@@ -18,7 +27,6 @@ const settings = {
   i18n,
   staticPageGenerationTimeout: 20000,
   output: 'standalone',
-  // https://github.com/vercel/next.js/issues/48748#issuecomment-1578374105
   modularizeImports: {},
   images: {
     remotePatterns: [

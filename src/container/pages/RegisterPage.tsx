@@ -91,7 +91,7 @@ export default function RegisterPage(): React.JSX.Element {
           </Button>
         </Row>
         <ColCenter className='h-full justify-center'>
-          <Col className='lg:w-1/2 w-full gap-2'>
+          <Col className='lg:w-1/2 w-full gap-2 lain_background px-4 py-10 rounded'>
             <H1 className='font-bold text-center text-3xl'>
               {t('auth.register.title')}
             </H1>
@@ -196,7 +196,7 @@ const Main = tw(Grid2)`
   w-full
   bg-white
   gap-0 md:gap-0
-  bg-background
+  background
 `;
 
 const Background = tw.img`

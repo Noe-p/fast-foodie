@@ -2,22 +2,57 @@ import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import '../static/styles/app.css';
 import { AppProvider, AuthProvider } from '@/contexts';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { useEffect, useState } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient();
+  const [isClient, setIsClient] = useState(false);
+
+  // Set the client-side flag once the component is mounted
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        gcTime: 1000 * 60 * 60 * 24, // 24 hours
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        networkMode: 'offlineFirst',
+      },
+      mutations: {
+        networkMode: 'offlineFirst',
+      },
+    },
+  });
+
+  // Only create the persister on the client side
+  const persister = isClient ? createSyncStoragePersister({
+    storage: window.localStorage,
+  }) : null;
+
+  if (!isClient || !persister) {
+    return null; // You can return a loading spinner or any other placeholder here
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+    >
       <AuthProvider>
         <AppProvider>
           <Component {...pageProps} />
           <Toaster />
-          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+          <ReactQueryDevtools initialIsOpen={false} />
         </AppProvider>
       </AuthProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }
+
 export default appWithTranslation(MyApp);
