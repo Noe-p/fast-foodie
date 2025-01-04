@@ -1,12 +1,12 @@
+import { PrismaClient } from '@prisma/client';
 import { IncomingForm } from 'formidable';
 import fs from 'fs';
-import path from 'path';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
-import { verifyApiKey } from '../../../middleware/verifyApiKey';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { i18n } from 'next-i18next';
+import path from 'path';
 import { errorMessage } from '../../../errors';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
@@ -57,7 +57,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const fileData = await new Promise<{ fields: any; files: any }>((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
+      form.parse(req, (err: any, fields: any, files: any) => {
         if (err) {
           return reject(err);
         }

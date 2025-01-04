@@ -1,5 +1,5 @@
 {
-  "name": "backoffice-template",
+  "name": "fast-foodie",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,6 +34,9 @@
     "@tanstack/react-query-devtools": "^5.28.8",
     "@tanstack/react-query-persist-client": "^5.62.8",
     "@tanstack/react-table": "^8.13.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/formidable": "^3.4.5",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/react-modal": "^3.16.0",
     "@types/validator": "^13.11.2",
     "@vercel/analytics": "^1.1.1",
@@ -47,6 +50,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.0.0",
     "express": "^4.21.2",
+    "formidable": "^3.5.2",
     "framer-motion": "^11.1.7",
     "i18next": "^23.7.7",
     "jsonwebtoken": "^9.0.2",
@@ -65,6 +69,7 @@
     "react-i18next": "^13.5.0",
     "react-loader-spinner": "^6.1.6",
     "react-modal": "^3.16.1",
+    "react-quill": "^2.0.0",
     "react-social-icons": "^6.14.0",
     "sonner": "^1.4.41",
     "swiper": "6.8.4",
@@ -83,6 +88,7 @@
     "@tanstack/eslint-plugin-query": "^5.20.1",
     "@types/express": "^5.0.0",
     "@types/node": "^20",
+    "@types/quill": "^2.0.14",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
@@ -91,6 +97,7 @@
     "eslint-config-next": "14.1.2",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "prisma": "^6.1.0"
   }
 }

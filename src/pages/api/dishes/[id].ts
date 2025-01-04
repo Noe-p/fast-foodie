@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
-import { verifyApiKey } from '../../../middleware/verifyApiKey';
-import { i18n } from 'next-i18next';
-import { errorMessage } from '../../../errors';
-import { foodValidation } from '../../../validations/food';
+import { DishStatus } from '@/types';
 import { dishValidation } from '@/validations/dish';
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { i18n } from 'next-i18next';
 import path from 'path';
+import { errorMessage } from '../../../errors';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
@@ -67,7 +67,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             select: {
               id: true,
               userName: true,
-              email: true,
               createdAt: true,
               updatedAt: true,
               password: false,
@@ -95,7 +94,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const { name, description, instructions, ingredients, tags, imageIds } = req.body;
+      const { name, instructions, ingredients, tags, imageIds, weeklyDish, status } = req.body;
 
       const dish = await prisma.dish.findUnique({
         where: { id },
@@ -161,10 +160,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         where: { id },
         data: {
           ...(name && { name }),
-          ...(description && { description }),
           ...(instructions && { instructions }),
           ...(tags && { tags }),
+          ...(status && { status: status ?? DishStatus.PUBLIC }),
           ...imageUpdateData,  // Mettre à jour les images si nécessaire
+          weeklyDish: weeklyDish,
           ingredients: {
             create: updatedIngredients,
           },
@@ -181,7 +181,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             select: {
               id: true,
               userName: true,
-              email: true,
               createdAt: true,
               updatedAt: true,
               password: false,

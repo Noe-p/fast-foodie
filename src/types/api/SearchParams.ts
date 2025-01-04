@@ -6,6 +6,11 @@ export interface SearchParams {
   orderType?: 'ASC' | 'DESC';
 }
 
+export interface LocalSearchParams {
+  search?: string;
+  tag?: string;
+  chef?: string;
+}
 export interface ApiSearchResponse<T> {
   items: T[];
   total: number;

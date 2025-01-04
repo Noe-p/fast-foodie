@@ -1,6 +1,8 @@
+export * from './AuthWall';
+export * from './Filters';
 export * from './Footer';
 export * from './Header';
-export * from './Tabbar';
+export * from './Inputs';
 export * from './SeoHead';
-export * from './AuthWall';
-export * from './Menu';
+export * from './Tabbar';
+

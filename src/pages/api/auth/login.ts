@@ -1,11 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import { authValidation } from '@/validations';
 import { errorMessage } from '@/errors';
-import { i18n } from 'next-i18next';
 import { verifyApiKey } from '@/middleware/verifyApiKey';
+import { authValidation } from '@/validations';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { i18n } from 'next-i18next';
 
 const prisma = new PrismaClient();
 
@@ -24,11 +24,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const { login, password } = req.body;
 
-      // Rechercher l'utilisateur par email ou userName
       const user = await prisma.user.findFirst({
         where: {
           OR: [
-            { email: login },      // Si l'utilisateur entre son email
             { userName: login },   // Si l'utilisateur entre son userName
           ],
         },
@@ -53,7 +51,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const token = jwt.sign(
         { 
           id: user.id,
-          email: user.email,
           userName: user.userName,
         },
         process.env.JWT_SECRET!,
@@ -64,7 +61,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         token,
         user: {
           id: user.id,
-          email: user.email,
           userName: user.userName,
         },
       });

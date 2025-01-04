@@ -1,12 +1,12 @@
-import { errorMessage } from '../errors';
-import { AuthLoginApi, CollaboratorApi, RegisterApi, UpdateUserApi } from '..//types/api';
 import * as yup from 'yup';
-import { genericsValidation } from './generics';
+import { CollaboratorApi } from '..//types/api';
+import { errorMessage } from '../errors';
 
 const add: yup.ObjectSchema<CollaboratorApi> = yup.object({
-  email: genericsValidation.email.required(
-    errorMessage.fields('email').REQUIRED
-  ).email(errorMessage.fields('email').NOT_VALID),
+  userName: yup
+    .string()
+    .required(errorMessage.fields('userName').REQUIRED)
+    .typeError(errorMessage.fields('userName').NOT_STRING),
 });
 
 export const collaboratorsValidation = {

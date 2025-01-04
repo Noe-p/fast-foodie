@@ -1,6 +1,7 @@
 import { BaseDto } from './BaseDto';
+import { Collaborator } from './Collaborators';
 
 export interface User extends BaseDto {
   userName: string;
-  email: string;
+  collaborators: Collaborator[];
 }

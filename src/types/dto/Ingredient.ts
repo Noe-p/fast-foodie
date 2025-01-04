@@ -3,5 +3,5 @@ import { Food } from "./Food";
 
 export interface Ingredient extends BaseDto {
   quantity: string;
-  foodId: Food;
+  food: Food;
 }

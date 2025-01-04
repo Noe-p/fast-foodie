@@ -32,7 +32,16 @@
     "place": "Lieu",
     "today": "Aujourd'hui",
     "noData": "Aucune donnée",
-    "tomorrow": "Demain"
+    "tomorrow": "Demain",
+    "create": "Créer"
+  },
+  "filters": {
+    "title": "Filtres",
+    "description": "Filtrer les résultats",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer",
+    "chef": "Chef",
+    "tag": "Catégorie"
   },
   "auth": {
     "login": {

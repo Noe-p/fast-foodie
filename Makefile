@@ -22,13 +22,13 @@ db.stop: ## Stop database
 
 #-- DOCKER
 docker.build: ## Build docker image
-	docker build --platform=linux/amd64 -t fast-foodie-backoffice:latest .  
+	docker build --platform=linux/amd64 -t fast-foodie:latest .  
 
 docker.tag: ## Tag docker image
-	docker tag fast-foodie-backoffice:latest noephilippe/fast-foodie-backoffice:latest
+	docker tag fast-foodie:latest noephilippe/fast-foodie:latest
 
 docker.push: ## Push docker image
-	docker push noephilippe/fast-foodie-backoffice:latest
+	docker push noephilippe/fast-foodie:latest
 
 docker.new: ## Build, tag and push docker image
 	make docker.build

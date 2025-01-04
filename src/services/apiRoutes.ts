@@ -1,6 +1,3 @@
-import collaborators from "@/pages/api/collaborators";
-import foods from "@/pages/api/foods";
-import { get } from "http";
 
 export const API_ROUTES = {
   auth: {
@@ -22,6 +19,7 @@ export const API_ROUTES = {
     create: '/api/dishes',
     update: (id: string) => `/api/dishes/${id}`,
     delete: (id: string) => `/api/dishes/${id}`,
+    getTags: '/api/dishes/getTags',
   },
   foods: {
     get: '/api/foods',

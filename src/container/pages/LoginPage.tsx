@@ -78,6 +78,7 @@ export default function LoginPage(): React.JSX.Element {
         <Row className='justify-end'>
           <Button
             variant='outline'
+            className='bg-background'
             onClick={() => router.push(ROUTES.auth.register)}
           >
             {t('generics.register')}

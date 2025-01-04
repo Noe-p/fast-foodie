@@ -23,7 +23,8 @@
       "exist": "Le fichier existe déjà",
       "notUpdated": "Le fichier n'a pas été mis à jour",
       "invalid": "Fichier invalide",
-      "notCreated": "Le fichier n'a pas été créé"
+      "notCreated": "Le fichier n'a pas été créé",
+      "invalidFormat": "Format de fichier invalide"
     },
     "apiKey": {
       "notFound": "Clé API non trouvée",

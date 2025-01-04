@@ -1,18 +1,16 @@
 'use client';
+import { Col } from '@/components/Helpers/Helpers';
+import { ApiService } from '@/services/api';
+import { MediaDto } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 import { Loader2, Upload, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Input } from '../ui/input';
-import { ApiService } from '@/services/api';
-import { useMutation } from '@tanstack/react-query';
-import { useTranslation } from 'next-i18next';
-import { useToast } from '../ui/use-toast';
-import { MediaDto } from '@/types';
 import tw from 'tailwind-styled-components';
-import { P10, P14 } from '..';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { Col, RowCenter } from '@/components/Helpers/Helpers';
+import { P14 } from '..';
+import { Input } from '../ui/input';
+import { useToast } from '../ui/use-toast';
 
 export interface ImageUploadProps {
   onImageUpload: (files: MediaDto[]) => void;
@@ -37,10 +35,10 @@ export default function ImageUpload(props: ImageUploadProps) {
   const { mutate: fileUpload, isPending } = useMutation({
     mutationFn: ApiService.medias.fileUpload,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
+    onError: (message: any) => {
       toast({
         title: t('toast:file.upload.error'),
-        description: `${error.message} : ${error.name}`,
+        description: message.data.error,
         variant: 'destructive',
       });
     },
@@ -67,10 +65,21 @@ export default function ImageUpload(props: ImageUploadProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadedFiles]);
 
-  const removeFile = (file: MediaDto) => {
-    setUploadedFiles((prevUploadedFiles) => {
-      return prevUploadedFiles.filter((item) => item.id !== file.id);
-    });
+  async function removeFile(file: MediaDto) {
+    try {
+      console.log('[D] ImageUpload', file.id);
+      await ApiService.medias.fileRemove(file.id);
+      setUploadedFiles((prevUploadedFiles) => {
+        return prevUploadedFiles.filter((item) => item.id !== file.id);
+      });
+    }
+    catch (message: any) {
+      toast({
+        title: t('toast:file.upload.error'),
+        description: message.data.error,
+        variant: 'destructive',
+      });
+    }
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -119,7 +128,7 @@ export default function ImageUpload(props: ImageUploadProps) {
         {uploadedFiles.length > 0 && (
           <P14 className='text-foreground'>{t('file.filesUploaded')}</P14>
         )}
-        <div className='space-y-1'>
+        <div className='space-x-1 mt-2 flex flex-wrap '>
           {isPending ? (
             <div className='flex justify-center'>
               <Loader2 className='h-6 w-6 animate-spin' />
@@ -135,19 +144,6 @@ export default function ImageUpload(props: ImageUploadProps) {
                   key={file.id}
                 >
                   <Image src={file.url} alt={file.filename} />
-                  <RowCenter className='w-full ml-2'>
-                    <Col className='justify-between'>
-                      {/* <P14 className='text-foreground/80'>
-                        {file?.filename.slice(0, 25)}
-                      </P14> */}
-                      {/* <P10 className='text-foreground/60'>
-                        {format(file.createdAt, 'dd MMMM yyyy, HH:mm', {
-                          locale: fr,
-                        })}
-                      </P10> */}
-                    </Col>
-                  </RowCenter>
-
                   <RemoveButton onClick={() => removeFile(file)}>
                     <X size={15} />
                   </RemoveButton>
@@ -190,18 +186,17 @@ const RemoveButton = tw(Col)`
 `;
 
 const ImageCard = tw.div`
+  w-fit
   cursor-pointer
-  p-1
   flex
   relative
   justify-between
   items-center
-  bg-gray-50
-  gap-2
   rounded-md
   border
   border-gray-300
   group
   hover:border-gray-500
   transition-all
+
 `;

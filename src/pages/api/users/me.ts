@@ -1,10 +1,10 @@
+import { userValidation } from '@/validations';
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
-import { verifyApiKey } from '../../../middleware/verifyApiKey';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { i18n } from 'next-i18next';
 import { errorMessage } from '../../../errors';
-import { userValidation } from '@/validations';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
@@ -54,9 +54,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const { email, userName } = req.body;
+      const { userName } = req.body;
 
-      if (email && (await prisma.user.findFirst({ where: { email, id: { not: user.id } } }))) {
+      if (await prisma.user.findFirst({ where: { userName, id: { not: user.id } } })) {
         return res.status(400).json({
           error: i18n.t(errorMessage.api('user').EXIST),
         });
@@ -78,7 +78,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {
-          ...(email && { email }),
           ...(userName && { userName }),
         },
       });

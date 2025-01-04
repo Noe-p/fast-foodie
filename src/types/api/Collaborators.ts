@@ -1,3 +1,3 @@
 export interface CollaboratorApi {
-  email: string;
+  userName: string;
 }

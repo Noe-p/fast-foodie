@@ -163,6 +163,7 @@ const config = {
       fontFamily: {
         sans: ['Luciole', 'Outfit'],
         title: ['Spicy Rice','DM', 'Outfit'],
+        main: ['Playwrite']
       },
       colors: {
         border: 'hsl(var(--border))',

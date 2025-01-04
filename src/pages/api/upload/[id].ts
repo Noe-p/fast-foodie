@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
-import { verifyApiKey } from '../../../middleware/verifyApiKey';
-import { i18n } from 'next-i18next';
-import { errorMessage } from '../../../errors';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { i18n } from 'next-i18next';
 import path from 'path';
+import { errorMessage } from '../../../errors';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 
 const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key';
@@ -55,6 +55,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const imageToDelete = await prisma.image.findUnique({
         where: { id },
       });
+      console.log('[D] [id]', id);
 
       if (!imageToDelete) {
         return res.status(404).json({ error: i18n.t(errorMessage.api('upload').NOT_FOUND) });

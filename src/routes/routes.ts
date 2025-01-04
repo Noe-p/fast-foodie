@@ -2,7 +2,7 @@ export const ROUTES = {
   dishes: {
     index: '/',
     detail: (id: string) => `/dishes/${id}`,
-    week: '/dishes/week',
+    week: 'weeklyDish',
   },
   shoppingList: '/shopping-list',
   user: '/user',

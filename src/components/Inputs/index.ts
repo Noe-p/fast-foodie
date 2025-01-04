@@ -1,3 +1,6 @@
-export * from './InputPassword';
+
 export * from './ImageUpload';
-export * from './InputAdress';
+export * from './InputPassword';
+export * from './InputTags';
+export * from './TextEditor';
+

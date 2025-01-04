@@ -76,6 +76,15 @@ export function P18(props: TextsProps): React.JSX.Element {
   );
 }
 
+export function P16(props: TextsProps): React.JSX.Element {
+  const { children, className, ...textProps } = props;
+  return (
+    <P16Styled className={className} {...textProps}>
+      {children}
+    </P16Styled>
+  );
+}
+
 export function P14(props: TextsProps): React.JSX.Element {
   const { children, className, ...textProps } = props;
   return (
@@ -161,6 +170,13 @@ const P24Styled = tw.p`
 
 const P18Styled = tw.p`
   text-[18px]
+  font-sans
+  font-normal
+  text-foreground
+`;
+
+const P16Styled = tw.p`
+  text-[16px]
   font-sans
   font-normal
   text-foreground

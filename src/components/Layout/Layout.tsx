@@ -1,10 +1,10 @@
-import { Footer, SideMenu, Tabbar } from '@/container/components';
+import { Tabbar } from '@/container/components';
 import { MEDIA_QUERIES } from '@/static/constants';
 import React, { ReactNode } from 'react';
 import tw from 'tailwind-styled-components';
 import { useMediaQuery } from 'usehooks-ts';
 
-interface LayoutProps {
+interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
   className?: string;
 }
@@ -14,17 +14,11 @@ export function Layout(props: LayoutProps): React.JSX.Element {
   const isDesktop = useMediaQuery(MEDIA_QUERIES.LG);
 
   return isDesktop ? (
-    <Main $isDesktop={isDesktop}>
-      <SideMenu />
-      <div className='overflow-y-scroll w-full'>
-        <Page $isDesktop={true} className={className}>
-          {children}
-        </Page>
-        {/* <Footer /> */}
-      </div>
+    <Main $isDesktop={isDesktop} {...props}>
+      
     </Main>
   ) : (
-    <Main $isDesktop={isDesktop}>
+    <Main $isDesktop={isDesktop} {...props}>
       <Page className={className}>{children}</Page>
       {/* <Footer /> */}
       <Tabbar />

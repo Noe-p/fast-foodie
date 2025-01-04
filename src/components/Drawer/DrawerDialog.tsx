@@ -67,15 +67,15 @@ export function DrawerDialog(props: DrawerDialogProps): JSX.Element {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{button}</DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className='lain_background'>
         <DrawerHeader className='text-left'>
-          <DrawerTitle className='text-3xl'>{title}</DrawerTitle>
+          <DrawerTitle className='text-3xl text-primary'>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
         <Col className='px-4 pb-8'>{children}</Col>
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
-            <Button variant='outline'>{t('generics.cancel')}</Button>
+            <Button variant='default'>{t('generics.cancel')}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

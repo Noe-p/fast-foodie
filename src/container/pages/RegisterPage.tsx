@@ -1,3 +1,11 @@
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'next-i18next';
+import router from 'next/router';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import 'swiper/swiper.min.css';
+import tw from 'tailwind-styled-components';
 import {
   Col,
   ColCenter,
@@ -7,13 +15,6 @@ import {
   P14,
   Row,
 } from '../../components';
-import { useAuthContext } from '../../contexts';
-import { ROUTES } from '../../routes';
-import { useTranslation } from 'next-i18next';
-import router from 'next/router';
-import React, { useEffect, useState } from 'react';
-import 'swiper/swiper.min.css';
-import tw from 'tailwind-styled-components';
 import { Button } from '../../components/ui/button';
 import {
   Form,
@@ -23,18 +24,13 @@ import {
   FormLabel,
   FormMessage,
 } from '../../components/ui/form';
-import { useForm } from 'react-hook-form';
-import { AuthRegisterUi } from '../../types';
-import { ApiService } from '../../services/api';
-import { userValidationUi } from '../../validations';
-import {
-  formatApiErrorMessage,
-  formatValidationErrorMessage,
-} from '../../services/error';
 import { Input } from '../../components/ui/input';
-import { useMutation } from '@tanstack/react-query';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { toast } from '../../components/ui/use-toast';
+import { useAuthContext } from '../../contexts';
+import { ROUTES } from '../../routes';
+import { ApiService } from '../../services/api';
+import { AuthRegisterUi } from '../../types';
+import { userValidationUi } from '../../validations';
 
 export default function RegisterPage(): React.JSX.Element {
   const { t } = useTranslation();
@@ -85,6 +81,7 @@ export default function RegisterPage(): React.JSX.Element {
         <Row className='justify-end'>
           <Button
             variant='outline'
+            className='bg-background'
             onClick={() => router.push(ROUTES.auth.login)}
           >
             {t('generics.login')}
@@ -103,24 +100,6 @@ export default function RegisterPage(): React.JSX.Element {
                 onSubmit={form.handleSubmit((values) => registerUser(values))}
                 className='space-y-3 mt-2'
               >
-                <FormField
-                  control={form.control}
-                  name='email'
-                  isRequired
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('fields:email.label')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type='email'
-                          placeholder={t('fields:email.placeholder')}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <Grid2>
                   <FormField
                     control={form.control}

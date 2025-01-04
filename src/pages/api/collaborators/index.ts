@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
-import { verifyApiKey } from '../../../middleware/verifyApiKey';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { i18n } from 'next-i18next';
 import { errorMessage } from '../../../errors';
+import { verifyApiKey } from '../../../middleware/verifyApiKey';
 import { collaboratorsValidation } from '../../../validations/collaborators';
 
 const prisma = new PrismaClient();
@@ -40,9 +40,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         });
       }
 
-      const { email } = req.body;
+      const { userName } = req.body;
 
-      const collaborator = await prisma.user.findUnique({ where: { email: email } });
+      const collaborator = await prisma.user.findUnique({ where: { userName: userName } });
       if (!collaborator) {
         return res.status(404).json({ error: i18n.t(errorMessage.api('collaborator').NOT_FOUND) });
       }
@@ -84,7 +84,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           collaborator: {
             select: { // Sélectionner uniquement les champs nécessaires
               id: true,
-              email: true,
               userName: true,
               createdAt: true,
               updatedAt: true,
@@ -93,7 +92,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       });
 
-      return res.status(200).json({ collaborators });
+      return res.status(200).json(collaborators.map((collaborator) => collaborator.collaborator));
     }
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });

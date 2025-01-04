@@ -68,7 +68,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       );
-      return res.status(200).json({ foods });
+      return res.status(200).json(foods)
     }
 
     return res.status(405).json({ error: i18n.t(errorMessage.api('method').NOT_ALLOWED) });

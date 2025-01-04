@@ -19,7 +19,7 @@ const fileUpload = async (
 };
 
 const fileRemove = async (id: string): Promise<void> => {
-  await HttpService.delete(API_ROUTES.media.delete, id);
+  await HttpService.delete(API_ROUTES.media.delete(id));
 }
 
 export const MediaApiService = {

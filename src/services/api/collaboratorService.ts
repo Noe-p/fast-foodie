@@ -1,8 +1,8 @@
-import { ApiResponse, Collaborator, CollaboratorApi } from '@/types';
+import { ApiResponse, Collaborator, CollaboratorApi, User } from '@/types';
 import { API_ROUTES } from '../apiRoutes';
 import { HttpService } from '../httpService';
 
-const get = async (): Promise<Collaborator> => {
+const get = async (): Promise<User[]> => {
   return (await HttpService.get(API_ROUTES.collaborators.get)).data;
 };
 

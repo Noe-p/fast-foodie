@@ -8,6 +8,7 @@ import { ColCenter, Row, RowCenter } from '@/components/Helpers';
 
 import tw from 'tailwind-styled-components';
 import { cn } from '@/services/utils';
+import path from 'path';
 
 interface TabbarProps {
   className?: string;
@@ -32,6 +33,12 @@ export function Tabbar(props: TabbarProps): JSX.Element {
       icon: <CalendarFoldIcon size={22} />,
       action: () => router.push(ROUTES.dishes.week),
       name: t('dishes:week.title'),
+    },
+    {
+      path: ROUTES.dishes.index,
+      icon: <PlusCircle size={22} />,
+      action: () => setDrawerOpen(DrawerType.CREATE_DISH),
+      name: t('generics.create'),
     },
     {
       path: ROUTES.shoppingList,

@@ -1,25 +1,12 @@
-import { errorMessage } from '../errors';
-import { AuthLoginApi, CollaboratorApi, CreateDishApi, CreateIngredientApi, DishStatus, RegisterApi, UpdateDishApi, UpdateIngredientApi, UpdateUserApi } from '../types/api';
 import * as yup from 'yup';
-import { genericsValidation } from './generics';
-import { ta } from 'date-fns/locale';
+import { errorMessage } from '../errors';
+import { CreateDishApi, DishStatus, UpdateDishApi } from '../types/api';
 
 const add: yup.ObjectSchema<CreateDishApi> = yup.object({
     name: yup
       .string()
       .required(errorMessage.fields('name').REQUIRED)
       .typeError(errorMessage.fields('name').NOT_STRING),
-    description: yup
-      .string()
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(undefined),
-    status: yup
-      .string()
-      .oneOf(Array.from(Object.values(DishStatus)))
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(DishStatus.SHARED),
     tags: yup
       .array()
       .of(
@@ -31,6 +18,15 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       .optional()
       .transform((value) => (value === '' ? undefined : value))
       .default(undefined),
+    weeklyDish: yup
+      .boolean()
+      .transform((value) => (value === '' ? undefined : value))
+      .default(false),
+    status: yup
+      .string()
+      .oneOf(Array.from(Object.values(DishStatus)))
+      .transform((value) => (value === '' ? undefined : value))
+      .default(DishStatus.PUBLIC),
     imageIds: yup
       .array()
       .of(
@@ -49,6 +45,7 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       .default(undefined),
     ingredients: yup
       .array()
+      .transform((value) => (value === '' ? undefined : value))
       .of(
         yup.object({
           foodId: yup
@@ -71,22 +68,22 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
-      status: yup
-      .string()
-      .oneOf(Array.from(Object.values(DishStatus)))
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(DishStatus.SHARED),
-  description: yup
-    .string()
-    .optional()
-    .transform((value) => (value === '' ? undefined : value))
-    .default(undefined),
   instructions: yup
     .string()
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
+  weeklyDish: yup
+    .boolean()
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(false),
+  status: yup
+      .string()
+      .oneOf(Array.from(Object.values(DishStatus)))
+      .optional()
+      .transform((value) => (value === '' ? undefined : value))
+      .default(DishStatus.PUBLIC),
   tags: yup
     .array()
     .of(

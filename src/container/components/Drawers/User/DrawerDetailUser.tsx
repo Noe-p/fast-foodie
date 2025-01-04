@@ -1,13 +1,13 @@
+import { P14 } from '@/components';
 import { DrawerMotion } from '@/components/Drawer';
-import { useTranslation } from 'next-i18next';
-import tw from 'tailwind-styled-components';
 import { Col } from '@/components/Helpers';
-import { Edit, LogOutIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
-import { P14 } from '@/components';
 import { ApiService } from '@/services/api';
+import { Edit, LogOutIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
+import tw from 'tailwind-styled-components';
 
 
 interface DrawerDetailUserProps {
@@ -39,12 +39,6 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
             <Label>{t('fields:userName.label')}</Label>
             <Text $empty={!currentUser?.userName}>
               {currentUser?.userName}
-            </Text>
-          </Col>
-          <Col>
-            <Label>{t('fields:email.label')}</Label>
-            <Text $empty={!currentUser?.email}>
-              {currentUser?.email ?? t('generics.noData')}
             </Text>
           </Col>
         </Col>

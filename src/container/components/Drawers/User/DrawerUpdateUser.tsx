@@ -14,6 +14,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
+import { RowBetween } from '@/components';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -22,11 +24,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/contexts';
-import { RowBetween } from '@/components';
-import ImageUpload from '@/components/Inputs/ImageUpload';
 
 interface DrawerUpdateUserProps {
   className?: string;
@@ -81,7 +80,6 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       form.reset({
         ...currentUser,
         userName: currentUser.userName ?? '',
-        email: currentUser.email ?? '',
       });
     }
 
@@ -123,30 +121,6 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='email'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('fields:email.label')}</FormLabel>
-                  <FormControl>
-                    <InputStyled
-                      isRemovable
-                      placeholder={t('fields:email.placeholder')}
-                      enterKeyHint='next'
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                        }
-                      }}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <RowBetween className='mt-10 gap-2'>
               <Button className='w-full z-50' type='button' onClick={onClose}>
                 {t('generics.cancel')}

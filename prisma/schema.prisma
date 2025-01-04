@@ -5,11 +5,11 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 model User {
   id              String         @id @default(cuid())
-  email           String         @unique
   password        String
   userName        String         @unique  
   collaborators   Collaborator[] @relation("UserToCollaborators")
@@ -46,14 +46,14 @@ model Dish {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   name        String
-  description String?
   instructions String?
   chefId      String
   chef        User         @relation("UserToDish", fields: [chefId], references: [id], onDelete: Cascade)
   ingredients Ingredient[]
   tags        String[]
   images      Image[]
-  status      String       @default("PRIVATE") // Status: "PRIVATE" or "SHARED"
+  weeklyDish  Boolean       @default(false) // Indique si le plat fait partie des repas de la semaine
+  status      SharedStatus  @default(PUBLIC) // Enum pour déterminer si le plat est partagé
 }
 
 model Ingredient {
@@ -74,4 +74,9 @@ model Image {
   size        Int
   dishId      String?
   dish        Dish?    @relation(fields: [dishId], references: [id], onDelete: Cascade)
+}
+
+enum SharedStatus {
+  PUBLIC
+  PRIVATE
 }

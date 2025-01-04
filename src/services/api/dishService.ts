@@ -1,7 +1,7 @@
-import { ApiResponse, CreateDishApi, UpdateDishApi, UpdateUserApi, User } from '@/types';
+import { CreateDishApi, UpdateDishApi } from '@/types';
+import { Dish } from '@/types/dto/Dish';
 import { API_ROUTES } from '../apiRoutes';
 import { HttpService } from '../httpService';
-import { Dish } from '@/types/dto/Dish';
 
 const get = async (): Promise<Dish[]> => {
   return (await HttpService.get(API_ROUTES.dishes.get)).data;
@@ -19,9 +19,14 @@ const create = async (payload: CreateDishApi): Promise<Dish> => {
   return (await HttpService.post(API_ROUTES.dishes.create, payload)).data;
 }
 
+const getTags = async (): Promise<string[]> => {
+  return (await HttpService.get(API_ROUTES.dishes.getTags)).data;
+}
+
 export const DishApiService = {
   get,
   update,
   remove,
   create,
+  getTags,
 };
