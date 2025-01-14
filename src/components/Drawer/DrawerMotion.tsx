@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { DRAWER_VARIANTS } from '@/services/motion';
+import { MEDIA_QUERIES } from '@/static/constants';
 import { AnimatePresence, motion } from 'framer-motion';
-import tw from 'tailwind-styled-components';
+import { X } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
 import styled from 'styled-components';
-import { DRAWER_VARIANTS } from '@/services/motion';
+import tw from 'tailwind-styled-components';
+import { useEventListener, useMediaQuery } from 'usehooks-ts';
 import { Col, Row, RowBetween } from '../Helpers';
-import { MEDIA_QUERIES } from '@/static/constants';
-import { useMediaQuery, useEventListener } from 'usehooks-ts';
-import { X } from 'lucide-react';
 import { H2 } from '../Texts/Texts';
 
 export type DrawerPlacement = 'right' | 'bottom';
@@ -26,6 +26,7 @@ export interface DrawerMotionProps {
   title?: ReactNode;
   icon?: ReactNode;
   containerClassName?: string;
+  headerClassName?: string;
 }
 
 export const DrawerMotion = (props: DrawerMotionProps) => {
@@ -33,6 +34,7 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
     isOpen,
     onClose,
     children,
+    headerClassName,
     className,
     shouldCloseOnOverlayClick = true,
     shouldCloseOnEsc = true,
@@ -83,7 +85,7 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
             exit='exit'
           >
             <DrawerContent>
-              <Header>
+              <Header className={headerClassName}>
                 <RowBetween>
                   <Row className='gap-2.5 flex-1'>
                     {!!icon && <IconContainer>{icon}</IconContainer>}
@@ -117,19 +119,18 @@ const Overlay = tw(motion.div)`
 const DrawerContainer = tw(motion.div)`
   flex
   flex-col
-  bg-background
-  relative
+  md:bg-primary
+  backdrop-blur-sm 
+  text-primary md:text-background
   group/drawerBase
-  shadow-lg
-  h-auto 
-  max-h-screen
-  rounded-t-3xl
+  md:h-screen
   overflow-hidden
-
-  lg:rounded-none
-  lg:mb-0
-  lg:pt-0
-  lg:h-screen
+  absolute md:relative
+  top-0
+  right-0
+  bottom-0
+  left-0
+  pt-0 md:pt-0
 
 `;
 
@@ -156,8 +157,10 @@ const Title = tw(H2)`
 `;
 
 const DrawerContent = tw(Col)`
+  w-full
   h-full
-  overflow-y-auto
+  overflow-y-scroll
+  hide-scrollbar
 `;
 
 const Header = tw(Col)`

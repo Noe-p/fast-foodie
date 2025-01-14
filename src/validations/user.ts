@@ -9,6 +9,11 @@ const update: yup.ObjectSchema<UpdateUserApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
+  collaboratorIds: yup
+    .array()
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default([]),
 });
 
 const create: yup.ObjectSchema<RegisterApi> = yup.object({

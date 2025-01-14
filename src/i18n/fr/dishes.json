@@ -3,6 +3,7 @@
   "week": {
     "title": "Semaine"
   },
+  "removeAll": "Tout supprimer de la semaine",
   "create":{
     "title": "Créer un plat",
     "name": "Nom",

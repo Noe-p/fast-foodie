@@ -1,13 +1,13 @@
+import { Toaster } from '@/components/ui/toaster';
+import { AppProvider, AuthProvider, DishProvider } from '@/contexts';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
-import '../static/styles/app.css';
-import { AppProvider, AuthProvider } from '@/contexts';
-import { QueryClient } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { useEffect, useState } from 'react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import '../static/styles/app.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isClient, setIsClient] = useState(false);
@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     defaultOptions: {
       queries: {
         gcTime: 1000 * 60 * 60 * 24, // 24 hours
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 10, // 5 minutes
         networkMode: 'offlineFirst',
       },
       mutations: {
@@ -45,11 +45,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       persistOptions={{ persister }}
     >
       <AuthProvider>
-        <AppProvider>
-          <Component {...pageProps} />
-          <Toaster />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </AppProvider>
+        <DishProvider>
+          <AppProvider>
+            <Component {...pageProps} />
+            <Toaster />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </AppProvider>
+        </DishProvider>
       </AuthProvider>
     </PersistQueryClientProvider>
   );

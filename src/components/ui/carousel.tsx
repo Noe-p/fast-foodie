@@ -1,14 +1,14 @@
 'use client';
 
-import * as React from 'react';
+import { cn } from '@/services/utils';
+import { EmblaCarouselType } from 'embla-carousel';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
-import { useCallback, useEffect, useState } from 'react';
-import { EmblaCarouselType } from 'embla-carousel';
-import tw from 'tailwind-styled-components';
-import { cn } from '@/services/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import tw from 'tailwind-styled-components';
 import { Button } from './button';
 
 type CarouselApi = UseEmblaCarouselType[1];
@@ -282,12 +282,9 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, CarouselNextProps>(
 CarouselNext.displayName = 'CarouselNext';
 
 export {
-  type CarouselApi,
   Carousel,
   CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
+  CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi
 };
 
 type UseDotButtonType = {
@@ -336,7 +333,7 @@ export const useDotButton = (
 };
 
 export const PaginationDot = tw.div<{ $isActive: boolean }>`
-  w-10
+  w-3
   h-3
   rounded-full
   bg-gray-500

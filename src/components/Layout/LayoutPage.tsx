@@ -1,6 +1,4 @@
 import { SeoHead } from '@/container/components';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ReactNode } from 'react';
 
 interface LayoutPageProps {
@@ -14,8 +12,6 @@ export function LayoutPage(props: LayoutPageProps): JSX.Element {
     <>
       <SeoHead />
       {children}
-      <Analytics />
-      <SpeedInsights />
     </>
   );
 }

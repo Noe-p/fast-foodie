@@ -1,7 +1,7 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { PageBaseProps } from '../types';
-import LoginPage from '@/container/pages/LoginPage';
 import { LayoutPage } from '@/components';
+import LoginPage from '@/container/pages/LoginPage';
+import { PageBaseProps } from '@/types';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 export default function Login(): React.JSX.Element {
   return (

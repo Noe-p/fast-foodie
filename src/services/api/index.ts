@@ -1,10 +1,9 @@
-import collaborators from '@/pages/api/collaborators';
 import { AuthApiService } from './authService';
+import { CollaboratorApiService } from './collaboratorService';
 import { DishApiService } from './dishService';
 import { FoodApiService } from './foodService';
 import { MediaApiService } from './mediaService';
 import { UserApiService } from './userService';
-import { CollaboratorApiService } from './collaboratorService';
 
 export const ApiService = {
   auth: AuthApiService,

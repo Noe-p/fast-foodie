@@ -35,10 +35,10 @@ export default function ImageUpload(props: ImageUploadProps) {
   const { mutate: fileUpload, isPending } = useMutation({
     mutationFn: ApiService.medias.fileUpload,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (message: any) => {
+    onError: (error: any) => {
       toast({
         title: t('toast:file.upload.error'),
-        description: message.data.error,
+        description: t(error.message),
         variant: 'destructive',
       });
     },
@@ -67,16 +67,15 @@ export default function ImageUpload(props: ImageUploadProps) {
 
   async function removeFile(file: MediaDto) {
     try {
-      console.log('[D] ImageUpload', file.id);
       await ApiService.medias.fileRemove(file.id);
       setUploadedFiles((prevUploadedFiles) => {
         return prevUploadedFiles.filter((item) => item.id !== file.id);
       });
     }
-    catch (message: any) {
+    catch (error: any) {
       toast({
         title: t('toast:file.upload.error'),
-        description: message.data.error,
+        description: t(error.data.message),
         variant: 'destructive',
       });
     }
@@ -100,8 +99,8 @@ export default function ImageUpload(props: ImageUploadProps) {
           {...getRootProps()}
           className='relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 '
         >
-          <div className=' text-center'>
-            <div className=' border p-2 rounded-md max-w-min mx-auto'>
+          <div className='text-center '>
+            <div className='p-2 mx-auto border rounded-md max-w-min'>
               <Upload className='text-gray-600' size={20} />
             </div>
 
@@ -128,10 +127,10 @@ export default function ImageUpload(props: ImageUploadProps) {
         {uploadedFiles.length > 0 && (
           <P14 className='text-foreground'>{t('file.filesUploaded')}</P14>
         )}
-        <div className='space-x-1 mt-2 flex flex-wrap '>
+        <div className='flex flex-wrap mt-2 space-x-1 '>
           {isPending ? (
             <div className='flex justify-center'>
-              <Loader2 className='h-6 w-6 animate-spin' />
+              <Loader2 className='w-6 h-6 animate-spin' />
             </div>
           ) : (
             uploadedFiles.map((file) => {

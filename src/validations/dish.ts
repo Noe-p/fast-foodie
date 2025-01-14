@@ -1,65 +1,76 @@
+import { CreateDishApi, DishStatus, UpdateDishApi } from '@/types/api/Dish';
 import * as yup from 'yup';
 import { errorMessage } from '../errors';
-import { CreateDishApi, DishStatus, UpdateDishApi } from '../types/api';
 
 const add: yup.ObjectSchema<CreateDishApi> = yup.object({
-    name: yup
-      .string()
-      .required(errorMessage.fields('name').REQUIRED)
-      .typeError(errorMessage.fields('name').NOT_STRING),
-    tags: yup
-      .array()
-      .of(
-        yup
+  name: yup
+    .string()
+    .required(errorMessage.fields('name').REQUIRED)
+    .typeError(errorMessage.fields('name').NOT_STRING),
+  tags: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .required(errorMessage.fields('tags').REQUIRED)
+        .typeError(errorMessage.fields('tags').NOT_STRING),
+    )
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(undefined),
+  weeklyDish: yup
+    .boolean()
+    .required(errorMessage.fields('weeklyDish').REQUIRED)
+    .transform((value) => (value === '' ? undefined : value))
+    .default(false),
+  ration: yup
+    .number()
+    .required(errorMessage.fields('ration').REQUIRED)
+    .default(2),
+  status: yup
+    .string()
+    .oneOf(Array.from(Object.values(DishStatus)))
+    .required(errorMessage.fields('status').REQUIRED)
+    .transform((value) => (value === '' ? undefined : value))
+    .default(DishStatus.PUBLIC),
+  imageIds: yup
+    .array()
+    .of(
+      yup
+        .string()
+        .required(errorMessage.fields('images').REQUIRED)
+        .typeError(errorMessage.fields('images').NOT_STRING),
+    )
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(undefined),
+  instructions: yup
+    .string()
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(undefined),
+  ingredients: yup
+    .array()
+    .transform((value) => (value === '' ? undefined : value))
+    .of(
+      yup.object({
+        foodId: yup
           .string()
-          .required(errorMessage.fields('tags').REQUIRED)
-          .typeError(errorMessage.fields('tags').NOT_STRING)
-      )
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(undefined),
-    weeklyDish: yup
-      .boolean()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(false),
-    status: yup
-      .string()
-      .oneOf(Array.from(Object.values(DishStatus)))
-      .transform((value) => (value === '' ? undefined : value))
-      .default(DishStatus.PUBLIC),
-    imageIds: yup
-      .array()
-      .of(
-        yup
+          .required(errorMessage.fields('foodId').REQUIRED)
+          .typeError(errorMessage.fields('foodId').NOT_STRING),
+        quantity: yup
           .string()
-          .required(errorMessage.fields('images').REQUIRED)
-          .typeError(errorMessage.fields('images').NOT_STRING)
-      )
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(undefined),
-    instructions: yup
-      .string()
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(undefined),
-    ingredients: yup
-      .array()
-      .transform((value) => (value === '' ? undefined : value))
-      .of(
-        yup.object({
-          foodId: yup
-            .string()
-            .required(errorMessage.fields('foodId').REQUIRED)
-            .typeError(errorMessage.fields('foodId').NOT_STRING),
-          quantity: yup
-            .string()
-            .required(errorMessage.fields('quantity').REQUIRED)
-            .typeError(errorMessage.fields('quantity').NOT_STRING),
-        })
-      )
-      .required(errorMessage.fields('ingredients').REQUIRED)
-      .typeError(errorMessage.fields('ingredients').NOT_ARRAY),
+          .required(errorMessage.fields('quantity').REQUIRED)
+          .typeError(errorMessage.fields('quantity').NOT_STRING),
+        ration: yup
+          .number()
+          .required(errorMessage.fields('ration').REQUIRED)
+          .typeError(errorMessage.fields('ration').NOT_NUMBER)
+          .default(2),
+      }),
+    )
+    .required(errorMessage.fields('ingredients').REQUIRED)
+    .typeError(errorMessage.fields('ingredients').NOT_ARRAY),
 });
 
 const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
@@ -68,6 +79,11 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
     .optional()
     .transform((value) => (value === '' ? undefined : value))
     .default(undefined),
+  ration: yup
+    .number()
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(2),
   instructions: yup
     .string()
     .optional()
@@ -79,18 +95,18 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
     .transform((value) => (value === '' ? undefined : value))
     .default(false),
   status: yup
-      .string()
-      .oneOf(Array.from(Object.values(DishStatus)))
-      .optional()
-      .transform((value) => (value === '' ? undefined : value))
-      .default(DishStatus.PUBLIC),
+    .string()
+    .oneOf(Array.from(Object.values(DishStatus)))
+    .optional()
+    .transform((value) => (value === '' ? undefined : value))
+    .default(DishStatus.PUBLIC),
   tags: yup
     .array()
     .of(
       yup
         .string()
         .required(errorMessage.fields('tags').REQUIRED)
-        .typeError(errorMessage.fields('tags').NOT_STRING)
+        .typeError(errorMessage.fields('tags').NOT_STRING),
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -101,7 +117,7 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
       yup
         .string()
         .required(errorMessage.fields('images').REQUIRED)
-        .typeError(errorMessage.fields('images').NOT_STRING)
+        .typeError(errorMessage.fields('images').NOT_STRING),
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -120,7 +136,12 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
           .optional()
           .transform((value) => (value === '' ? undefined : value))
           .default(undefined),
-      })
+        ration: yup
+          .number()
+          .optional()
+          .transform((value) => (value === '' ? undefined : value))
+          .default(undefined),
+      }),
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))

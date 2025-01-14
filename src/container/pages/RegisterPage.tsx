@@ -63,8 +63,8 @@ export default function RegisterPage(): React.JSX.Element {
     if (isError) {
       const errorData = error as any;
       toast({
-        title: errorData?.data?.error,
-        description: errorData?.data?.details ?? '',
+        title: t(errorData?.data?.error),
+        description: t(errorData?.data?.details) ?? '',
         variant: 'destructive',
       });
     }

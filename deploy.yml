@@ -19,14 +19,6 @@
       register: copy_docker_compose_result
       ignore_errors: yes
 
-    - name: Copier le fichier .env.production
-      become_user: noep
-      copy:
-        src: .env.production
-        dest: ~/fast-foodie/.env
-      register: copy_env_result
-      ignore_errors: yes
-
     - name: Arrêter le service Docker
       become_user: noep
       command: docker compose -f ~/fast-foodie/docker-compose.yml down

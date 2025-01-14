@@ -73,7 +73,7 @@ export function DrawerCreateDish(
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     onError: (message: any) => {
       toast({
-        title: message.data.error,
+        title: t(message.data.error),
         variant: 'destructive',
       });
     },

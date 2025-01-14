@@ -1,13 +1,11 @@
 import { ColCenter, H2 } from '@/components';
 import { useToast } from '@/components/ui/use-toast';
-import { DrawerType, useAppContext } from '@/contexts';
-import { ApiService } from '@/services/api';
+import { DrawerType, useAppContext, useDishContext } from '@/contexts';
 import { IMAGE_FALLBACK } from '@/static/constants';
-import { UpdateDishApi } from '@/types';
 import { Dish } from '@/types/dto/Dish';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { CalendarCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import tw from 'tailwind-styled-components';
 
 
@@ -21,31 +19,11 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
   const { setDrawerOpen, setCurrentDish } = useAppContext();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [ isWeeklyDish, setIsWeeklyDish ] = useState<boolean>(dish.weeklyDish);
+  const { t } = useTranslation();
+  const { setWeeklyDishes, weeklyDishes } = useDishContext();
 
-  const { 
-    mutate: updateDish,
-    isPending,
-    isError,
-    error,
-  } = useMutation({
-    mutationFn:(data: UpdateDishApi) => ApiService.dishes.update(data, dish.id),
-    onSuccess(data, variables, context) {
-      queryClient.refetchQueries({
-        queryKey: ['getWeeklyDishes'],
-        exact: false,
-        type: 'all',
-      });
-      setIsWeeklyDish(data.weeklyDish);
-    },
-    onError(message: any){
-      toast({
-        title: message?.data?.error,
-        variant: 'destructive',
-      });
-    }
-  });
-
+  const isWeeklyDish = weeklyDishes.some((d) => d.id === dish.id);
+  
   return <Main 
     onClick={()=> {
       setCurrentDish(dish);
@@ -59,12 +37,14 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
         className={`${isWeeklyDish ? 'bg-primary text-background' : 'bg-transparent border border-primary/80 text-primary/80'}`}
         onClick={(e) => {
           e.stopPropagation();
-          updateDish({
-            weeklyDish: !isWeeklyDish,
-          });
+          if (isWeeklyDish) {
+            setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
+            return;
+          }
+          setWeeklyDishes([...weeklyDishes, dish]);
         }}
-      >
-        <CalendarCheck size={15} />
+      > 
+        <CalendarCheck size={18} />
       </WeeklyDishButton>
   </Main>;
 }
@@ -87,10 +67,14 @@ const Image = tw.img`
 const WeeklyDishButton = tw.div`
   absolute
   right-4
-  bottom-4
+  bottom-3
   bg-primary
   text-white
-  p-2
+  h-10
+  w-10
   rounded-full
   shadow-md
+  flex 
+  items-center
+  justify-center
 `;

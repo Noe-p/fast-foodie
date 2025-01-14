@@ -67,7 +67,7 @@ export function InputTags(props: InputTagsProps): JSX.Element {
           />
         </Badge>
       </Row>
-      <DrawerMotion className='lain_background' isOpen={addOpen} onClose={()=> setAddOpen(false)} title={t('fields:addTag.label')}>
+      <DrawerMotion className='lain_background h-fit relative' headerClassName='rounded-t-xl' isOpen={addOpen} onClose={()=> setAddOpen(false)} title={t('fields:addTag.label')}>
         <DrawerContent>
           <Input
             className='w-full'

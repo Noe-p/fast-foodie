@@ -1,7 +1,8 @@
+import { LayoutPage } from '@/components';
+import RegisterPage from '@/container/pages/RegisterPage';
+import { PageBaseProps } from '@/types';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { PageBaseProps } from '../types';
-import { LayoutPage } from '../components';
-import RegisterPage from '../container/pages/RegisterPage';
+
 import React from 'react';
 
 

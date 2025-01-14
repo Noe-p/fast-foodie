@@ -8,16 +8,17 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
-      urlPattern: /^\/files\/.*\.(png|jpg|jpeg|svg|gif)$/,
+      urlPattern: /^https:\/\/api\.fast-foodie\.sakana-san\.fr\/files\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
       handler: 'CacheFirst',
       options: {
-        cacheName: 'local-images-cache',
+        cacheName: 'external-images-cache',
         expiration: {
           maxEntries: 50,
           maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
         },
       },
     },
+    // Autres configurations de mise en cache
   ],
 });
 
@@ -31,10 +32,16 @@ const settings = {
   images: {
     remotePatterns: [
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/files/**',
+      },
+      {
         protocol: 'https',
-        hostname: 'www.jambase.com',
+        hostname: 'api.fast-foodie.sakana-san.fr',
         port: '',
-        pathname: '/**',
+        pathname: '/files/**',
       },
     ],
   },

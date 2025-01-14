@@ -1,6 +1,7 @@
-import { H2, ImageFullScreen, P18 } from '@/components';
+import { ImageFullScreen } from '@/components';
 import { DrawerMotion } from '@/components/Drawer';
 import { Col, Row } from '@/components/Helpers';
+import { H2, P18 } from '@/components/Texts';
 import { Badge } from '@/components/ui/badge';
 import { useAppContext } from '@/contexts';
 import { ApiService } from '@/services/api';
@@ -23,7 +24,7 @@ export function DrawerDetailDish(props: DrawerDetailDishProps): JSX.Element {
   const { t } = useTranslation();
   const { setDrawerOpen, currentDish, setCurrentDish } = useAppContext();
   const [ isLoading, setIsLoading ] = useState<boolean>(false);
-  const [isImageFullScreenOpen, setIsImageFullScreenOpen] = useState<number>();
+  const [isImageFullScreenOpen, setIsImageFullScreenOpen] = useState<boolean>(false);
 
 
   async function handleDelete() {
@@ -39,8 +40,8 @@ export function DrawerDetailDish(props: DrawerDetailDishProps): JSX.Element {
     <>
       <DrawerMotion className='text_background' isOpen={isOpen} onClose={onClose} title={currentDish.name}>
         <Content className={className}>
-          <Row className='gap-2 flex-wrap'>
-          {currentDish.tags.map((tag) => <Badge
+          <Row className='flex-wrap gap-2'>
+          {currentDish?.tags?.map((tag) => <Badge
                 variant={'outline'}
                 key={tag}
               >
@@ -73,25 +74,26 @@ export function DrawerDetailDish(props: DrawerDetailDishProps): JSX.Element {
               )}
             </ul>
             </TextContainer>
-            <Image
-              onClick={() => setIsImageFullScreenOpen(0)}
+            {currentDish.images[0] && <Image
+              onClick={() => setIsImageFullScreenOpen(true)}
               src={currentDish.images[0].url}
-            />
+            />}
           </Grid2>
           <Col className='mt-5'>
             <TextContainer className=''>
             <H2 className='text-center'>{'Instructions'}</H2>
             <Col className='mt-2'>
-              {currentDish.instructions  && <Main className='font-main' dangerouslySetInnerHTML={{ __html: currentDish.instructions }}/>}
+              {currentDish.instructions  && <Main className='' dangerouslySetInnerHTML={{ __html: currentDish.instructions }}/>}
             </Col>
             </TextContainer>
           </Col>
         </Content>
       </DrawerMotion>
       <ImageFullScreen
+        startIndex={0}
         images={currentDish.images.map((image)=> image.url)}
-        isOpen={isImageFullScreenOpen !== undefined}
-        onClose={() => setIsImageFullScreenOpen(undefined)}
+        isOpen={isImageFullScreenOpen}
+        onClose={() => setIsImageFullScreenOpen(false)}
       />
     </>
   );
@@ -139,15 +141,24 @@ export const WysiwygRenderStyle = `
   padding: 0px;
   overflow-x: hidden;
   width: 100%;
-  font-size: 18px;
   text-align: justify;
-  text-color: hsl(218.03 56.8% 24.51%);
+  font-size: 15px;
 
   a {
     color: var(--primary);
     &:hover {
       color: var(--primary);
     }
+  }
+
+  h1 {
+    font-size : 25px;
+    margin-bottom: 2px;
+  }
+
+  h2 {
+    font-size : 20px;
+    margin-bottom: 2px;
   }
 
   strong {
@@ -172,7 +183,7 @@ export const WysiwygRenderStyle = `
 
   ol,
   ul, li {
-    padding-left: 15px;
+    padding-left: 20px;
     list-style: round; 
     maring-bottom: 10px;
   }

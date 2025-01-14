@@ -37,4 +37,6 @@ docker.new: ## Build, tag and push docker image
 
 #-- DEPLOY
 deploy: ## Deploy on server
+	make docker.new 
 	ansible-playbook -i inventory.ini deploy.yml
+

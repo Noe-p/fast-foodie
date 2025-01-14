@@ -1,15 +1,12 @@
-import { ReactNode, useState } from 'react';
-import { DrawerDialog } from '../../../components/Drawer';
-import { ArrowUpNarrowWide, ListFilter } from 'lucide-react';
-import { Col, H3, Row, RowBetween } from '../../../components';
-import { useTranslation } from 'next-i18next';
-import { Separator } from '../../../components/ui/separator';
-import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
-import { Label } from '../../../components/ui/label';
-import { Button } from '../../../components/ui/button';
-import { useAppContext } from '@/contexts';
-import { Badge } from '../../../components/ui/badge';
 import { LocalSearchParams } from '@/types';
+import { ListFilter } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
+import { Col, H3, Row, RowBetween } from '../../../components';
+import { DrawerDialog } from '../../../components/Drawer';
+import { Badge } from '../../../components/ui/badge';
+import { Button } from '../../../components/ui/button';
+import { Separator } from '../../../components/ui/separator';
 
 interface FilterDishDrawerProps {
   tags: string[];
@@ -83,7 +80,7 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
           </Button>
         </RowBetween>
         <Row className='gap-1'>
-          {tags.map((tag) => (
+          {tags.length > 0 && tags.map((tag) => (
             <Badge
               variant={filters.tag === tag ? 'active' : 'outline'}
               key={tag} onClick={() => tag === filters.tag ? setFilters({ ...filters, tag: undefined }) : setFilters({ ...filters, tag })}

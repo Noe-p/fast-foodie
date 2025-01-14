@@ -1,13 +1,6 @@
+import { Col, ColCenter, Grid2, InputPassword, Row } from '@/components';
 import { H1, P14 } from '@/components/Texts';
 import { Button } from '@/components/ui/button';
-import { useAuthContext } from '@/contexts';
-import { ROUTES } from '@/routes';
-import { ApiService } from '@/services/api';
-import { authValidation } from '@/validations';
-import { useTranslation } from 'next-i18next';
-import router from 'next/router';
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -17,16 +10,19 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { AuthLoginApi } from '@/types';
-import { Col, ColCenter, Grid2, InputPassword, Row } from '@/components';
-import tw from 'tailwind-styled-components';
-import { useMutation } from '@tanstack/react-query';
-import {
-  formatApiErrorMessage,
-  formatValidationErrorMessage,
-} from '@/services/error';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuthContext } from '@/contexts';
+import { ROUTES } from '@/routes';
+import { ApiService } from '@/services/api';
+import { AuthLoginApi } from '@/types';
+import { authValidation } from '@/validations';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'next-i18next';
+import router from 'next/router';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import tw from 'tailwind-styled-components';
 
 export default function LoginPage(): React.JSX.Element {
   const { t } = useTranslation();
@@ -60,8 +56,8 @@ export default function LoginPage(): React.JSX.Element {
     if (isError) {
       const errorData = error as any;
       toast({
-        title: errorData?.data?.error,
-        description: errorData?.data?.details ?? '',
+        title: t(errorData?.data?.error),
+        description: t(errorData?.data?.details) ?? '',
         variant: 'destructive',
       });
     }

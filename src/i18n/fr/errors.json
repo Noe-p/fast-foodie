@@ -26,6 +26,13 @@
       "notCreated": "Le fichier n'a pas été créé",
       "invalidFormat": "Format de fichier invalide"
     },
+    "media": {
+      "notFound": "Média non trouvé",
+      "exist": "Le média existe déjà",
+      "notUpdated": "Le média n'a pas été mis à jour",
+      "invalid": "Média invalide",
+      "notDeleted": "Le média n'a pas été supprimé"
+    },
     "apiKey": {
       "notFound": "Clé API non trouvée",
       "exist": "La clé API existe déjà",

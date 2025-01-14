@@ -69,7 +69,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       formatValidationErrorMessage(error.data.message, form.setError);
       toast({
         title: t('toast:update.error'),
-        description: error.data.error,
+        description: t(error.data.error),
         variant: 'destructive',
       });
     },

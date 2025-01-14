@@ -50,7 +50,7 @@ export function SelectFood(
     if (isError) {
       toast({
         title: t('errors:fetch.dishes'),
-        description: error.message,
+        description: t(error.message),
         variant: 'destructive',
       });
     }
@@ -132,7 +132,6 @@ const Main = tw.div`
 const DrawerContent = tw(Col)`
   px-4
   pb-5
-  h-screen
   gap-2
   
 `;

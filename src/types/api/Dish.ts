@@ -1,4 +1,4 @@
-import { CreateIngredientApi, UpdateIngredientApi } from "./Ingredient";
+import { CreateIngredientApi, UpdateIngredientApi } from './Ingredient';
 
 export enum DishStatus {
   PRIVATE = 'PRIVATE',
@@ -12,6 +12,7 @@ export interface CreateDishApi {
   imageIds?: string[];
   status: DishStatus;
   weeklyDish: boolean;
+  ration: number;
 }
 
 export interface UpdateDishApi {
@@ -22,4 +23,5 @@ export interface UpdateDishApi {
   imageIds?: string[];
   status?: DishStatus;
   weeklyDish?: boolean;
+  ration?: number;
 }

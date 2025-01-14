@@ -14,4 +14,5 @@ export interface Dish extends BaseDto {
   images: MediaDto[];
   weeklyDish: boolean;
   status: DishStatus;
+  ration: number;
 } 

@@ -73,7 +73,7 @@ export function DrawerCreateFood(
     onError: (message: any) => {
       toast({
         title: t('toast.new.error'),
-        description: message.error,
+        description: t(message.error),
         variant: 'destructive',
       });
       setErrorApi(message.error);
@@ -81,7 +81,7 @@ export function DrawerCreateFood(
   });
 
   return (
-    <DrawerMotion className='lain_background' isOpen={isOpen} onClose={onClose} title={t('dishes:foods.create')}>
+    <DrawerMotion className='lain_background h-min relative'  headerClassName='rounded-t-xl' isOpen={isOpen} onClose={onClose} title={t('dishes:foods.create')}>
       <Content className={className}>
         <Form {...form}>
           <form

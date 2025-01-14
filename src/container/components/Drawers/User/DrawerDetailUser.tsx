@@ -1,9 +1,8 @@
-import { P14 } from '@/components';
 import { DrawerMotion } from '@/components/Drawer';
 import { Col } from '@/components/Helpers';
+import { P14 } from '@/components/Texts';
 import { Button } from '@/components/ui/button';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
-import { ApiService } from '@/services/api';
 import { Edit, LogOutIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
@@ -25,7 +24,6 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
 
   async function handleLogout() {
     setIsLoading(true);
-    await ApiService.auth.logout();
     removeToken();
     onClose();
     setIsLoading(false);
