@@ -87,15 +87,16 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
             <DrawerContent>
               <Header className={headerClassName}>
                 <RowBetween>
-                  <Row className='gap-2.5 flex-1'>
-                    {!!icon && <IconContainer>{icon}</IconContainer>}
+                  <Row className='flex-1'>
                     <Title>{title}</Title>
                   </Row>
-                  <CloseIcon onClick={props.onClose} />
+                  <Row className='gap-2 items-center'>
+                    {!!icon && <IconContainer>{icon}</IconContainer>}
+                    <CloseIcon size={20} onClick={props.onClose} />
+                  </Row>
                 </RowBetween>
               </Header>
               <Divider />
-
               <DrawerChildren className={containerClassName}>
                 {children}
               </DrawerChildren>
@@ -110,7 +111,9 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
 const Overlay = tw(motion.div)`
   fixed
   inset-0
-  bg-background/50
+  bg-background/10
+  backdrop-filter
+  backdrop-blur-sm
   flex
   justify-end
   items-end
@@ -119,19 +122,18 @@ const Overlay = tw(motion.div)`
 const DrawerContainer = tw(motion.div)`
   flex
   flex-col
-  md:bg-primary
   backdrop-blur-sm 
-  text-primary md:text-background
+  text-primary
   group/drawerBase
-  md:h-screen
   overflow-hidden
-  absolute md:relative
+  absolute
   top-0
   right-0
   bottom-0
   left-0
-  pt-0 md:pt-0
-
+  mt-20
+  rounded-t-2xl
+  lain_background
 `;
 
 const CloseIcon = tw(X)`
@@ -143,8 +145,8 @@ const CloseIcon = tw(X)`
 `;
 
 const IconContainer = styled.div`
-  width: 34px;
-  height: 34px;
+  width: 20px;
+  height: 20px;
   svg {
     width: 100%;
     height: 100%;
@@ -159,8 +161,7 @@ const Title = tw(H2)`
 const DrawerContent = tw(Col)`
   w-full
   h-full
-  overflow-y-scroll
-  hide-scrollbar
+  relative
 `;
 
 const Header = tw(Col)`
@@ -171,14 +172,18 @@ const Header = tw(Col)`
   top-0
   left-0
   z-10
-  h-20
+  h-15
   bg-primary
+  rounded-t-2xl
+  overflow-hidden
 `;
 
 const DrawerChildren = tw(Col)`
   h-full
-  overflow-y-auto
-  mt-25
+  overflow-y-scroll
+  mt-15
+  pt-5
+  mb-5
 `;
 
 const Divider = tw.div`

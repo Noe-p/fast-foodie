@@ -18,14 +18,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
+import { useDishContext } from '@/contexts';
 import { ApiService } from '@/services/api';
+import { formatValidationErrorMessage } from '@/services/error';
 import { cn } from '@/services/utils';
 import { AisleType, CreateFoodApi } from '@/types';
 import { foodValidation } from '@/validations';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
@@ -35,14 +36,11 @@ interface DrawerCreateFoodProps {
   onClose: () => void;
 }
 
-export function DrawerCreateFood(
-  props: DrawerCreateFoodProps
-): JSX.Element {
+export function DrawerCreateFood(props: DrawerCreateFoodProps): JSX.Element {
   const { className, isOpen, onClose } = props;
   const { t } = useTranslation();
-  const [errorApi, setErrorApi] = useState<string>('');
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { refresh } = useDishContext();
 
   const form = useForm<CreateFoodApi>({
     resolver: yupResolver(foodValidation.create),
@@ -61,41 +59,39 @@ export function DrawerCreateFood(
     mutationFn: ApiService.foods.create,
     onSuccess: () => {
       form.reset();
-      queryClient.refetchQueries({
-        queryKey: ['getFoods'],
-        exact: false,
-        type: 'all',
-      });
+      refresh();
       onClose();
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    onError: (message: any) => {
+    onError: (error: any) => {
+      formatValidationErrorMessage(error.data.errors, form.setError);
+      console.log('[D] DrawerCreateFood', error);
       toast({
-        title: t('toast.new.error'),
-        description: t(message.error),
+        title: t(error.data.response.title),
+        description: t(error.data.response.message),
         variant: 'destructive',
       });
-      setErrorApi(message.error);
     },
   });
 
   return (
-    <DrawerMotion className='lain_background h-min relative'  headerClassName='rounded-t-xl' isOpen={isOpen} onClose={onClose} title={t('dishes:foods.create')}>
+    <DrawerMotion
+      className='h-min relative'
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('dishes:foods.create')}
+    >
       <Content className={className}>
         <Form {...form}>
-          <form
-            className='flex flex-col gap-4 w-full'
-          >
+          <form className='flex flex-col gap-4 w-full'>
             <FormField
               control={form.control}
               name='name'
               isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel >
-                    {t('fields:foodName.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:foodName.label')}</FormLabel>
                   <FormControl>
                     <InputStyled
                       isRemovable
@@ -119,18 +115,14 @@ export function DrawerCreateFood(
               isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t('fields:aisle.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:aisle.label')}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     {...field}
                   >
                     <FormControl
-                      className={cn(
-                        isError && 'border-destructive'
-                      )}
+                      className={cn(isError && 'border-destructive')}
                     >
                       <SelectTrigger>
                         <SelectValue
@@ -158,9 +150,8 @@ export function DrawerCreateFood(
               type='button'
               onClick={() => createFood(form.getValues())}
             >
-              {t('dishes:create.submit')}
+              {t('generics.create')}
             </Button>
-            <FormMessage>{errorApi}</FormMessage>
           </form>
         </Form>
       </Content>

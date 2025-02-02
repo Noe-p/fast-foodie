@@ -1,47 +1,43 @@
 import { Tabbar } from '@/container/components';
-import { MEDIA_QUERIES } from '@/static/constants';
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import tw from 'tailwind-styled-components';
 import { useMediaQuery } from 'usehooks-ts';
-
+import { P16 } from '../Texts';
 interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
   className?: string;
 }
 
+
+
 export function Layout(props: LayoutProps): React.JSX.Element {
   const { children, className } = props;
-  const isDesktop = useMediaQuery(MEDIA_QUERIES.LG);
+  const isPhone = useMediaQuery('(max-width: 700px)');
+  const { t } = useTranslation();
 
-  return isDesktop ? (
-    <Main $isDesktop={isDesktop} {...props}>
-      
+  return !isPhone ? (
+    <Main {...props} className='flex flex-col justify-center items-center h-screen w-screen'>
+      <P16>{t('appOnlyForPhone')}</P16>
     </Main>
   ) : (
-    <Main $isDesktop={isDesktop} {...props}>
+    <Main {...props}>
       <Page className={className}>{children}</Page>
-      {/* <Footer /> */}
       <Tabbar />
     </Main>
   );
 }
 
-const Main = tw.div<{ $isDesktop?: boolean }>`
-  pb-19
-  h-full
-
-  ${({ $isDesktop }) => $isDesktop && 'flex h-screen overflow-hidden pb-0'}
+const Main = tw.div`
+ 
 `;
 
-const Page = tw.div<{ $isDesktop?: boolean }>`
+const Page = tw.div`
   flex
   flex-col
   z-0
   min-h-screen
-  p-3 md:pt-10
-  mb-5 
+  p-3
+  pb-25
   overflow-hidden
-
-  ${({ $isDesktop }) => $isDesktop && 'w-full p-5'}
-
 `;

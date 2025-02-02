@@ -16,12 +16,28 @@
       "noUppercase": "Le mot de passe doit contenir au moins une majuscule"
     }
   },
+  "ration":{
+    "label": "Nombre de personnes",
+    "placeholder": "Entrez la ration",
+    "errors": {
+      "required": "La ration est requise",
+      "notString": "La ration doit être une chaîne de caractères"
+    }
+  },
   "tags": {
     "label": "Catégories",
     "placeholder": "Ajouter des catégories",
     "errors": {
       "required": "Les catégories sont requises",
       "notArray": "Les catégories doivent être un tableau"
+    }
+  },
+  "collaborator": {
+    "label": "Collaborateur",
+    "placeholder": "Entrer le pseudo du collaborateur",
+    "errors": {
+      "required": "Le collaborateur est requis",
+      "notString": "Le collaborateur doit être une chaîne de caractères"
     }
   },
   "addTag": {

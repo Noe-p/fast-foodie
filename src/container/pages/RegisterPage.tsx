@@ -1,3 +1,5 @@
+import { useToast } from '@/components/ui/use-toast';
+import { formatValidationErrorMessage } from '@/services/error';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
@@ -25,7 +27,6 @@ import {
   FormMessage,
 } from '../../components/ui/form';
 import { Input } from '../../components/ui/input';
-import { toast } from '../../components/ui/use-toast';
 import { useAuthContext } from '../../contexts';
 import { ROUTES } from '../../routes';
 import { ApiService } from '../../services/api';
@@ -35,17 +36,21 @@ import { userValidationUi } from '../../validations';
 export default function RegisterPage(): React.JSX.Element {
   const { t } = useTranslation();
   const { currentUser, setToken } = useAuthContext();
+  const { toast } = useToast();
 
-  const { 
-    mutate: registerUser,
-    isPending,
-    isError,
-    error,
-  } = useMutation({
+  const { mutate: registerUser, isPending } = useMutation({
     mutationFn: ApiService.auth.register,
     onSuccess: (data) => {
       setToken(data);
       router.push(ROUTES.dishes.index);
+    },
+    onError: (error: any) => {
+      formatValidationErrorMessage(error.data.errors, form.setError);
+      toast({
+        title: t(error.data.response.title),
+        description: t(error.data.response.message),
+        variant: 'destructive',
+      });
     },
   });
 
@@ -58,18 +63,6 @@ export default function RegisterPage(): React.JSX.Element {
     resolver: yupResolver(userValidationUi.create),
     mode: 'onTouched',
   });
-
-  useEffect(() => {
-    if (isError) {
-      const errorData = error as any;
-      toast({
-        title: t(errorData?.data?.error),
-        description: t(errorData?.data?.details) ?? '',
-        variant: 'destructive',
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isError]);
 
   return (
     <Main>
@@ -92,7 +85,7 @@ export default function RegisterPage(): React.JSX.Element {
             <H1 className='font-bold text-center text-3xl'>
               {t('auth.register.title')}
             </H1>
-            <P14 className='text-center text-primary/40'>
+            <P14 className='text-center text-primary/80'>
               {t('auth.register.subtitle')}
             </P14>
             <Form {...form}>

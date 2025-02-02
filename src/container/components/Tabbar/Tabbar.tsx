@@ -1,14 +1,18 @@
 import { Avatar, P10 } from '@/components';
+import { ColCenter, Row, RowCenter } from '@/components/Helpers';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
 import { ROUTES } from '@/routes';
-import { CalendarDays, CalendarFoldIcon, Home, PenTool, PlusCircle, SaladIcon, ShoppingCartIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { cn } from '@/services/utils';
+import {
+  CalendarFoldIcon,
+  PlusCircle,
+  SaladIcon,
+  ShoppingCartIcon,
+} from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { ColCenter, Row, RowCenter } from '@/components/Helpers';
+import { useRouter } from 'next/router';
 
 import tw from 'tailwind-styled-components';
-import { cn } from '@/services/utils';
-import path from 'path';
 
 interface TabbarProps {
   className?: string;
@@ -19,7 +23,9 @@ export function Tabbar(props: TabbarProps): JSX.Element {
   const router = useRouter();
   const { t } = useTranslation();
   const { currentUser } = useAuthContext();
-  const { setDrawerOpen, drawerOpen } = useAppContext();
+  const { setDrawerOpen } = useAppContext();
+
+  console.log('[D] Tabbar', { currentUser });
 
   const KEYS = [
     {
@@ -35,9 +41,9 @@ export function Tabbar(props: TabbarProps): JSX.Element {
       name: t('dishes:week.title'),
     },
     {
-      path: ROUTES.dishes.index,
+      path: ROUTES.dishes.create,
       icon: <PlusCircle size={22} />,
-      action: () => setDrawerOpen(DrawerType.CREATE_DISH),
+      action: () => router.push(ROUTES.dishes.create),
       name: t('generics.create'),
     },
     {
@@ -48,10 +54,9 @@ export function Tabbar(props: TabbarProps): JSX.Element {
     },
     {
       path: ROUTES.user,
-      icon: (
-        <Avatar />
-      ),
+      icon: <Avatar user={currentUser} />,
       action: () => setDrawerOpen(DrawerType.DETAIL_USER),
+      name: currentUser?.userName || '',
     },
   ];
 
@@ -64,16 +69,12 @@ export function Tabbar(props: TabbarProps): JSX.Element {
           <Item
             key={key.name}
             $selected={selected === key}
-            onClick={key.action}
+            onClick={() => {
+              key.action();
+            }}
           >
             {key.icon}
-            <P10
-              className={
-                selected === key ? '  text-background' : '  text-muted'
-              }
-            >
-              {key.name}
-            </P10>
+            <P10 className={cn('mt-1 text-background')}>{key.name}</P10>
           </Item>
         ))}
       </RowCenter>
@@ -96,5 +97,6 @@ const Item = tw(ColCenter)<{ $selected?: boolean }>`
   rounded 
   justify-between
   cursor-pointer
-  ${(props) => (props.$selected ? 'text-background' : 'text-muted')}
+  text-background
+  ${(props) => (props.$selected ? 'opacity-100' : 'opacity-60')}
 `;

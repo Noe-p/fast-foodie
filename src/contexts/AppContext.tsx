@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
-import { LocalSearchParams, SearchParams } from '@/types';
+import { DrawerCreateFood } from '@/container/components/Drawers/Food';
 import {
   DrawerDetailUser,
   DrawerUpdateUser,
 } from '@/container/components/Drawers/User';
-import { Drawer } from 'vaul';
-import { DrawerDetailDish } from '@/container/components/Drawers/Dish/DrawerDetailDish';
 import { Dish } from '@/types/dto/Dish';
-import { DrawerCreateDish } from '@/container/components/Drawers/Dish';
-import { DrawerCreateFood } from '@/container/components/Drawers/Food';
+import React, { useEffect, useState } from 'react';
+import { useDishContext } from './DishContext';
 
 export enum DrawerType {
   DETAIL_USER = 'DETAIL_USER',
   UPDATE_USER = 'UPDATE_USER',
-  CREATE_DISH = 'CREATE_DISH',
-  DETAIL_DISH = 'DETAIL_DISH',
   CREATE_FOOD = 'CREATE_FOOD',
   CREATE_ALIMENT = 'CREATE_ALIMENT',
+  UPDATE_FOOD = 'UPDATE_FOOD',
 }
 
 interface State {
@@ -26,9 +22,7 @@ interface State {
 
 interface Context extends State {
   setDrawerOpen: React.Dispatch<React.SetStateAction<State['drawerOpen']>>;
-  setCurrentDish: React.Dispatch<
-    React.SetStateAction<State['currentDish']>
-  >;
+  setCurrentDish: React.Dispatch<React.SetStateAction<State['currentDish']>>;
 }
 
 export const defaultState: State = {
@@ -50,9 +44,15 @@ function useAppProvider() {
   const [drawerOpen, setDrawerOpen] = useState<State['drawerOpen'] | undefined>(
     defaultState.drawerOpen
   );
-  const [currentDish, setCurrentDish] = useState<State['currentDish'] | undefined>(
-    defaultState.currentDish
-  );
+  const [currentDish, setCurrentDish] = useState<
+    State['currentDish'] | undefined
+  >(defaultState.currentDish);
+  const { dishes } = useDishContext();
+
+  useEffect(() => {
+    if (dishes && dishes.length > 0)
+      if (!currentDish) setCurrentDish(dishes[0]);
+  }, [dishes]);
 
   return {
     drawerOpen,
@@ -78,14 +78,6 @@ export const AppProvider = ({ children }: Props): JSX.Element => {
       />
       <DrawerUpdateUser
         isOpen={context.drawerOpen === DrawerType.UPDATE_USER}
-        onClose={() => context.setDrawerOpen(undefined)}
-      />
-      <DrawerDetailDish
-        isOpen={context.drawerOpen === DrawerType.DETAIL_DISH}
-        onClose={() => context.setDrawerOpen(undefined)}
-      />
-      <DrawerCreateDish
-        isOpen={context.drawerOpen === DrawerType.CREATE_DISH}
         onClose={() => context.setDrawerOpen(undefined)}
       />
       <DrawerCreateFood

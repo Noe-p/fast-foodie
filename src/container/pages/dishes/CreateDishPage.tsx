@@ -1,13 +1,12 @@
-import { DrawerMotion } from '@/components/Drawer';
 import { useToast } from '@/components/ui/use-toast';
 import { ApiService } from '@/services/api';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
-import { InputTags, TextEditor } from '@/components';
+import { H1, InputTags, Layout, TextEditor, Toggle } from '@/components';
 import ImageUpload from '@/components/Inputs/ImageUpload';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,27 +18,24 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Toggle } from '@/components/ui/toggle';
-import { useAppContext } from '@/contexts';
+import { CreateIngredients } from '@/container/components';
+import { useAppContext, useDishContext } from '@/contexts';
+import { ROUTES } from '@/routes';
+import { formatValidationErrorMessage } from '@/services/error';
 import { CreateDishApi, DishStatus, MediaDto } from '@/types';
 import { dishValidation } from '@/validations/dish';
-import { Eye } from 'lucide-react';
-import { CreateIngredients } from '../../Inputs';
+import router from 'next/router';
 
-interface DrawerCreateDishProps {
+interface CreateDishPageProps {
   className?: string;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export function DrawerCreateDish(
-  props: DrawerCreateDishProps
-): JSX.Element {
-  const { className, isOpen, onClose } = props;
+export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
+  const { className } = props;
   const { t } = useTranslation();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const { setDrawerOpen } = useAppContext();
+  const { refresh } = useDishContext();
 
   const form = useForm<CreateDishApi>({
     resolver: yupResolver(dishValidation.add),
@@ -49,47 +45,39 @@ export function DrawerCreateDish(
       instructions: '',
       ingredients: [],
       tags: [],
-      imageIds: undefined,
+      imageIds: [],
       weeklyDish: false,
       status: DishStatus.PUBLIC,
+      ration: 2,
     },
   });
 
-  const {
-    mutate: createDish,
-    isPending,
-  } = useMutation({
+  const { mutate: createDish, isPending } = useMutation({
     mutationFn: ApiService.dishes.create,
     onSuccess: () => {
       form.reset();
-      queryClient.refetchQueries({
-        queryKey: ['getDishes'],
-        exact: false,
-        type: 'all',
-      });
-      setDrawerOpen(undefined);
+      refresh();
+      router.push(ROUTES.dishes.index);
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    onError: (message: any) => {
+    onError: (error: any) => {
+      formatValidationErrorMessage(error.data.errors, form.setError);
       toast({
-        title: t(message.data.error),
+        title: t(error.data.response.title),
+        description: t(error.data.response.message),
         variant: 'destructive',
       });
     },
   });
 
   return (
-    <DrawerMotion className='lain_background' isOpen={isOpen} onClose={()=> {
-      onClose();
-      form.reset();
-    }} title={t('dishes:create.title')}>
+    <Layout className='p-0 lain_background'>
       <Content className={className}>
+        <H1 className='text-center mb-5'>{t('dishes:create.title')}</H1>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit((values) =>
-              createDish({ ...values })
-            )}
+            onSubmit={form.handleSubmit((values) => createDish({ ...values }))}
             className='flex flex-col gap-4 w-full'
           >
             <FormField
@@ -98,11 +86,9 @@ export function DrawerCreateDish(
               isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel >
-                    {t('fields:dishesName.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:dishesName.label')}</FormLabel>
                   <FormControl>
-                    <InputStyled
+                    <Input
                       isRemovable
                       placeholder={t('fields:dishesName.placeholder')}
                       enterKeyHint='next'
@@ -121,12 +107,9 @@ export function DrawerCreateDish(
             <FormField
               control={form.control}
               name='tags'
-              isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel >
-                    {t('fields:tags.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:tags.label')}</FormLabel>
                   <InputTags
                     tags={field.value}
                     onChange={(v) => field.onChange(v)}
@@ -141,13 +124,34 @@ export function DrawerCreateDish(
               isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t('fields:images.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:images.label')}</FormLabel>
                   <ImageUpload
+                    favorite={form.watch('favoriteImage')}
+                    onFavoriteChange={(v) => form.setValue('favoriteImage', v)}
                     onImageUpload={(v: MediaDto[]) => {
                       field.onChange(v.map((file) => file.id));
                     }}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='ration'
+              render={({ field }) => (
+                <FormItem className='flex flex-row w-full items-center justify-between'>
+                  <FormLabel className='w-full'>
+                    {t('fields:ration.label')}
+                  </FormLabel>
+                  <Input
+                    className='w-14 h-7'
+                    isArrow
+                    iconSize={22}
+                    min={1}
+                    type='number'
+                    onChange={(v) => field.onChange(v)}
+                    value={field.value}
                   />
                   <FormMessage />
                 </FormItem>
@@ -159,9 +163,7 @@ export function DrawerCreateDish(
               isRequired
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t('fields:ingredients.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:ingredients.label')}</FormLabel>
                   <CreateIngredients
                     values={field.value}
                     onIngredientChange={(v) => {
@@ -177,9 +179,7 @@ export function DrawerCreateDish(
               name='instructions'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t('fields:instructions.label')}
-                  </FormLabel>
+                  <FormLabel>{t('fields:instructions.label')}</FormLabel>
                   <FormControl>
                     <TextEditor
                       value={field.value}
@@ -193,18 +193,19 @@ export function DrawerCreateDish(
             <FormField
               control={form.control}
               name='status'
-              isRequired
               render={({ field }) => (
-                <FormItem>
-                  <Toggle
-                    onPressedChange={(v) => field.onChange(v === true ? DishStatus.PUBLIC : DishStatus.PRIVATE)}
-                    pressed={field.value === DishStatus.PUBLIC}
-                    variant='outline'
-                    className='w-full gap-1'
-                  >
-                    <Eye size={15} />
+                <FormItem className='flex flex-row w-full items-center justify-between'>
+                  <FormLabel className='w-full'>
                     {t('fields:isVisible.label')}
-                  </Toggle>
+                  </FormLabel>
+                  <Toggle
+                    onChange={(v) =>
+                      field.onChange(
+                        v === true ? DishStatus.PUBLIC : DishStatus.PRIVATE
+                      )
+                    }
+                    value={field.value === DishStatus.PUBLIC}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -213,21 +214,20 @@ export function DrawerCreateDish(
               disabled={isPending || !form.formState.isValid}
               isLoading={isPending}
               type='submit'
+              className='mt-5'
             >
               {t('dishes:create.submit')}
             </Button>
           </form>
         </Form>
       </Content>
-    </DrawerMotion>
+    </Layout>
   );
 }
 
 const Content = tw.div`
-  px-4
-  pb-5
-`;
-
-const InputStyled = tw(Input)`
-
+  p-5
+  px-3
+  h-full
+  overflow-y-scroll
 `;

@@ -6,30 +6,31 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { useMediaQuery } from 'usehooks-ts';
-import { Button } from '../ui/button';
 import {
   Drawer,
-  DrawerTrigger,
+  DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-  DrawerClose,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Col } from '..';
-import { useTranslation } from 'next-i18next';
-import { BookOpen } from 'lucide-react';
 import { MEDIA_QUERIES } from '@/static/constants';
+import { BookOpen } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
+import { useMediaQuery } from 'usehooks-ts';
+import { Col, Row } from '..';
+import { Button } from '../ui/button';
 
 interface DrawerDialogProps {
   children: React.ReactNode;
   title: string;
-  description: string;
+  description?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   button?: React.ReactNode;
+  isFooter?:boolean;
   className?: string;
 }
 
@@ -40,6 +41,7 @@ export function DrawerDialog(props: DrawerDialogProps): JSX.Element {
     title,
     open = false,
     setOpen,
+    isFooter = true,
     button = (
       <Button variant='outline'>
         <BookOpen />
@@ -56,7 +58,7 @@ export function DrawerDialog(props: DrawerDialogProps): JSX.Element {
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
             <DialogTitle className='text-3xl'>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
+            {description && <DialogDescription>{description}</DialogDescription>}
           </DialogHeader>
           {children}
         </DialogContent>
@@ -72,12 +74,14 @@ export function DrawerDialog(props: DrawerDialogProps): JSX.Element {
           <DrawerTitle className='text-3xl text-primary'>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        <Col className='px-4 pb-8'>{children}</Col>
-        <DrawerFooter className='pt-2'>
+        <Col className='px-4 pb-4'>{children}</Col>
+        {isFooter && <DrawerFooter className='pt-2 pb-15'>
           <DrawerClose asChild>
-            <Button variant='default'>{t('generics.cancel')}</Button>
+            <Row className='justify-end gap-2'>
+              <Button variant='outline'>{t('generics.save')}</Button>
+            </Row>
           </DrawerClose>
-        </DrawerFooter>
+        </DrawerFooter>}
       </DrawerContent>
     </Drawer>
   );

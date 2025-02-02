@@ -55,9 +55,9 @@ export default function LoginPage(): React.JSX.Element {
   useEffect(() => {
     if (isError) {
       const errorData = error as any;
+      console.log('[D] LoginPage', errorData);
       toast({
-        title: t(errorData?.data?.error),
-        description: t(errorData?.data?.details) ?? '',
+        title: t(errorData?.data?.response.message),
         variant: 'destructive',
       });
     }
@@ -85,7 +85,7 @@ export default function LoginPage(): React.JSX.Element {
             <H1 className='font-bold text-center text-3xl'>
               {t('generics.login')}
             </H1>
-            <P14 className='text-center text-primary/40'>
+            <P14 className='text-center text-primary/80'>
               {t('auth.login.subtitle')}
             </P14>
             <Form {...form}>

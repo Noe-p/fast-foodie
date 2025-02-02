@@ -26,6 +26,7 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
       setOpen={setOpen}
       title={t('filters.title')}
       description={t('filters.description')}
+      isFooter={false}
       button={
         <Button variant='outline' className='w-fit'>
           <ListFilter className='w-fit' />
@@ -90,6 +91,9 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
           ))}
         </Row>
       </Col>
+      <Row className='mt-10 justify-end gap-2 mb-10'>
+        <Button onClick={()=> setOpen(false)} variant='default'>{t('generics.save')}</Button>
+      </Row>
     </DrawerDialog>
   );
 }

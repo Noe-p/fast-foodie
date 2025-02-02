@@ -1,0 +1,19 @@
+{
+  "pagination": {
+    "results": "{{results}} results in total"
+  },
+  "copyId": "Copy ID",
+  "seeDetail": "See details",
+  "filters": {
+    "title": "Filters",
+    "description": "You can filter the results using the fields below",
+    "columns": "Columns",
+    "orderBy": "Sort by",
+    "filterBy": "Filter by"
+  },
+  "columns": {
+    "title": "Title",
+    "images": "Image",
+    "chef": "Chef"
+  }
+}

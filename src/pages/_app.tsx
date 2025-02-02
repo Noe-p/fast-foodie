@@ -2,7 +2,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { AppProvider, AuthProvider, DishProvider } from '@/contexts';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
@@ -49,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <AppProvider>
             <Component {...pageProps} />
             <Toaster />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </AppProvider>
         </DishProvider>
       </AuthProvider>

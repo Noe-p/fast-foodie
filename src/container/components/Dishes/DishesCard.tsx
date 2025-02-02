@@ -1,10 +1,10 @@
-import { ColCenter, H2 } from '@/components';
-import { useToast } from '@/components/ui/use-toast';
-import { DrawerType, useAppContext, useDishContext } from '@/contexts';
+import { ColCenter, H2, ImageLoader } from '@/components';
+import { useAppContext, useDishContext } from '@/contexts';
+import { ROUTES } from '@/routes';
 import { IMAGE_FALLBACK } from '@/static/constants';
 import { Dish } from '@/types/dto/Dish';
-import { useQueryClient } from '@tanstack/react-query';
 import { CalendarCheck } from 'lucide-react';
+import router from 'next/router';
 import { useTranslation } from 'react-i18next';
 import tw from 'tailwind-styled-components';
 
@@ -16,23 +16,20 @@ interface DishesCardProps {
 
 export function DishesCard(props: DishesCardProps): JSX.Element {
   const { className, dish } = props;
-  const { setDrawerOpen, setCurrentDish } = useAppContext();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const { setDrawerOpen } = useAppContext();
   const { t } = useTranslation();
   const { setWeeklyDishes, weeklyDishes } = useDishContext();
 
   const isWeeklyDish = weeklyDishes.some((d) => d.id === dish.id);
+
+  const imageCover = dish.images.find(image => image.id === dish.favoriteImage);
   
   return <Main 
-    onClick={()=> {
-      setCurrentDish(dish);
-      setDrawerOpen(DrawerType.DETAIL_DISH);
-    }} 
+    onClick={()=> router.push(ROUTES.dishes.detail(dish.id))} 
     className={className}
     >
-      <Image src={dish.images.length > 0 ? dish.images[0]?.url : IMAGE_FALLBACK} alt={dish.name} />
-      <H2 className='mt-4' >{dish.name}</H2>
+      <ImageLoader height={420} src={dish.images.length > 0 ? imageCover?.url ?? IMAGE_FALLBACK : IMAGE_FALLBACK} alt={dish.name} />
+      <H2 className='mt-4 w-3/4 text-center' >{dish.name}</H2>
       <WeeklyDishButton 
         className={`${isWeeklyDish ? 'bg-primary text-background' : 'bg-transparent border border-primary/80 text-primary/80'}`}
         onClick={(e) => {
@@ -59,7 +56,6 @@ const Main = tw(ColCenter)`
 `;
 const Image = tw.img`
   w-full
-  h-90
   object-cover
   rounded-sm
 `;

@@ -2,9 +2,11 @@ export const ROUTES = {
   dishes: {
     index: '/',
     detail: (id: string) => `/dishes/${id}`,
-    week: 'weeklyDish',
+    week: '/weeklyDish',
+    update: (id: string) => `/dishes/update/${id}`,
+    create: '/dishes/create',
   },
-  shoppingList: '/shopping-list',
+  shoppingList: '/shoppingList',
   user: '/user',
   auth: {
     login: '/login',

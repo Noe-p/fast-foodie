@@ -1,36 +1,49 @@
-import { useTranslation } from 'next-i18next';
+import { User } from '@/types';
+import Image from 'next/image';
 import { LegacyRef, forwardRef, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-import { P12 } from '../Texts';
-import { useAuthContext } from '@/contexts';
-
+import { P10 } from '../Texts';
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
+  user?: User;
+  size?: number;
 }
 
 export const Avatar = forwardRef(function (
   props: AvatarProps,
   ref: LegacyRef<HTMLDivElement>
 ) {
-  const {
-  } = props;
-  const { currentUser } = useAuthContext();
-  const [ firstLetter, setFirstLetter ] = useState<string | null>(null);
+  const { user, size = 25 } = props;
+  const [firstLetter, setFirstLetter] = useState<string | null>(null);
 
   useEffect(() => {
-    if (currentUser?.userName) {
-      const first = currentUser.userName[0];
-      setFirstLetter(first.toUpperCase());
+    if (user?.userName) {
+      setFirstLetter(user.userName.charAt(0).toUpperCase());
     }
-  }, [currentUser]);
-
+  }, [user]);
 
   return (
     <Main
       ref={ref}
+      style={{ width: `${size}px`, height: `${size}px` }}
       {...props}
     >
-      <P12 className='text-white'>{firstLetter}</P12>
+      {user?.profilePicture ? (
+        <ImageStyled
+          src={user.profilePicture.url}
+          alt={user.userName}
+          quality={10}
+          width={size}
+          height={size}
+        />
+      ) : (
+        <P10
+          className='text-white translate-y-0.5'
+          style={{ fontSize: `${size / 2}px` }}
+        >
+          {firstLetter}
+        </P10>
+      )}
     </Main>
   );
 });
@@ -43,9 +56,15 @@ const Main = tw.div`
   justify-center
   bg-primary
   text-secondary
-  w-7
-  h-7
   cursor-pointer
   border
   border-secondary
+`;
+
+const ImageStyled = tw(Image)`
+  bg-white
+  rounded-full
+  w-full
+  h-full
+  object-cover
 `;

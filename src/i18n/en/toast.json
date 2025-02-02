@@ -1,0 +1,40 @@
+{
+  "remove": {
+    "success": {
+      "title": "Removal successful",
+      "description": "The item has been successfully removed"
+    },
+    "error": "Error during removal"
+  },
+  "fetch": {
+    "error": "Error fetching data"
+  },
+  "login": {
+    "error": "Unable to log in"
+  },
+  "copy": "Copied to clipboard",
+  "new": {
+    "success": "New item created",
+    "error": "Error during creation"
+  },
+  "update": {
+    "success": "Update successful",
+    "error": "Error during update"
+  },
+  "collaborator": {
+    "add": {
+      "success": "Collaborator added",
+      "error": "Error adding collaborator"
+    },
+    "remove": {
+      "success": "Collaborator removed",
+      "error": "Error removing collaborator"
+    }
+  },
+  "file": {
+    "upload": {
+      "success": "File uploaded",
+      "error": "Error during upload"
+    }
+  }
+}

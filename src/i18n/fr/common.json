@@ -33,7 +33,16 @@
     "today": "Aujourd'hui",
     "noData": "Aucune donnée",
     "tomorrow": "Demain",
-    "create": "Créer"
+    "create": "Créer",
+    "save": "Enregistrer"
+  },
+  "weeklyDish": "Plat de la semaine",
+  "appOnlyForPhone": "Cette application est uniquement disponible sur mobile",
+  "shoppingList": {
+    "title": "Liste de courses",
+    "addSuccess": "Ingrédient ajouté à la liste de courses",
+    "add": "Ajouter à la liste",
+    "empty": "La liste de courses est vide"
   },
   "filters": {
     "title": "Filtres",
@@ -52,6 +61,49 @@
       "subtitle": "Entrer vos informations pour vous inscrire"
     }
   },
+  "toast": {
+    "remove": {
+      "success": {
+        "title": "Suppression réussie",
+        "description": "L'élément a bien été supprimé"
+      },
+      "error": "Erreur lors de la suppression"
+    },
+    "fetch": {
+      "error": "Erreur lors de la récupération des données"
+    },
+    "login": {
+      "error": "Connexion impossible"
+    },
+    "copy": "Copié dans le presse-papier",
+    "new": {
+      "success": "Nouveau élément créé",
+      "error": "Erreur lors de la création"
+    },
+    "update": {
+      "success": "Mise à jour réussie",
+      "error": "Erreur lors de la mise à jour"
+    },
+    "file": {
+      "upload": {
+        "success": "Fichier téléchargé",
+        "error": "Erreur lors du téléchargement"
+      }
+    }
+  },
+  "enums":{
+    "units":{
+      "kg": "Kg",
+      "g": "g",
+      "l": "L",
+      "cl": "cl",
+      "ml": "ml",
+      "unit": "Unité",
+      "tsp": "c. à café",
+      "tbsp": "c. à soupe",
+      "cup": "Tasse"
+    }
+  },
   "home": {
     "name": "home",
     "subTitle": "C'est la page d'accueil",
@@ -68,6 +120,12 @@
     "detail": {
       "general": "Informations générales",
       "address": "Adresse"
+    }
+  },
+  "modal": {
+    "remove": {
+      "title": "Êtes-vous sûr ?",
+      "description": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cet élément ?"
     }
   },
   "file": {

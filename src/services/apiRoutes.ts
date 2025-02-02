@@ -1,4 +1,3 @@
-
 export const API_ROUTES = {
   auth: {
     register: '/auth/register',
@@ -9,6 +8,7 @@ export const API_ROUTES = {
     me: '/users/me',
     update: '/users/me',
     delete: '/users/me',
+    removeCollaborator: (id: string) => `/users/me/collaborators/${id}`,
   },
   media: {
     upload: '/upload',
@@ -20,6 +20,7 @@ export const API_ROUTES = {
     update: (id: string) => `/dishes/${id}`,
     delete: (id: string) => `/dishes/${id}`,
     getTags: '/dishes/getTags',
+    deleteTag: (tag: string) => `/dishes/tag/${tag}`,
   },
   foods: {
     get: '/foods',

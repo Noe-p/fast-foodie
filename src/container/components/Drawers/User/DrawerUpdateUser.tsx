@@ -1,20 +1,17 @@
 import { DrawerMotion } from '@/components/Drawer';
 import { useToast } from '@/components/ui/use-toast';
 import { ApiService } from '@/services/api';
-import {
-  formatApiErrorMessage,
-  formatValidationErrorMessage,
-} from '@/services/error';
 import { UpdateUserApi } from '@/types';
 import { userValidation } from '@/validations';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
 import { RowBetween } from '@/components';
+import ImageUpload from '@/components/Inputs/ImageUpload';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -26,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/contexts';
+import { formatValidationErrorMessage } from '@/services/error';
 
 interface DrawerUpdateUserProps {
   className?: string;
@@ -36,7 +34,6 @@ interface DrawerUpdateUserProps {
 export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
   const { className, isOpen, onClose } = props;
   const { t } = useTranslation();
-  const [errorApi, setErrorApi] = useState<string>('');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { currentUser, refreshUser } = useAuthContext();
@@ -47,8 +44,7 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
   });
 
   const { mutate: updateEvent, isPending } = useMutation({
-    mutationFn: (data: UpdateUserApi) =>
-      ApiService.users.updateMe(data),
+    mutationFn: (data: UpdateUserApi) => ApiService.users.updateMe(data),
     onSuccess: (data) => {
       refreshUser();
       toast({
@@ -65,11 +61,10 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      setErrorApi(formatApiErrorMessage(error.data.message, t));
-      formatValidationErrorMessage(error.data.message, form.setError);
+      formatValidationErrorMessage(error.data.errors, form.setError);
       toast({
-        title: t('toast:update.error'),
-        description: t(error.data.error),
+        title: t(error.data.response.title),
+        description: t(error.data.response.message),
         variant: 'destructive',
       });
     },
@@ -80,9 +75,9 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
       form.reset({
         ...currentUser,
         userName: currentUser.userName ?? '',
+        profilePicture: currentUser.profilePicture?.url ?? '',
       });
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
@@ -91,7 +86,12 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
   }
 
   return (
-    <DrawerMotion className='lain_background' isOpen={isOpen} onClose={onClose} title={t('user:update.title')}>
+    <DrawerMotion
+      className='relative h-min'
+      isOpen={isOpen}
+      onClose={onClose}
+      title={t('user:update.title')}
+    >
       <Content className={className}>
         <Form {...form}>
           <form
@@ -121,6 +121,31 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name='profilePicture'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('fields:profilePicture.label')}</FormLabel>
+                  <ImageUpload
+                    onFavoriteChange={(v) => form.setValue('profilePicture', v)}
+                    favorite={form.watch('profilePicture')}
+                    onImageUpload={(v) => {
+                      if (!v.length) {
+                        return;
+                      }
+                      const image = v[0];
+                      field.onChange(image.id);
+                    }}
+                    multiple={false}
+                    defaultValue={
+                      currentUser.profilePicture && [currentUser.profilePicture]
+                    }
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <RowBetween className='mt-10 gap-2'>
               <Button className='w-full z-50' type='button' onClick={onClose}>
                 {t('generics.cancel')}
@@ -134,7 +159,6 @@ export function DrawerUpdateUser(props: DrawerUpdateUserProps): JSX.Element {
                 {t('generics.update')}
               </Button>
             </RowBetween>
-            <FormMessage>{errorApi}</FormMessage>
           </form>
         </Form>
       </Content>

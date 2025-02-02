@@ -3,8 +3,11 @@
     "internalServerError": "Erreur interne du serveur",
     "connexion": "Erreur de connexion"
   },
-  "fetch":{
+  "fetch": {
     "dishes": "Erreur lors de la récupération des plats"
+  },
+  "fields": {
+    "missing": "Un ou plusieurs champs sont manquants"
   },
   "api": {
     "validation": {
@@ -12,13 +15,20 @@
       "multiple": "Erreurs sur les champs suivants : {{fields}}",
       "error": "Erreur de validation"
     },
-    "email":{
+    "email": {
       "alreadyCreated": "L'email a déjà été utilisé"
     },
-    "userName":{
+    "userName": {
       "alreadyCreated": "Le nom d'utilisateur a déjà été utilisé"
     },
-    "upload":{
+    "tags": {
+      "notFound": "Catégorie non trouvée",
+      "exist": "La catégorie existe déjà",
+      "notUpdated": "La catégorie n'a pas été mise à jour",
+      "invalid": "Catégorie invalide",
+      "notDeleted": "La catégorie n'a pas été supprimée"
+    },
+    "upload": {
       "notFound": "Fichier non trouvé",
       "exist": "Le fichier existe déjà",
       "notUpdated": "Le fichier n'a pas été mis à jour",
@@ -39,7 +49,7 @@
       "notUpdated": "La clé API n'a pas été mise à jour",
       "invalid": "Clé API invalide"
     },
-    "methode":{
+    "methode": {
       "notFound": "Méthode non trouvée",
       "exist": "La méthode existe déjà",
       "notUpdated": "La méthode n'a pas été mise à jour",
@@ -50,20 +60,24 @@
       "invalid": "Token invalide"
     },
     "collaborator": {
-      "notFound": "Collaborateur non trouvé",
+      "notFound": "Pseudo non trouvé",
       "exist": "Le collaborateur existe déjà",
       "notUpdated": "Le collaborateur n'a pas été mis à jour",
       "invalid": "Collaborateur invalide",
       "emailRequired": "L'email est requis",
-      "alreadyAdded": "Le collaborateur a déjà été ajouté"
+      "alreadyAdded": "Le collaborateur a déjà été ajouté",
+      "cannotChangeOwnStatus": "Vous ne pouvez pas vous ajouter en tant que collaborateur"
     },
-    "food":{
+    "food": {
       "notFound": "Aliment non trouvé",
       "exist": "L'aliment existe déjà",
       "notUpdated": "L'aliment n'a pas été mis à jour",
-      "invalid": "Aliment invalide"
+      "notCreated": "L'aliment n'a pas été créé",
+      "invalid": "Aliment invalide",
+      "notDeleted": "L'aliment n'a pas été supprimé",
+      "isSimilar": "L'aliment est similaire à un autre"
     },
-    "dish":{
+    "dish": {
       "notFound": "Plat non trouvé",
       "exist": "Le plat existe déjà",
       "notUpdated": "Le plat n'a pas été mis à jour",

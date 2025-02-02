@@ -14,8 +14,13 @@ const deleteMe = async (): Promise<void> => {
   await HttpService.delete(API_ROUTES.users.delete);
 };
 
+const removeCollaborator = async (id: string): Promise<void> => {
+  await HttpService.delete(API_ROUTES.users.removeCollaborator(id));
+}
+
 export const UserApiService = {
   me,
   updateMe,
   deleteMe,
+  removeCollaborator,
 };

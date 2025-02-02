@@ -1,0 +1,57 @@
+{
+  "title": "Dishes",
+  "update": {
+    "title": "Edit the dish",
+    "submit": "Update the dish"
+  },
+  "week": {
+    "title": "Week",
+    "add": "Add to the week",
+    "remove": "Remove from the week"
+  },
+  "tags": {
+    "title": "Which categories to associate with this dish?",
+    "list": "List of categories existing in other dishes",
+    "empty": "Add categories",
+    "removed": "Category removed"
+  },
+  "instruction": "Instruction",
+  "removeAll": "Remove all from the week",
+  "create": {
+    "title": "Create a dish",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "image": "Image",
+    "submit": "Create a dish"
+  },
+  "ingredients": {
+    "add": "Add an ingredient"
+  },
+  "foods": {
+    "create": "Create a food",
+    "select": "Select a food"
+  },
+  "aisleType": {
+    "FRUITS_AND_VEGETABLES": "Fruits and vegetables",
+    "BUTCHERY": "Butchery",
+    "FISHMONGER": "Fishmonger",
+    "DELI": "Deli",
+    "DAIRY_PRODUCTS": "Dairy products",
+    "SAVORY_GROCERY": "Savory grocery",
+    "SWEET_GROCERY": "Sweet grocery",
+    "SPICES": "Spices",
+    "BAKERY_AND_PASTRY": "Bakery and pastry",
+    "FROZEN_PRODUCTS": "Frozen products",
+    "PREPARED_MEALS": "Prepared meals",
+    "NON_ALCOHOLIC_BEVERAGES": "Non-alcoholic beverages",
+    "ALCOHOLIC_BEVERAGES": "Alcoholic beverages",
+    "CLEANING_PRODUCTS": "Cleaning products",
+    "PERSONAL_CARE": "Personal care",
+    "BABY_CARE": "Baby care",
+    "PET_SUPPLIES": "Pet supplies",
+    "SEASONAL_PRODUCTS": "Seasonal products",
+    "HOME_PRODUCTS": "Home products"
+  }
+}

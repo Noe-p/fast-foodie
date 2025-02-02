@@ -1,0 +1,103 @@
+{
+  "generics": {
+    "internalServerError": "Internal server error",
+    "connexion": "Connection error"
+  },
+  "fetch": {
+    "dishes": "Error fetching dishes"
+  },
+  "fields": {
+    "missing": "One or more fields are missing"
+  },
+  "api": {
+    "validation": {
+      "single": "Error on field: {{field}}",
+      "multiple": "Errors on the following fields: {{fields}}",
+      "error": "Validation error"
+    },
+    "tags": {
+      "notFound": "Category not found",
+      "exist": "The category already exists",
+      "notUpdated": "The category was not updated",
+      "invalid": "Invalid category",
+      "notDeleted": "The category was not deleted"
+    },
+    "email": {
+      "alreadyCreated": "The email has already been used"
+    },
+    "userName": {
+      "alreadyCreated": "The username has already been used"
+    },
+    "upload": {
+      "notFound": "File not found",
+      "exist": "The file already exists",
+      "notUpdated": "The file was not updated",
+      "invalid": "Invalid file",
+      "notCreated": "The file was not created",
+      "invalidFormat": "Invalid file format"
+    },
+    "media": {
+      "notFound": "Media not found",
+      "exist": "The media already exists",
+      "notUpdated": "The media was not updated",
+      "invalid": "Invalid media",
+      "notDeleted": "The media was not deleted"
+    },
+    "apiKey": {
+      "notFound": "API key not found",
+      "exist": "The API key already exists",
+      "notUpdated": "The API key was not updated",
+      "invalid": "Invalid API key"
+    },
+    "methode": {
+      "notFound": "Method not found",
+      "exist": "The method already exists",
+      "notUpdated": "The method was not updated",
+      "invalid": "Invalid method",
+      "notAllowed": "Method not allowed"
+    },
+    "token": {
+      "invalid": "Invalid token"
+    },
+    "collaborator": {
+      "notFound": "Username not found",
+      "exist": "The collaborator already exists",
+      "notUpdated": "The collaborator was not updated",
+      "invalid": "Invalid collaborator",
+      "emailRequired": "Email is required",
+      "alreadyAdded": "The collaborator has already been added",
+      "cannotChangeOwnStatus": "You cannot add yourself as a collaborator"
+    },
+    "food": {
+      "notFound": "Food not found",
+      "exist": "The food already exists",
+      "notUpdated": "The food was not updated",
+      "notCreated": "The food was not created",
+      "invalid": "Invalid food",
+      "notDeleted": "The food was not deleted",
+      "isSimilar": "The food is similar to another"
+    },
+    "dish": {
+      "notFound": "Dish not found",
+      "exist": "The dish already exists",
+      "notUpdated": "The dish was not updated",
+      "invalid": "Invalid dish"
+    },
+    "user": {
+      "notFound": "User not found",
+      "exist": "The user already exists",
+      "notFoundOrWrongPassword": "User not found or incorrect password",
+      "notUpdated": "The user was not updated",
+      "invalide": "Invalid user",
+      "alreadyCreated": "The user has already been created"
+    },
+    "admin": {
+      "notAdmin": "You are not an administrator",
+      "cannotChangeOwnStatus": "You cannot change your own status",
+      "userNotAdmin": "The user is not an administrator"
+    },
+    "file": {
+      "undefined": "The file is not found"
+    }
+  }
+}

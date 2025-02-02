@@ -1,8 +1,13 @@
 {
+  "title": "Compte",
   "detail": {
-    "title": "Détail de l'utilisateur"
+    "title": "Détail",
+    "collaborators": "Collaborateurs"
   },
   "update": {
-    "title": "Mettre à jour l'utilisateur"
+    "title": "Mettre à jour"
+  },
+  "collaborator": {
+    "add": "Ajouter un collaborateur"
   }
 }

@@ -1,10 +1,23 @@
 {
   "title": "Plats",
-  "week": {
-    "title": "Semaine"
+  "update": {
+    "title": "Modifier le plat",
+    "submit": "Modifier le plat"
   },
+  "week": {
+    "title": "Semaine",
+    "add": "Ajouter à la semaine",
+    "remove": "Supprimer de la semaine"
+  },
+  "tags": {
+    "title": "Catégories",
+    "list": "Catégories éxistantes",
+    "empty": "Ajouter des catégories",
+    "removed": "Catégorie supprimée"
+  },
+  "instruction": "Instruction",
   "removeAll": "Tout supprimer de la semaine",
-  "create":{
+  "create": {
     "title": "Créer un plat",
     "name": "Nom",
     "description": "Description",
@@ -16,7 +29,7 @@
   "ingredients": {
     "add": "Ajouter un ingrédient"
   },
-  "foods":{
+  "foods": {
     "create": "Créer un aliment",
     "select": "Selectionner un aliment"
   },
@@ -28,6 +41,7 @@
     "DAIRY_PRODUCTS": "Produits laitiers",
     "SAVORY_GROCERY": "Épicerie salée",
     "SWEET_GROCERY": "Épicerie sucrée",
+    "SPICES": "Épices",
     "BAKERY_AND_PASTRY": "Boulangerie et pâtisserie",
     "FROZEN_PRODUCTS": "Produits surgelés",
     "PREPARED_MEALS": "Plats préparés",

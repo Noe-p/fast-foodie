@@ -1,0 +1,28 @@
+{
+  "api":  {
+    "collaborator": {
+      "addedSuccess": "Collaborator added successfully",
+      "deletedSuccess": "Collaborator deleted successfully"
+    },
+    "user": {
+      "addedSuccess": "User added successfully",
+      "deletedSuccess": "User deleted successfully",
+      "updatedSuccess": "User updated successfully"
+    },
+    "food": {
+      "addedSuccess": "Food added successfully",
+      "deletedSuccess": "Food deleted successfully",
+      "updatedSuccess": "Food updated successfully"
+    },
+    "dish": {
+      "addedSuccess": "Dish added successfully",
+      "deletedSuccess": "Dish deleted successfully",
+      "updatedSuccess": "Dish updated successfully"
+    },
+    "upload": {
+      "addedSuccess": "File added successfully",
+      "deletedSuccess": "File deleted successfully",
+      "updatedSuccess": "File updated successfully"
+    }
+  }
+}

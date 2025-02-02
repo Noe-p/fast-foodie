@@ -1,75 +1,138 @@
 {
-  "language": "en",
+  "langage": "en",
+  "generics": {
+    "appName": "Backoffice Template",
+    "copyright": "Copyright © 2024 - Backoffice Template - All rights reserved",
+    "designed": "Designed and developed by ",
+    "logout": "Logout",
+    "next": "Next",
+    "back": "Back",
+    "login": "Login",
+    "register": "Register",
+    "step": "Step",
+    "update": "Update",
+    "cancel": "Cancel",
+    "add": "Add",
+    "yes": "Yes",
+    "no": "No",
+    "previous": "Previous",
+    "noResults": "No results",
+    "search": "Search...",
+    "actions": "Actions",
+    "remove": "Remove",
+    "continue": "Continue",
+    "file": "File",
+    "edit": "Edit",
+    "visible": "Visible",
+    "favorite": "Favorite",
+    "in": "in",
+    "days": "days",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "place": "Place",
+    "today": "Today",
+    "noData": "No data",
+    "tomorrow": "Tomorrow",
+    "create": "Create",
+    "save": "Save"
+  },
+  "weeklyDish": "Dish of the week",
+  "appOnlyForPhone": "This app is only available on mobile",
+  "shoppingList": {
+    "title": "Shopping list",
+    "addSuccess": "Ingredient added to the shopping list",
+    "add": "Add to list",
+    "empty": "The shopping list is empty"
+  },
+  "filters": {
+    "title": "Filters",
+    "description": "Filter the results",
+    "reset": "Reset",
+    "apply": "Apply",
+    "chef": "Chef",
+    "tag": "Category"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Log in to your account"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Enter your details to sign up"
+    }
+  },
+  "toast": {
+    "remove": {
+      "success": {
+        "title": "Removal successful",
+        "description": "The item has been successfully removed"
+      },
+      "error": "Error while removing"
+    },
+    "fetch": {
+      "error": "Error fetching data"
+    },
+    "login": {
+      "error": "Login failed"
+    },
+    "copy": "Copied to clipboard",
+    "new": {
+      "success": "New item created",
+      "error": "Error creating item"
+    },
+    "update": {
+      "success": "Update successful",
+      "error": "Error updating"
+    },
+    "file": {
+      "upload": {
+        "success": "File uploaded",
+        "error": "Error uploading file"
+      }
+    }
+  },
+  "enums": {
+    "units": {
+      "kg": "Kg",
+      "g": "g",
+      "l": "L",
+      "cl": "cl",
+      "ml": "ml",
+      "unit": "Unit",
+      "tsp": "teaspoon",
+      "tbsp": "tablespoon",
+      "cup": "Cup"
+    }
+  },
   "home": {
     "name": "home",
     "subTitle": "This is the home page",
     "title": "Welcome to the starter-fast-foodie! 👋",
     "link": "About"
   },
-  "about": {
-    "name": "About",
-    "title": "About",
-    "subtitle": "This is the about page",
-    "link": "Back to Home"
+  "login": {
+    "notHaveAccount": "Don't have an account?"
   },
-  "generics": {
-    "copyright": "Copyright © 2023 - Starter-fast-foodie - All rights reserved",
-    "designed": "Designed and developed by ",
-    "logout": "Logout"
+  "register": {
+    "haveAccount": "Already have an account?"
   },
-  "fields": {
-    "generics": {
-      "email": "Email",
-      "password": "Password",
-      "userName": "First Name",
-      "lastName": "Last Name"
+  "user": {
+    "detail": {
+      "general": "General information",
+      "address": "Address"
+    }
+  },
+  "modal": {
+    "remove": {
+      "title": "Are you sure?",
+      "description": "This action is irreversible. Are you sure you want to delete this item?"
+    }
+  },
+  "file": {
+    "upload": {
+      "drag": "Drop files",
+      "description": "Click or drop files here to upload"
     },
-    "validations": {
-      "email": {
-        "invalid": "The email is not valid",
-        "required": "Email is required"
-      },
-      "password": {
-        "required": "Password is required",
-        "min": "Password must be at least 8 characters long",
-        "uppercase": "Password must contain at least one uppercase letter",
-        "lowercase": "Password must contain at least one lowercase letter",
-        "digit": "Password must contain at least one digit",
-        "specialCharacter": "Password must contain at least one special character",
-        "noSpaces": "Password must not contain spaces"
-      }
-    }
-  },
-  "errors": {
-    "api": {
-      "INTERNAL_SERVER_ERROR": "Internal server error",
-      "USER_NOT_FOUND": "User not found",
-      "FIRSTNAME_REQUIRED": "First name is required",
-      "LASTNAME_REQUIRED": "Last name is required",
-      "EMAIL_REQUIRED": "Email is required",
-      "FIRSTNAME_NOT_STRING": "First name must be a string",
-      "LASTNAME_NOT_STRING": "Last name must be a string",
-      "NOT_VALID_EMAIL": "Email is not valid",
-      "PASSWORD_REQUIRED": "Password is required",
-      "PASSWORD_NOT_STRING": "Password must be a string",
-      "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
-      "PASSWORD_NO_LETTER": "Password must contain at least one letter",
-      "PASSWORD_NO_DIGIT": "Password must contain at least one digit",
-      "PASSWORD_NO_SPECIAL_CHARACTER": "Password must contain at least one special character",
-      "PASSWORD_HAS_SPACES": "Password must not contain spaces",
-      "PASSWORD_NO_UPPERCASE": "Password must contain at least one uppercase letter",
-      "NOT_ADMIN": "You are not an administrator",
-      "CANNOT_CHANGE_OWN_STATUS": "You cannot change your own status",
-      "USER_NOT_ADMIN": "User is not an administrator",
-      "ADDRESS_NOT_FOUND": "Address not found",
-      "STREET_REQUIRED": "Street is required",
-      "CITY_REQUIRED": "City is required",
-      "COUNTRY_REQUIRED": "Country is required",
-      "ZIPCODE_REQUIRED": "Zip code is required",
-      "STREET_NOT_STRING": "Street must be a string",
-      "CITY_NOT_STRING": "City must be a string",
-      "COUNTRY_NOT_STRING": "Country must be a string",
-      "ZIPCODE_NOT_STRING": "Zip code must be a string"
-    }
+    "filesUploaded": "Files uploaded"
   }
 }

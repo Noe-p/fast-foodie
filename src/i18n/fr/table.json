@@ -1,0 +1,19 @@
+{
+  "pagination": {
+    "results": "{{results}} résultats au total"
+  },
+  "copyId": "Copier l'ID",
+  "seeDetail": "Voir le détail",
+  "filters": {
+    "title": "Filtres",
+    "description": "Vous pouvez filtrer les résultats en utilisant les champs ci-dessous",
+    "columns": "Colonnes",
+    "orderBy": "Trier par",
+    "filterBy": "Filtrer par"
+  },
+  "columns": {
+    "title": "Titre",
+    "images": "Image",
+    "chef": "Chef"
+  }
+}

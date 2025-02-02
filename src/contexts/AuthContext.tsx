@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { PageLoader } from '../components';
 
 interface State {
-  currentUser: User | null;
+  currentUser?: User;
   token: string;
   isLoaded: boolean;
 }
@@ -18,7 +18,7 @@ interface Context extends State {
 }
 
 const defaultState: State = {
-  currentUser: null,
+  currentUser: undefined,
   token: '',
   isLoaded: false,
 };
@@ -41,21 +41,23 @@ const AuthContext = React.createContext<Context>({
 
 function useAuthProvider() {
   const [token, setStateToken] = useState('');
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User>();
   const [isLoaded, setIsLoaded] = useState(false);
 
   HttpService.setToken(token);
 
   async function refreshUser() {
     if (token === '') {
-      setCurrentUser(null);
+      setCurrentUser(undefined);
       return;
     }
     try {
       const user = await ApiService.users.me();
       setCurrentUser(user);
+      window.localStorage.setItem('user', JSON.stringify(user));
     } catch (e) {
-      removeToken();
+      const user = window.localStorage.getItem('user');
+      setCurrentUser(user ? JSON.parse(user) : null);
     }
   }
 

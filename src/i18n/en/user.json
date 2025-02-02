@@ -1,0 +1,13 @@
+{
+  "title": "Account",
+  "detail": {
+    "title": "Detail",
+    "collaborators": "Collaborators"
+  },
+  "update": {
+    "title": "Update User"
+  },
+  "collaborator": {
+    "add": "Add a collaborator"
+  }
+}

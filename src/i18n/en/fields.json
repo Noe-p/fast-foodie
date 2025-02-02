@@ -1,0 +1,210 @@
+{
+  "generics": {
+    "addData": "Add a value"
+  },
+  "password": {
+    "label": "Password",
+    "placeholder": "Enter your password",
+    "errors": {
+      "required": "Password is required",
+      "notString": "Password must be a string",
+      "tooShort": "Password must be at least 8 characters long",
+      "noLetter": "Password must contain at least one letter",
+      "noDigit": "Password must contain at least one digit",
+      "noSpecialCharacter": "Password must contain at least one special character",
+      "hasSpaces": "Password must not contain spaces",
+      "noUppercase": "Password must contain at least one uppercase letter"
+    }
+  },
+  "ration": {
+    "label": "Number of people",
+    "placeholder": "Enter the ration",
+    "errors": {
+      "required": "Ration is required",
+      "notString": "Ration must be a string"
+    }
+  },
+  "tags": {
+    "label": "Categories",
+    "placeholder": "Add categories",
+    "errors": {
+      "required": "Categories are required",
+      "notArray": "Categories must be an array"
+    }
+  },
+  "collaborator": {
+    "label": "Collaborator",
+    "placeholder": "Enter the collaborator's username",
+    "errors": {
+      "required": "Collaborator is required",
+      "notString": "Collaborator must be a string"
+    }
+  },
+  "addTag": {
+    "label": "Add a category",
+    "placeholder": "Add a category",
+    "errors": {
+      "required": "Category is required",
+      "notString": "Category must be a string"
+    }
+  },
+  "userName": {
+    "label": "Username",
+    "placeholder": "Enter your username",
+    "errors": {
+      "required": "Username is required",
+      "notString": "Username must be a string"
+    }
+  },
+  "login": {
+    "label": "Username",
+    "placeholder": "Enter your username",
+    "errors": {
+      "required": "Username is required",
+      "notString": "Username must be a string"
+    }
+  },
+  "isVisible": {
+    "label": "Share the dish"
+  },
+  "name": {
+    "label": "Name",
+    "placeholder": "Enter your name",
+    "errors": {
+      "required": "Name is required",
+      "notString": "Name must be a string"
+    }
+  },
+  "dishesName": {
+    "label": "Name",
+    "placeholder": "Enter the dish name",
+    "errors": {
+      "required": "Dish name is required",
+      "notString": "Dish name must be a string"
+    }
+  },
+  "images": {
+    "label": "Images",
+    "placeholder": "Choose one or more images",
+    "errors": {
+      "required": "Images are required",
+      "notArray": "Images must be an array"
+    }
+  },
+  "ingredients": {
+    "label": "Ingredients",
+    "placeholder": "Enter the ingredients",
+    "errors": {
+      "required": "Ingredients are required",
+      "notString": "Ingredients must be a string"
+    }
+  },
+  "foodName": {
+    "label": "Name",
+    "placeholder": "Enter the food name",
+    "errors": {
+      "required": "Food name is required",
+      "notString": "Food name must be a string"
+    }
+  },
+  "aisle": {
+    "label": "Aisle",
+    "placeholder": "Enter the aisle",
+    "errors": {
+      "required": "Aisle is required",
+      "notString": "Aisle must be a string"
+    }
+  },
+  "description": {
+    "label": "Description",
+    "placeholder": "Enter the description",
+    "errors": {
+      "required": "Description is required",
+      "notString": "Description must be a string"
+    }
+  },
+  "selectFood": {
+    "label": "Add a food",
+    "placeholder": "Add a food",
+    "errors": {
+      "required": "Food is required",
+      "notString": "Food must be a string"
+    }
+  },
+  "instructions": {
+    "label": "Instructions",
+    "placeholder": "Enter the instructions",
+    "errors": {
+      "required": "Instructions are required",
+      "notString": "Instructions must be a string"
+    }
+  },
+  "quantity": {
+    "label": "Quantity",
+    "placeholder": "Enter the quantity...",
+    "errors": {
+      "required": "Quantity is required",
+      "notString": "Quantity must be a string"
+    }
+  },
+  "lastName": {
+    "label": "Last name",
+    "placeholder": "Enter your last name",
+    "errors": {
+      "required": "Last name is required",
+      "notString": "Last name must be a string"
+    }
+  },
+  "confirmPassword": {
+    "label": "Confirm password",
+    "placeholder": "Confirm your password",
+    "errors": {
+      "notMatch": "Passwords do not match"
+    }
+  },
+  "email": {
+    "label": "Email",
+    "placeholder": "Enter your email",
+    "errors": {
+      "required": "Email is required",
+      "notString": "Email must be a string",
+      "notValid": "Email is not valid"
+    }
+  },
+  "street": {
+    "label": "Street",
+    "placeholder": "Enter your street",
+    "errors": {
+      "required": "Street is required",
+      "notString": "Street must be a string"
+    }
+  },
+  "city": {
+    "label": "City",
+    "placeholder": "Enter your city",
+    "errors": {
+      "required": "City is required",
+      "notString": "City must be a string"
+    }
+  },
+  "country": {
+    "label": "Country",
+    "placeholder": "Enter your country",
+    "errors": {
+      "required": "Country is required",
+      "notString": "Country must be a string"
+    }
+  },
+  "zipCode": {
+    "label": "Zip Code",
+    "placeholder": "Enter your zip code",
+    "errors": {
+      "required": "Zip code is required",
+      "notString": "Zip code must be a string"
+    }
+  },
+  "profilePicture": {
+    "label": "Profile picture",
+    "placeholder": "Choose a photo"
+  }
+}

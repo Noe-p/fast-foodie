@@ -1,15 +1,16 @@
 'use client';
+
 import { Col } from '@/components/Helpers/Helpers';
 import { ApiService } from '@/services/api';
+import { cn } from '@/services/utils';
 import { MediaDto } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2, Upload, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import tw from 'tailwind-styled-components';
 import { P14 } from '..';
-import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
 export interface ImageUploadProps {
@@ -28,67 +29,81 @@ export default function ImageUpload(props: ImageUploadProps) {
     favorite,
     onFavoriteChange,
   } = props;
+
   const [uploadedFiles, setUploadedFiles] = useState<MediaDto[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState<File[]>([]); // Nouvel état pour les fichiers en cours d'upload
   const { t } = useTranslation();
   const { toast } = useToast();
 
-  const { mutate: fileUpload, isPending } = useMutation({
+  const { mutate: fileUpload } = useMutation({
     mutationFn: ApiService.medias.fileUpload,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       toast({
         title: t('toast:file.upload.error'),
-        description: t(error.message),
+        description: t(error.data.response.message),
         variant: 'destructive',
       });
     },
-    onSuccess: (data) => {
-      setUploadedFiles((prevUploadedFiles) => {
-        return multiple ? [...prevUploadedFiles, data] : [data];
-      });
+    onSuccess: (data, variables) => {
+      setUploadedFiles((prev) => [...prev, data]);
+      setUploadingFiles(
+        (prev) => prev.filter((file) => file.name !== variables.name) // Supprime le fichier en cours d'upload
+      );
     },
   });
+
+  const prevUploadedFiles = useRef(uploadedFiles);
 
   useEffect(() => {
     if (defaultValue) {
       setUploadedFiles(defaultValue);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [defaultValue]);
 
   useEffect(() => {
-    onImageUpload(uploadedFiles.map((file) => file));
+    // Ne mettre à jour onImageUpload que si la liste des fichiers a changé
+    if (
+      JSON.stringify(uploadedFiles) !==
+      JSON.stringify(prevUploadedFiles.current)
+    ) {
+      onImageUpload(uploadedFiles.map((file) => file));
+      prevUploadedFiles.current = uploadedFiles; // Mettre à jour la référence
+    }
+
     const favoriteFile = uploadedFiles.find((file) => file.id === favorite);
     if (!favoriteFile && uploadedFiles.length > 0 && onFavoriteChange) {
       onFavoriteChange(uploadedFiles[0].id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadedFiles]);
+  }, [uploadedFiles, favorite, onFavoriteChange]);
 
-  async function removeFile(file: MediaDto) {
+  const removeFile = async (file: MediaDto) => {
     try {
       await ApiService.medias.fileRemove(file.id);
-      setUploadedFiles((prevUploadedFiles) => {
-        return prevUploadedFiles.filter((item) => item.id !== file.id);
-      });
-    }
-    catch (error: any) {
+      setUploadedFiles((prev) => prev.filter((item) => item.id !== file.id));
+    } catch (error: any) {
       toast({
         title: t('toast:file.upload.error'),
-        description: t(error.data.message),
+        description: t(error.data.response.message),
         variant: 'destructive',
       });
     }
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    await Promise.all(
-      acceptedFiles.map(async (file) => {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      // Ajouter les nouveaux fichiers uniquement si nécessaire
+      setUploadingFiles((prev) => {
+        const newFiles = acceptedFiles.filter(
+          (file) => !prev.some((existing) => existing.name === file.name)
+        );
+        return [...prev, ...newFiles];
+      });
+      acceptedFiles.forEach((file) => {
         fileUpload(file);
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      });
+    },
+    [fileUpload]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -97,9 +112,9 @@ export default function ImageUpload(props: ImageUploadProps) {
       <div>
         <label
           {...getRootProps()}
-          className='relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 '
+          className='relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100'
         >
-          <div className='text-center '>
+          <div className='text-center'>
             <div className='p-2 mx-auto border rounded-md max-w-min'>
               <Upload className='text-gray-600' size={20} />
             </div>
@@ -113,7 +128,7 @@ export default function ImageUpload(props: ImageUploadProps) {
           </div>
         </label>
 
-        <Input
+        <input
           {...getInputProps()}
           id='dropzone-file'
           accept='image/*'
@@ -127,29 +142,30 @@ export default function ImageUpload(props: ImageUploadProps) {
         {uploadedFiles.length > 0 && (
           <P14 className='text-foreground'>{t('file.filesUploaded')}</P14>
         )}
-        <div className='flex flex-wrap mt-2 space-x-1 '>
-          {isPending ? (
-            <div className='flex justify-center'>
-              <Loader2 className='w-6 h-6 animate-spin' />
+        <div className='flex flex-wrap mt-2 space-x-1'>
+          {uploadingFiles.map((file) => (
+            <div
+              key={file.name}
+              className='flex items-center justify-center w-15 h-20 border bg-gray-50 rounded-md border-dashed border-gray-500'
+            >
+              <Loader2 className='w-6 h-6 animate-spin text-gray-500' />
             </div>
-          ) : (
-            uploadedFiles.map((file) => {
-              return (
-                <ImageCard
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onFavoriteChange && onFavoriteChange(file.id);
-                  }}
-                  key={file.id}
-                >
-                  <Image src={file.url} alt={file.filename} />
-                  <RemoveButton onClick={() => removeFile(file)}>
-                    <X size={15} />
-                  </RemoveButton>
-                </ImageCard>
-              );
-            })
-          )}
+          ))}
+          {uploadedFiles.map((file) => (
+            <ImageCard
+              className={cn(favorite === file.id && 'border-2 border-primary')}
+              onClick={(e) => {
+                e.preventDefault();
+                onFavoriteChange && onFavoriteChange(file.id);
+              }}
+              key={file.id}
+            >
+              <Image src={file.url} alt={file.filename} />
+              <RemoveButton onClick={() => removeFile(file)}>
+                <X size={15} />
+              </RemoveButton>
+            </ImageCard>
+          ))}
         </div>
       </div>
     </div>
@@ -158,7 +174,7 @@ export default function ImageUpload(props: ImageUploadProps) {
 
 const Image = tw.img`
   w-15
-  h-15
+  h-20
   object-cover
   rounded-md
   border 
@@ -197,5 +213,4 @@ const ImageCard = tw.div`
   group
   hover:border-gray-500
   transition-all
-
 `;

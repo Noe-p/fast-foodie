@@ -21,6 +21,16 @@
     "success": "Mise à jour réussie",
     "error": "Erreur lors de la mise à jour"
   },
+  "collaborator": {
+    "add": {
+      "success": "Collaborateur ajouté",
+      "error": "Erreur lors de l'ajout du collaborateur"
+    },
+    "remove": {
+      "success": "Collaborateur supprimé",
+      "error": "Erreur lors de la suppression du collaborateur"
+    }
+  },
   "file": {
     "upload": {
       "success": "Fichier téléchargé",

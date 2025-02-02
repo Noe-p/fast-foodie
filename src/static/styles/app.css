@@ -106,9 +106,11 @@ body {
 
 .lain_background {
   background-image: url('/images/lain_background.JPG');
-  background-size: cover; /* Remplir l'écran */
   background-position: center; /* Centrer l'image */
   background-repeat: repeat-y; /* Répéter verticalement */
+  /* Hauteur totale de la fenêtre */
+  width: 100%;
+  /* Largeur totale */
 }
 
 .text_background {
@@ -116,4 +118,13 @@ body {
   background-size: cover; /* Remplir l'écran */
   background-position: center; /* Centrer l'image */
   background-repeat: repeat-y; /* Répéter verticalement */
+}
+
+@layer utilities {
+  .reset {
+    all: unset;
+    /* Réinitialise tous les styles */
+    display: block;
+    /* Réapplique les styles nécessaires */
+  }
 }
