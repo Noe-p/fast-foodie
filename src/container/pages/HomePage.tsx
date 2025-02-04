@@ -31,7 +31,14 @@ export function HomePage(): React.JSX.Element {
     if (currentUser)
       setChefs([
         ...currentUser?.collaborators.flatMap(
-          (collaborator) => collaborator.userName
+          (collaborator) =>
+            collaborator?.collaborator?.userName ??
+            collaborator?.sender?.userName ??
+            []
+        ),
+        ...currentUser?.collabSend.flatMap(
+          (collab) =>
+            collab?.collaborator?.userName ?? collab?.sender?.userName ?? []
         ),
         currentUser.userName,
       ]);

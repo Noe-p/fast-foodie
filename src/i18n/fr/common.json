@@ -34,7 +34,11 @@
     "noData": "Aucune donnée",
     "tomorrow": "Demain",
     "create": "Créer",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "accept": "Accepter",
+    "refuse": "Refuser",
+    "fullAccess": "Accès total",
+    "readOnly": "Lecture seule"
   },
   "weeklyDish": "Plat de la semaine",
   "appOnlyForPhone": "Cette application est uniquement disponible sur mobile",
@@ -91,8 +95,8 @@
       }
     }
   },
-  "enums":{
-    "units":{
+  "enums": {
+    "units": {
       "kg": "Kg",
       "g": "g",
       "l": "L",

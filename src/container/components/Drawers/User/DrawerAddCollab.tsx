@@ -1,16 +1,14 @@
 import { DrawerMotion } from '@/components/Drawer';
 import { useToast } from '@/components/ui/use-toast';
 import { ApiService } from '@/services/api';
-import { UpdateUserApi } from '@/types';
-import { userValidation } from '@/validations';
+import { CollaboratorType, CreateCollaboratorApi } from '@/types';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
-import { RowBetween } from '@/components';
+import { Col, P14, RowBetween, Toggle } from '@/components';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -23,7 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/contexts';
 import { formatValidationErrorMessage } from '@/services/error';
-
+import { CollaboratorValidation } from '@/validations';
 interface DrawerAddCollabProps {
   className?: string;
   isOpen: boolean;
@@ -37,13 +35,17 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
   const queryClient = useQueryClient();
   const { currentUser, refreshUser } = useAuthContext();
 
-  const form = useForm<UpdateUserApi>({
-    resolver: yupResolver(userValidation.update),
+  const form = useForm<CreateCollaboratorApi>({
+    resolver: yupResolver(CollaboratorValidation.create),
     mode: 'onTouched',
+    defaultValues: {
+      type: CollaboratorType.READ_ONLY,
+    },
   });
 
   const { mutate: addCollab, isPending } = useMutation({
-    mutationFn: (data: UpdateUserApi) => ApiService.users.updateMe(data),
+    mutationFn: (data: CreateCollaboratorApi) =>
+      ApiService.collaborators.sendAsk(data),
     onSuccess: (data) => {
       refreshUser();
       form.reset();
@@ -68,18 +70,6 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
     },
   });
 
-  useEffect(() => {
-    if (currentUser) {
-      form.reset({
-        ...currentUser,
-        userName: currentUser.userName,
-        profilePicture: undefined,
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
-
   if (!currentUser) {
     return <></>;
   }
@@ -99,7 +89,7 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
           >
             <FormField
               control={form.control}
-              name='collaboratorName'
+              name='userName'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('fields:collaborator.label')}</FormLabel>
@@ -116,6 +106,33 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='type'
+              render={({ field }) => (
+                <FormItem className='flex flex-col gap-1'>
+                  <RowBetween className='w-full items-center'>
+                    <FormLabel className='w-full'>
+                      {t('fields:collabType.label')}
+                    </FormLabel>
+                    <Toggle
+                      onChange={(v) =>
+                        field.onChange(
+                          v === true
+                            ? CollaboratorType.FULL_ACCESS
+                            : CollaboratorType.READ_ONLY
+                        )
+                      }
+                      value={field.value === CollaboratorType.FULL_ACCESS}
+                    />
+                  </RowBetween>
+                  <P14 className='text-primary/80'>
+                    {t('fields:collabType.description')}
+                  </P14>
                   <FormMessage />
                 </FormItem>
               )}
@@ -140,9 +157,8 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
   );
 }
 
-const Content = tw.div`
-  px-4
-  pb-5
+const Content = tw(Col)`
+  px-5
 `;
 
 const InputStyled = tw(Input)`

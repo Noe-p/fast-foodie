@@ -2,7 +2,17 @@
   "title": "Compte",
   "detail": {
     "title": "Détail",
-    "collaborators": "Collaborateurs"
+    "collaborators": {
+      "title": "Collaborateurs",
+      "empty": "Aucun collaborateur",
+      "pending": "En attente de validation",
+      "isPending": "En attente",
+      "accept": {
+        "title": "Accepter la demande",
+        "fullAccess": "Attention, si vous acceptez cette demande, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Le collaborateur pourra également modifier et supprimer vos plats. Êtes-vous sûr de vouloir accepter cette demande ?",
+        "readOnly": "En acceptant cette demande, vous aurez accès au plats du collaborateur et le collaborateur pourra voir vos plats. Êtes-vous sûr de vouloir accepter cette demande ?"
+      }
+    }
   },
   "update": {
     "title": "Mettre à jour"

@@ -1,21 +1,35 @@
-import { ApiResponse, Collaborator, CollaboratorApi, User } from '@/types';
+import {
+  CollaboratorDto,
+  CreateCollaboratorApi,
+  UpdateCollaboratorApi,
+} from '@/types';
 import { API_ROUTES } from '../apiRoutes';
 import { HttpService } from '../httpService';
 
-const get = async (): Promise<User[]> => {
-  return (await HttpService.get(API_ROUTES.collaborators.get)).data;
+const sendAsk = async (
+  body: CreateCollaboratorApi
+): Promise<CollaboratorDto> => {
+  return await HttpService.post(API_ROUTES.collaborators.sendAsk, body);
 };
 
 const remove = async (id: string): Promise<void> => {
-  await HttpService.delete(API_ROUTES.collaborators.delete, id);
+  await HttpService.delete(API_ROUTES.collaborators.delete(id));
 };
 
-const create = async (payload: CollaboratorApi): Promise<Collaborator> => {
-  return (await HttpService.post(API_ROUTES.collaborators.create, payload)).data;
-}
+const accept = async (id: string): Promise<CollaboratorDto> => {
+  return await HttpService.post(API_ROUTES.collaborators.accept(id));
+};
+
+const update = async (
+  id: string,
+  body: UpdateCollaboratorApi
+): Promise<CollaboratorDto> => {
+  return await HttpService.put(API_ROUTES.collaborators.update(id), body);
+};
 
 export const CollaboratorApiService = {
-  get,
   remove,
-  create,
+  sendAsk,
+  accept,
+  update,
 };

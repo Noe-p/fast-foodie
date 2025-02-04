@@ -66,7 +66,8 @@
       "invalid": "Collaborateur invalide",
       "emailRequired": "L'email est requis",
       "alreadyAdded": "Le collaborateur a déjà été ajouté",
-      "cannotChangeOwnStatus": "Vous ne pouvez pas vous ajouter en tant que collaborateur"
+      "cannotChangeOwnStatus": "Vous ne pouvez pas vous ajouter en tant que collaborateur",
+      "alreadyPending": "Ce collaborateur est déjà en attente de validation"
     },
     "food": {
       "notFound": "Aliment non trouvé",

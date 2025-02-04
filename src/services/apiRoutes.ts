@@ -8,7 +8,6 @@ export const API_ROUTES = {
     me: '/users/me',
     update: '/users/me',
     delete: '/users/me',
-    removeCollaborator: (id: string) => `/users/me/collaborators/${id}`,
   },
   media: {
     upload: '/upload',
@@ -29,8 +28,9 @@ export const API_ROUTES = {
     delete: (id: string) => `/foods/${id}`,
   },
   collaborators: {
-    get: '/collaborators',
-    create: '/collaborators',
+    sendAsk: '/collaborators/sendAsk',
+    accept: (id: string) => `/collaborators/accept/${id}`,
     delete: (id: string) => `/collaborators/${id}`,
+    update: (id: string) => `/collaborators/${id}`,
   },
 };

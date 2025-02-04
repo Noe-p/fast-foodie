@@ -16,13 +16,18 @@
       "noUppercase": "Le mot de passe doit contenir au moins une majuscule"
     }
   },
-  "ration":{
+  "ration": {
     "label": "Nombre de personnes",
     "placeholder": "Entrez la ration",
     "errors": {
       "required": "La ration est requise",
       "notString": "La ration doit être une chaîne de caractères"
     }
+  },
+  "collabType": {
+    "label": "Privileges du collaborateur",
+    "placeholder": "Sélectionnez le type de collaborateur",
+    "description": "Si vous cochez la case, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Le collaborateur pourra également modifier et supprimer vos plats."
   },
   "tags": {
     "label": "Catégories",
@@ -56,7 +61,7 @@
       "notString": "Le Pseudo doit être une chaîne de caractères"
     }
   },
-  "login":{
+  "login": {
     "label": "Pseudo",
     "placeholder": "Entrez votre Pseudo",
     "errors": {
@@ -67,7 +72,7 @@
   "isVisible": {
     "label": "Partager le plat"
   },
-  "name":{
+  "name": {
     "label": "Nom",
     "placeholder": "Entrez votre nom",
     "errors": {
@@ -75,7 +80,7 @@
       "notString": "Le nom doit être une chaîne de caractères"
     }
   },
-  "dishesName":{
+  "dishesName": {
     "label": "Nom",
     "placeholder": "Entrez le nom du plat",
     "errors": {
@@ -83,7 +88,7 @@
       "notString": "Le nom du plat doit être une chaîne de caractères"
     }
   },
-  "images":{
+  "images": {
     "label": "Images",
     "placeholder": "Choisissez une ou plusieurs images",
     "errors": {
@@ -91,7 +96,7 @@
       "notArray": "Les images doivent être un tableau"
     }
   },
-  "ingredients":{
+  "ingredients": {
     "label": "Ingrédients",
     "placeholder": "Entrez les ingrédients",
     "errors": {
@@ -99,7 +104,7 @@
       "notString": "Les ingrédients doivent être une chaîne de caractères"
     }
   },
-  "foodName":{
+  "foodName": {
     "label": "Nom",
     "placeholder": "Entrez le nom de l'aliment",
     "errors": {
@@ -107,7 +112,7 @@
       "notString": "Le nom de l'aliment doit être une chaîne de caractères"
     }
   },
-  "aisle":{
+  "aisle": {
     "label": "Rayon",
     "placeholder": "Entrez le rayon",
     "errors": {
@@ -115,7 +120,7 @@
       "notString": "Le rayon doit être une chaîne de caractères"
     }
   },
-  "description":{
+  "description": {
     "label": "Description",
     "placeholder": "Entrez la description",
     "errors": {
@@ -123,7 +128,7 @@
       "notString": "La description doit être une chaîne de caractères"
     }
   },
-  "selectFood":{
+  "selectFood": {
     "label": "Ajouter un aliment",
     "placeholder": "Ajouter un aliment",
     "errors": {
@@ -131,7 +136,7 @@
       "notString": "L'aliment doit être une chaîne de caractères"
     }
   },
-  "instructions":{
+  "instructions": {
     "label": "Instructions",
     "placeholder": "Entrez les instructions",
     "errors": {
@@ -139,7 +144,7 @@
       "notString": "Les instructions doivent être une chaîne de caractères"
     }
   },
-  "quantity":{
+  "quantity": {
     "label": "Quantité",
     "placeholder": "Entrez la quantité...",
     "errors": {

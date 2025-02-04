@@ -1,8 +1,9 @@
 import { Avatar, P10 } from '@/components';
-import { ColCenter, Row, RowCenter } from '@/components/Helpers';
+import { Col, ColCenter, Row, RowCenter } from '@/components/Helpers';
 import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { cn } from '@/services/utils';
+import { CollaboratorStatus } from '@/types';
 import {
   CalendarFoldIcon,
   PlusCircle,
@@ -24,8 +25,6 @@ export function Tabbar(props: TabbarProps): JSX.Element {
   const { t } = useTranslation();
   const { currentUser } = useAuthContext();
   const { setDrawerOpen } = useAppContext();
-
-  console.log('[D] Tabbar', { currentUser });
 
   const KEYS = [
     {
@@ -54,7 +53,25 @@ export function Tabbar(props: TabbarProps): JSX.Element {
     },
     {
       path: ROUTES.user,
-      icon: <Avatar user={currentUser} />,
+      icon: (
+        <Col className='relative'>
+          <Avatar user={currentUser} />
+          {currentUser?.collaborators &&
+            currentUser?.collaborators?.filter(
+              (colab) => colab.status === CollaboratorStatus.IS_PENDING
+            ).length > 0 && (
+              <Notification>
+                <P10 className='text-background'>
+                  {
+                    currentUser?.collaborators?.filter(
+                      (colab) => colab.status === CollaboratorStatus.IS_PENDING
+                    ).length
+                  }
+                </P10>
+              </Notification>
+            )}
+        </Col>
+      ),
       action: () => setDrawerOpen(DrawerType.DETAIL_USER),
       name: currentUser?.userName || '',
     },
@@ -99,4 +116,19 @@ const Item = tw(ColCenter)<{ $selected?: boolean }>`
   cursor-pointer
   text-background
   ${(props) => (props.$selected ? 'opacity-100' : 'opacity-60')}
+`;
+
+const Notification = tw(ColCenter)`
+  rounded-full
+  bg-destructive
+  w-5
+  h-5
+  absolute
+  items-center
+  justify-center
+  top-0
+  right-0
+  transform
+  translate-x-1/2
+  -translate-y-1/2
 `;
