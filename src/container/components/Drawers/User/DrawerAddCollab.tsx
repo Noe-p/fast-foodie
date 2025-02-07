@@ -8,7 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
 
-import { Col, P14, RowBetween, Toggle } from '@/components';
+import { Col, P16, RowBetween } from '@/components';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -22,14 +22,16 @@ import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/contexts';
 import { formatValidationErrorMessage } from '@/services/error';
 import { CollaboratorValidation } from '@/validations';
+import { useEffect } from 'react';
 interface DrawerAddCollabProps {
   className?: string;
   isOpen: boolean;
   onClose: () => void;
+  type: CollaboratorType;
 }
 
 export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
-  const { className, isOpen, onClose } = props;
+  const { className, isOpen, onClose, type } = props;
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -39,7 +41,7 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
     resolver: yupResolver(CollaboratorValidation.create),
     mode: 'onTouched',
     defaultValues: {
-      type: CollaboratorType.READ_ONLY,
+      type: type,
     },
   });
 
@@ -51,7 +53,7 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
       form.reset();
       onClose();
       toast({
-        title: t('toast:collaborator.add.success'),
+        title: t('toast:collaborator.isPending.success'),
       });
       queryClient.refetchQueries({
         queryKey: ['user'],
@@ -70,6 +72,10 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
     },
   });
 
+  useEffect(() => {
+    form.setValue('type', type);
+  }, [type]);
+
   if (!currentUser) {
     return <></>;
   }
@@ -79,7 +85,7 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
       className='relative h-min'
       isOpen={isOpen}
       onClose={onClose}
-      title={t('user:title')}
+      title={t('generics.add')}
     >
       <Content className={className}>
         <Form {...form}>
@@ -92,7 +98,7 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
               name='userName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('fields:collaborator.label')}</FormLabel>
+                  <FormLabel>{t('fields:userName.label')}</FormLabel>
                   <FormControl>
                     <InputStyled
                       isRemovable
@@ -110,33 +116,11 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='type'
-              render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
-                  <RowBetween className='w-full items-center'>
-                    <FormLabel className='w-full'>
-                      {t('fields:collabType.label')}
-                    </FormLabel>
-                    <Toggle
-                      onChange={(v) =>
-                        field.onChange(
-                          v === true
-                            ? CollaboratorType.FULL_ACCESS
-                            : CollaboratorType.READ_ONLY
-                        )
-                      }
-                      value={field.value === CollaboratorType.FULL_ACCESS}
-                    />
-                  </RowBetween>
-                  <P14 className='text-primary/80'>
-                    {t('fields:collabType.description')}
-                  </P14>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <P16 className='text-primary/80'>
+              {type === CollaboratorType.FULL_ACCESS
+                ? t('fields:collabType.fullAccess')
+                : t('fields:collabType.readOnly')}
+            </P16>
             <RowBetween className='mt-10 gap-2'>
               <Button className='w-full z-50' type='button' onClick={onClose}>
                 {t('generics.cancel')}
@@ -158,7 +142,8 @@ export function DrawerAddCollab(props: DrawerAddCollabProps): JSX.Element {
 }
 
 const Content = tw(Col)`
-  px-5
+  px-4
+  pb-5
 `;
 
 const InputStyled = tw(Input)`

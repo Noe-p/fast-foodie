@@ -8,6 +8,9 @@ export const ROUTES = {
   },
   shoppingList: '/shoppingList',
   user: '/user',
+  users: {
+    detail: (id: string) => `/users/${id}`,
+  },
   auth: {
     login: '/login',
     register: '/register',

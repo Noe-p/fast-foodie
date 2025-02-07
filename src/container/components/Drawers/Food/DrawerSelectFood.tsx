@@ -132,7 +132,9 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
                       >
                         <Col className='items-center justify-center h-full'>
                           <H3 className='text-center'>{food.icon}</H3>
-                          <P16 className='text-center'>{food.name}</P16>
+                          <P16 className='text-center leading-none'>
+                            {food.name}
+                          </P16>
                         </Col>
                         <Row className='justify-end items-end w-full'>
                           <CircleEllipsis

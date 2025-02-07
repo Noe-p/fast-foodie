@@ -88,7 +88,7 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
               <Header className={headerClassName}>
                 <RowBetween>
                   <Row className='flex-1'>
-                    <Title>{title}</Title>
+                    <Title className='leading-none'>{title}</Title>
                   </Row>
                   <Row className='gap-2 items-center'>
                     {!!icon && <IconContainer>{icon}</IconContainer>}

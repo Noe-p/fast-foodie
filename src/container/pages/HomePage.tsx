@@ -4,7 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
-import { LocalSearchParams } from '@/types';
+import {
+  CollaboratorStatus,
+  CollaboratorType,
+  LocalSearchParams,
+} from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { motion } from 'framer-motion';
 import { AlignJustify, Grid2X2, Loader2, SearchIcon } from 'lucide-react';
@@ -28,20 +32,26 @@ export function HomePage(): React.JSX.Element {
   const { dishes, tags, isPending, refresh } = useDishContext();
 
   useEffect(() => {
-    if (currentUser)
-      setChefs([
-        ...currentUser?.collaborators.flatMap(
+    if (currentUser) {
+      const collabFullAccess = [
+        ...currentUser?.collaborators.filter(
           (collaborator) =>
-            collaborator?.collaborator?.userName ??
-            collaborator?.sender?.userName ??
-            []
+            collaborator?.type === CollaboratorType.FULL_ACCESS &&
+            collaborator?.status === CollaboratorStatus.IS_ACCEPTED
         ),
-        ...currentUser?.collabSend.flatMap(
+        ...currentUser?.collabSend.filter(
           (collab) =>
-            collab?.collaborator?.userName ?? collab?.sender?.userName ?? []
+            collab?.type === CollaboratorType.FULL_ACCESS &&
+            collab?.status === CollaboratorStatus.IS_ACCEPTED
         ),
+      ];
+      setChefs([
         currentUser.userName,
+        ...collabFullAccess.map(
+          (collab) => collab?.collaborator?.userName || collab.sender.userName
+        ),
       ]);
+    }
   }, [currentUser]);
 
   function filterDishes(filters: LocalSearchParams, dishes?: Dish[]): Dish[] {
@@ -55,7 +65,9 @@ export function HomePage(): React.JSX.Element {
         )
           return false;
         if (filters.chef && dish.chef.userName !== filters.chef) return false;
+        if (!chefs.includes(dish.chef.userName)) return false;
         return true;
+        //SI Un chef d'un des plats n'est pas dans la liste des chefs, on ne l'affiche pas
       })
       .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
   }
@@ -125,7 +137,7 @@ export function HomePage(): React.JSX.Element {
                 columns={dishColumns}
                 data={filterDishes(filters, dishes) ?? []}
                 redirection={(id) => {
-                  router.push(ROUTES.dishes.detail(id));
+                  router.push(`${ROUTES.dishes.detail(id)}?dish=true`);
                 }}
               />
             </motion.div>
@@ -152,7 +164,7 @@ export function HomePage(): React.JSX.Element {
                   </P14>
                 ) : (
                   filterDishes(filters, dishes)?.map((dish: Dish) => (
-                    <DishesCard key={dish.id} dish={dish} />
+                    <DishesCard from='dish' key={dish.id} dish={dish} />
                   ))
                 )}
               </Col>

@@ -32,6 +32,12 @@
       "notArray": "Categories must be an array"
     }
   },
+  "collabType": {
+    "label": "Collaborator privileges",
+    "placeholder": "Select the collaborator type",
+    "fullAccess": "If the request is accepted, you will share foods, weekly dishes and shopping list with this collaborator. You will also be able to edit dishes and the collaborator will be able to edit your dishes.",
+    "readOnly": "If the request is accepted, you will have access to the collaborator's dishes and the collaborator will be able to see your dishes."
+  },
   "collaborator": {
     "label": "Collaborator",
     "placeholder": "Enter the collaborator's username",

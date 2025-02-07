@@ -1,4 +1,4 @@
-import { Avatar, DialogModal, ModalRemove } from '@/components';
+import { Avatar, DialogModal } from '@/components';
 import { DrawerMotion } from '@/components/Drawer';
 import { Col, Row, RowBetween } from '@/components/Helpers';
 import { H2, P10, P12, P14 } from '@/components/Texts';
@@ -10,11 +10,19 @@ import {
   useAuthContext,
   useDishContext,
 } from '@/contexts';
+import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { CollaboratorDto, CollaboratorStatus, CollaboratorType } from '@/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Loader2, LogOutIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import {
+  ArrowRight,
+  Edit,
+  LogOutIcon,
+  PlusIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { useTranslation } from 'next-i18next';
+import router from 'next/router';
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { DrawerAddCollab } from './DrawerAddCollab';
@@ -37,6 +45,9 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
   const [collaborators, setCollaborators] = useState<CollaboratorDto[]>([]);
   const [collabPending, setCollabPending] = useState<CollaboratorDto[]>([]);
   const queryClient = useQueryClient();
+  const [typeSelected, setTypeSelected] = useState<CollaboratorType>(
+    CollaboratorType.READ_ONLY
+  );
 
   async function handleLogout() {
     setIsLoading(true);
@@ -76,6 +87,7 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
       ApiService.collaborators.accept(data.id),
     onSuccess: async (data) => {
       await refreshUser();
+      refresh();
       toast({
         title: t('toast:collaborator.add.success'),
       });
@@ -122,24 +134,13 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
 
   return (
     <>
-      <DrawerMotion
-        className='relative h-min'
-        isOpen={isOpen}
-        onClose={onClose}
-        title={t('user:title')}
-      >
+      <DrawerMotion isOpen={isOpen} onClose={onClose} title={t('user:title')}>
         <Content className={className}>
           <Col className='gap-4'>
             <Col className='gap-1'>
               <H2>{t('user:detail.title')}</H2>
               <Col className='gap-2'>
-                {currentUser?.profilePicture && (
-                  <img
-                    src={currentUser?.profilePicture?.url}
-                    alt={currentUser?.userName}
-                    className='w-20 h-20 border border-primary rounded-full object-cover'
-                  />
-                )}
+                <Avatar size={80} user={currentUser} />
                 <Row className='gap-2 bg-background rounded-md px-3 py-2 w-full'>
                   <Col>
                     <Label>{t('fields:userName.label')}</Label>
@@ -152,15 +153,24 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
             </Col>
             <Col className='gap-4'>
               <Col className='gap-2'>
-                <H2>{t('user:detail.collaborators.title')}</H2>
+                <Row className='w-full items-end gap-2'>
+                  <H2>{t('user:detail.collaborators.title')}</H2>
+                  <P14 className='text-primary/90 -translate-y-1'>
+                    {`(${t('generics.fullAccess')})`}
+                  </P14>
+                </Row>
                 <div className='grid grid-cols-3 gap-2'>
                   {collaborators &&
                     collaborators
-                      .filter((e) => e)
+                      .filter((e) => e.type === CollaboratorType.FULL_ACCESS)
                       ?.map((collab) => (
                         <Col
-                          className='bg-background relative p-2 rounded-lg items-center justify-center w-full h-30'
+                          className='bg-background relative p-2 rounded-lg items-center justify-center w-full h-25'
                           key={collab?.id}
+                          onClick={() => {
+                            router.push(ROUTES.users.detail(collab.id));
+                            setDrawerOpen(undefined);
+                          }}
                         >
                           <Avatar
                             size={35}
@@ -170,33 +180,67 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
                             {collab?.collaborator?.userName ||
                               collab.sender.userName}
                           </P14>
-                          <P12 className='text-center text-primary/80'>
-                            {collab.type === CollaboratorType.FULL_ACCESS
-                              ? t('generics.fullAccess')
-                              : t('generics.readOnly')}
-                          </P12>
-                          <Row className='justify-end w-full mt-1'>
-                            <ModalRemove
-                              icon={
-                                isPending ? (
-                                  <Loader2 className='w-6 h-6 animate-spin' />
-                                ) : (
-                                  <Trash2Icon
-                                    size={17}
-                                    className='text-muted-foreground'
-                                  />
-                                )
-                              }
-                              onRemove={() => {
-                                removeCollab({ id: collab.id });
-                              }}
-                            />
+                          <Row className='justify-end w-full items-center mt-1 gap-1'>
+                            <P12 className='text-primary/80'>
+                              {t('generics.seeMore')}
+                            </P12>
+                            <ArrowRight className='text-primary/80' size={15} />
                           </Row>
                         </Col>
                       ))}
                   <Col
-                    onClick={() => setIsAddCollab(true)}
-                    className='bg-background p-2 rounded-lg items-center w-full justify-center h-30 text-muted-foreground'
+                    onClick={() => {
+                      setTypeSelected(CollaboratorType.FULL_ACCESS);
+                      setIsAddCollab(true);
+                    }}
+                    className='bg-background p-2 rounded-lg items-center w-full justify-center h-25 text-muted-foreground'
+                  >
+                    <PlusIcon />
+                  </Col>
+                </div>
+              </Col>
+              <Col className='gap-2'>
+                <Row className='w-full items-end gap-2'>
+                  <H2>{t('user:detail.friends.title')}</H2>
+                  <P14 className='text-primary/90 -translate-y-1'>
+                    {`(${t('generics.readOnly')})`}
+                  </P14>
+                </Row>
+                <div className='grid grid-cols-3 gap-2'>
+                  {collaborators &&
+                    collaborators
+                      .filter((e) => e.type === CollaboratorType.READ_ONLY)
+                      ?.map((collab) => (
+                        <Col
+                          className='bg-background relative p-2 rounded-lg items-center justify-center w-full h-25'
+                          key={collab?.id}
+                          onClick={() => {
+                            router.push(ROUTES.users.detail(collab.id));
+                            setDrawerOpen(undefined);
+                          }}
+                        >
+                          <Avatar
+                            size={35}
+                            user={collab?.collaborator || collab.sender}
+                          />
+                          <P14 className='text-center mt-1'>
+                            {collab?.collaborator?.userName ||
+                              collab.sender.userName}
+                          </P14>
+                          <Row className='justify-end w-full items-center mt-1 gap-1'>
+                            <P12 className='text-primary/80'>
+                              {t('generics.seeMore')}
+                            </P12>
+                            <ArrowRight className='text-primary/80' size={15} />
+                          </Row>
+                        </Col>
+                      ))}
+                  <Col
+                    onClick={() => {
+                      setTypeSelected(CollaboratorType.READ_ONLY);
+                      setIsAddCollab(true);
+                    }}
+                    className='bg-background p-2 rounded-lg items-center w-full justify-center h-25 text-muted-foreground'
                   >
                     <PlusIcon />
                   </Col>
@@ -299,6 +343,7 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
       <DrawerAddCollab
         isOpen={isAddCollab}
         onClose={() => setIsAddCollab(false)}
+        type={typeSelected}
       />
     </>
   );

@@ -2,7 +2,22 @@
   "title": "Account",
   "detail": {
     "title": "Detail",
-    "collaborators": "Collaborators"
+    "friends": {
+      "title": "Friends"
+    },
+    "collaborators": {
+      "title": "Collaborators",
+      "empty": "No collaborator",
+      "add": "Add a collaborator",
+      "pending": "Pending validation",
+      "remove": "Remove collaborator",
+      "isPending": "Pending",
+      "accept": {
+        "title": "Accept request",
+        "fullAccess": "Warning, if you accept this request, you will share foods, the list of dishes of the week and the shopping list with this collaborator. The collaborator will also be able to modify your dishes. Are you sure you want to accept this request?",
+        "readOnly": "By accepting this request, you will have access to the collaborator's dishes and the collaborator will be able to see your dishes. Are you sure you want to accept this request?"
+      }
+    }
   },
   "update": {
     "title": "Update User"

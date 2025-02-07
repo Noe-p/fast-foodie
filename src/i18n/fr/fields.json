@@ -27,7 +27,8 @@
   "collabType": {
     "label": "Privileges du collaborateur",
     "placeholder": "Sélectionnez le type de collaborateur",
-    "description": "Si vous cochez la case, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Le collaborateur pourra également modifier et supprimer vos plats."
+    "fullAccess": "Si la demande est acceptée, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Vous pourrez également modifier les plats et le collaborateur pourra modifier vos plats.",
+    "readOnly": "Si la demande est acceptée, vous aurez accès aux plats du collaborateur et le collaborateur pourra voir vos plats."
   },
   "tags": {
     "label": "Catégories",

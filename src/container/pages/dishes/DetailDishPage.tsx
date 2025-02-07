@@ -15,7 +15,7 @@ import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { cn, writeUnit } from '@/services/utils';
-import { DishStatus } from '@/types';
+import { CollaboratorStatus, CollaboratorType, DishStatus } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -29,11 +29,11 @@ import {
   X,
 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
+import { useSearchParams } from 'next/navigation';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import tw from 'tailwind-styled-components';
-
 interface DetailDishPageProps {
   idPage: string;
   className?: string;
@@ -41,8 +41,9 @@ interface DetailDishPageProps {
 
 export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
   const { idPage, className } = props;
+  const searchParams = useSearchParams();
   const { getDishesById } = useDishContext();
-  const dish = getDishesById(idPage);
+  const dish = getDishesById(idPage, Boolean(searchParams.get('weekly')));
   const { t } = useTranslation();
   const { currentUser } = useAuthContext();
   const [isImageFullScreenOpen, setIsImageFullScreenOpen] =
@@ -52,6 +53,7 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
     useDishContext();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { toast } = useToast();
+  const [youAreInReadOnlyMode, setYouAreInReadOnlyMode] = useState(true);
 
   const isWeeklyDish = weeklyDishes.some((d) => d.id === dish?.id);
 
@@ -84,12 +86,49 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
     (image) => image.id === dish.favoriteImage
   );
 
+  useEffect(() => {
+    if (currentUser && dish) {
+      const collabReadOnly = [
+        ...currentUser?.collaborators.filter(
+          (collaborator) =>
+            collaborator?.type === CollaboratorType.READ_ONLY &&
+            collaborator?.status === CollaboratorStatus.IS_ACCEPTED
+        ),
+        ...currentUser?.collabSend.filter(
+          (collab) =>
+            collab?.type === CollaboratorType.READ_ONLY &&
+            collab?.status === CollaboratorStatus.IS_ACCEPTED
+        ),
+      ];
+      if (collabReadOnly.length > 0) {
+        const getCollaboratorId = collabReadOnly.map(
+          (collab) => collab?.collaborator?.id || collab.sender.id
+        );
+        if (getCollaboratorId.includes(dish.chef.id)) {
+          setYouAreInReadOnlyMode(true);
+        } else {
+          setYouAreInReadOnlyMode(false);
+        }
+      } else {
+        setYouAreInReadOnlyMode(false);
+      }
+    }
+  }, [currentUser, dish]);
+
   return dish ? (
     <Layout className={'text_background p-0'}>
       <RowBetween className='bg-primary fixed top-0 z-40 w-full items-center px-3 py-5'>
         <Row
           className='items-center'
-          onClick={() => router.push(ROUTES.dishes.index)}
+          onClick={() => {
+            if (searchParams.get('weekly')) {
+              router.push(ROUTES.dishes.week);
+            } else if (searchParams.get('user')) {
+              router.back();
+            } else {
+              router.push(ROUTES.dishes.index);
+            }
+          }}
         >
           <ChevronLeft className='text-background' size={30} />
           <P16 className='text-background translate-y-0.5'>
@@ -260,7 +299,7 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
               {isWeeklyDish ? t('dishes:week.remove') : t('dishes:week.add')}
             </P16>
           </RowBetween>
-          {currentUser?.id === dish.chef.id && (
+          {!youAreInReadOnlyMode && (
             <RowBetween
               onClick={() => {
                 router.push(ROUTES.dishes.update(dish.id));

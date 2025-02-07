@@ -2,14 +2,19 @@
   "title": "Compte",
   "detail": {
     "title": "Détail",
+    "friends": {
+      "title": "Amis"
+    },
     "collaborators": {
       "title": "Collaborateurs",
       "empty": "Aucun collaborateur",
+      "add": "Ajouter un collaborateur",
       "pending": "En attente de validation",
+      "remove": "Supprimer le collaborateur",
       "isPending": "En attente",
       "accept": {
         "title": "Accepter la demande",
-        "fullAccess": "Attention, si vous acceptez cette demande, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Le collaborateur pourra également modifier et supprimer vos plats. Êtes-vous sûr de vouloir accepter cette demande ?",
+        "fullAccess": "Attention, si vous acceptez cette demande, vous partagerez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Le collaborateur pourra également modifier vos plats. Êtes-vous sûr de vouloir accepter cette demande ?",
         "readOnly": "En acceptant cette demande, vous aurez accès au plats du collaborateur et le collaborateur pourra voir vos plats. Êtes-vous sûr de vouloir accepter cette demande ?"
       }
     }

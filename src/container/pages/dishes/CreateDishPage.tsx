@@ -121,7 +121,6 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
             <FormField
               control={form.control}
               name='imageIds'
-              isRequired
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('fields:images.label')}</FormLabel>
@@ -160,7 +159,6 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
             <FormField
               control={form.control}
               name='ingredients'
-              isRequired
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('fields:ingredients.label')}</FormLabel>
@@ -226,8 +224,9 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
 }
 
 const Content = tw.div`
-  p-5
   px-3
+  pb-25
+  pt-5
   h-full
   overflow-y-scroll
 `;

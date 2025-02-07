@@ -1,23 +1,19 @@
-import { FullPageLoader, LayoutPage } from '@/components';
 import { AuthWall } from '@/container/components';
-import { UpdateDishPage } from '@/container/pages';
-import { useDishContext } from '@/contexts';
+import { UserDishesPage } from '@/container/pages/users/UserDishesPage';
 import { GetStaticPath, PageBaseProps } from '@/types';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { FullPageLoader, LayoutPage } from '../../components';
 
-type UpdateDishProps = {
+type DetailProps = {
   idPage: string;
 };
 
-export default function UpdateDish(props: UpdateDishProps): React.JSX.Element {
+export default function Detail(props: DetailProps): React.JSX.Element {
   const { idPage } = props;
-  const { getDishesById } = useDishContext();
-  const dish = getDishesById(idPage, false);
-
   return (
     <AuthWall>
       <LayoutPage>
-        {dish ? <UpdateDishPage dish={dish} /> : <FullPageLoader />}
+        {idPage ? <UserDishesPage colabId={idPage} /> : <FullPageLoader />}
       </LayoutPage>
     </AuthWall>
   );

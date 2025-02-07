@@ -1,11 +1,13 @@
-import { DrawerCreateFood } from '@/container/components/Drawers/Food';
+import {
+  DrawerCreateFood,
+  DrawerSelectFood,
+} from '@/container/components/Drawers/Food';
 import {
   DrawerDetailUser,
   DrawerUpdateUser,
 } from '@/container/components/Drawers/User';
-import { Dish } from '@/types/dto/Dish';
-import React, { useEffect, useState } from 'react';
-import { useDishContext } from './DishContext';
+import { Food } from '@/types';
+import React, { useState } from 'react';
 
 export enum DrawerType {
   DETAIL_USER = 'DETAIL_USER',
@@ -13,21 +15,22 @@ export enum DrawerType {
   CREATE_FOOD = 'CREATE_FOOD',
   CREATE_ALIMENT = 'CREATE_ALIMENT',
   UPDATE_FOOD = 'UPDATE_FOOD',
+  SELECT_FOOD = 'SELECT_FOOD',
 }
 
 interface State {
   drawerOpen?: DrawerType;
-  currentDish?: Dish;
+  foodSelected?: Food;
 }
 
 interface Context extends State {
   setDrawerOpen: React.Dispatch<React.SetStateAction<State['drawerOpen']>>;
-  setCurrentDish: React.Dispatch<React.SetStateAction<State['currentDish']>>;
+  setFoodSelected: React.Dispatch<React.SetStateAction<State['foodSelected']>>;
 }
 
 export const defaultState: State = {
   drawerOpen: undefined,
-  currentDish: undefined,
+  foodSelected: undefined,
 };
 
 const AppContext = React.createContext<Context>({
@@ -35,8 +38,8 @@ const AppContext = React.createContext<Context>({
   setDrawerOpen: () => {
     throw new Error('AppContext.setDrawerOpen has not been set');
   },
-  setCurrentDish: () => {
-    throw new Error('AppContext.setCurrentDish has not been set');
+  setFoodSelected: () => {
+    throw new Error('AppContext.setFoodSelected has not been set');
   },
 });
 
@@ -44,21 +47,15 @@ function useAppProvider() {
   const [drawerOpen, setDrawerOpen] = useState<State['drawerOpen'] | undefined>(
     defaultState.drawerOpen
   );
-  const [currentDish, setCurrentDish] = useState<
-    State['currentDish'] | undefined
-  >(defaultState.currentDish);
-  const { dishes } = useDishContext();
-
-  useEffect(() => {
-    if (dishes && dishes.length > 0)
-      if (!currentDish) setCurrentDish(dishes[0]);
-  }, [dishes]);
+  const [foodSelected, setFoodSelected] = useState<State['foodSelected']>(
+    defaultState.foodSelected
+  );
 
   return {
     drawerOpen,
     setDrawerOpen,
-    currentDish,
-    setCurrentDish,
+    foodSelected,
+    setFoodSelected,
   };
 }
 
@@ -83,6 +80,15 @@ export const AppProvider = ({ children }: Props): JSX.Element => {
       <DrawerCreateFood
         isOpen={context.drawerOpen === DrawerType.CREATE_FOOD}
         onClose={() => context.setDrawerOpen(undefined)}
+      />
+      <DrawerSelectFood
+        isOpen={context.drawerOpen === DrawerType.SELECT_FOOD}
+        onClose={() => context.setDrawerOpen(undefined)}
+        onSelect={(food) => {
+          context.setFoodSelected(food);
+          context.setDrawerOpen(undefined);
+        }}
+        foodsSelected={[]}
       />
     </AppContext.Provider>
   );

@@ -38,7 +38,12 @@
     "accept": "Accepter",
     "refuse": "Refuser",
     "fullAccess": "Accès total",
-    "readOnly": "Lecture seule"
+    "readOnly": "Lecture seule",
+    "seeMore": "Voir plus"
+  },
+  "collaboratorType": {
+    "FULL_ACCESS": "Vous partagez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Vous pouvez modifier les plats et le collaborateur peut modifier vos plats.",
+    "READ_ONLY": "Vous avez accès aux plats du collaborateur et le collaborateur peut voir vos plats."
   },
   "weeklyDish": "Plat de la semaine",
   "appOnlyForPhone": "Cette application est uniquement disponible sur mobile",

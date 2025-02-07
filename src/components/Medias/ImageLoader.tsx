@@ -29,12 +29,12 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
 
   return (
     <Container $height={height} $isLoading={loading}>
-      {loading && <Progress value={progress} className="w-1/2" />}
+      <ProgressStyled $isLoading={loading} value={progress} />
       <ImageStyled
         onLoadStart={() => setProgress(13)}
         onLoad={handleImageLoad}
-        style={{ display: loading ? 'none' : 'block', objectFit: "cover" }}
-        layout="fill"
+        layout='fill'
+        $isLoaded={!loading}
         priority={true}
         {...rest}
       />
@@ -54,16 +54,37 @@ const Container = styled.div<ContainerProps>`
   height: ${({ $height }) => $height}px;
   display: flex;
   justify-content: center;
-  align-items: center; 
-  background-color: ${({ $isLoading }) => ($isLoading ? 'hsl(var(--background))' : 'transparent')};
-  background: ${({ $isLoading }) => 
-    $isLoading 
-      ? 'hsl(var(--background))'
-      : 'transparent'};
+  align-items: center;
+  background-color: ${({ $isLoading }) =>
+    $isLoading ? 'hsl(var(--background))' : 'transparent'};
+  background: ${({ $isLoading }) =>
+    $isLoading ? 'hsl(var(--background))' : 'transparent'};
   border-radius: 0.5rem;
+  transition: background-color 0.3s ease-in-out;
 `;
 
-const ImageStyled = tw(Image)`
+const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
   object-cover
   rounded-sm
+  transition-opacity
+  duration-300
+  ease-in-out
+  object-center
+  object-cover
+  ${(props) => (props.$isLoaded ? 'opacity-100' : 'opacity-0')}
+`;
+
+const ProgressStyled = tw(Progress)<{ $isLoading: boolean }>`
+  w-1/2
+  transition-opacity
+  duration-300
+  ease-in-out
+  absolute
+  top-1/2
+  left-1/2
+  transform
+  -translate-x-1/2
+  -translate-y-1/2
+  w-1/2
+  ${(props) => (props.$isLoading ? 'opacity-100' : 'opacity-0')}
 `;

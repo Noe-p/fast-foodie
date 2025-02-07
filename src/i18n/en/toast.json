@@ -29,6 +29,10 @@
     "remove": {
       "success": "Collaborator removed",
       "error": "Error removing collaborator"
+    },
+    "isPending": {
+      "success": "Request sent",
+      "error": "Error sending request"
     }
   },
   "file": {

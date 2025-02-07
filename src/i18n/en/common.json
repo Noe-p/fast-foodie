@@ -34,7 +34,16 @@
     "noData": "No data",
     "tomorrow": "Tomorrow",
     "create": "Create",
-    "save": "Save"
+    "save": "Save",
+    "accept": "Accept",
+    "refuse": "Refuse",
+    "fullAccess": "Full access",
+    "readOnly": "Read only",
+    "seeMore": "See more"
+  },
+  "collaboratorType": {
+    "FULL_ACCESS": "You share food, the weekly dish list and the shopping list with this collaborator. You can edit dishes and the collaborator can edit your dishes.",
+    "READ_ONLY": "You have access to the collaborator's dishes and the collaborator can see your dishes."
   },
   "weeklyDish": "Dish of the week",
   "appOnlyForPhone": "This app is only available on mobile",

@@ -29,6 +29,10 @@
     "remove": {
       "success": "Collaborateur supprimé",
       "error": "Erreur lors de la suppression du collaborateur"
+    },
+    "isPending": {
+      "success": "Demande envoyée",
+      "error": "Erreur lors de l'envoi de la demande"
     }
   },
   "file": {

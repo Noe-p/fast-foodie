@@ -23,7 +23,7 @@ interface Context extends State {
   refresh: () => Promise<void>;
   setShoppingList: (list: ShoppingList[]) => void;
   clearWeeklyDishes: () => void;
-  getDishesById: (id: string) => Dish | undefined;
+  getDishesById: (id: string, fromWeekly: boolean) => Dish | undefined;
 }
 
 const defaultState: State = {
@@ -72,6 +72,7 @@ function useDishProvider() {
 
   // Gestion des plats hebdomadaires
   const setWeeklyDishes = (dishes: Dish[]) => {
+    console.log('[D] DishContext', dishes);
     setStateWeeklyDishes(dishes);
     window.localStorage.setItem('weeklyDishes', JSON.stringify(dishes));
     const newShoppingList = generateShoppingListFromDishes(dishes);
@@ -128,8 +129,9 @@ function useDishProvider() {
     window.localStorage.removeItem('dishes');
   };
 
-  const getDishesById = (id: string) => {
-    return localDishes.find((dish) => dish.id === id);
+  const getDishesById = (id: string, fromWeekly: boolean) => {
+    const weeklyDish = weeklyDishes.find((dish) => dish.id === id);
+    return fromWeekly ? weeklyDish : localDishes.find((dish) => dish.id === id);
   };
 
   // Gestion de la liste de courses
@@ -190,6 +192,7 @@ function useDishProvider() {
 
   // Actualisation des données depuis l'API
   async function refresh() {
+    if (isLoaded) return;
     setIsLoaded(true);
     try {
       const [dishes, foods] = await Promise.all([

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { useDishContext } from '@/contexts';
+import { DrawerType, useAppContext, useDishContext } from '@/contexts';
 import {
   addItemToShoppingList,
   cn,
@@ -31,15 +31,13 @@ import { Food, IngredientUnit } from '@/types';
 import { Ingredient } from '@/types/dto/Ingredient';
 import { CheckIcon, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
-import { DrawerSelectFood } from '../components/Drawers/Food';
 
 export function ShoppingListPage(): React.JSX.Element {
   const { t } = useTranslation();
   const { shoppingList, setShoppingList } = useDishContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [ingredient, setIngredient] = useState<{
     quantity?: number;
     food?: Food;
@@ -50,6 +48,7 @@ export function ShoppingListPage(): React.JSX.Element {
     unit: IngredientUnit.UNIT,
   });
   const { toast } = useToast();
+  const { setDrawerOpen, foodSelected } = useAppContext();
 
   function removeItemFromShoppingList(aisle: string, id: string) {
     const newShoppingList = shoppingList.map((group) => {
@@ -104,6 +103,12 @@ export function ShoppingListPage(): React.JSX.Element {
       title: t('shoppingList.addSuccess'),
     });
   }
+
+  useEffect(() => {
+    if (foodSelected) {
+      setIngredient({ ...ingredient, food: foodSelected });
+    }
+  }, [foodSelected]);
 
   return (
     <Layout>
@@ -161,7 +166,7 @@ export function ShoppingListPage(): React.JSX.Element {
         </Button>
       </Col>
       <Modal
-        className={cn(!isOpen && 'relative h-fit')}
+        className={cn('relative h-fit')}
         isOpen={isDrawerOpen}
         title={t('shoppingList.add')}
         onClose={() => setIsDrawerOpen(false)}
@@ -209,7 +214,7 @@ export function ShoppingListPage(): React.JSX.Element {
           </Select>
           <Main>
             <Row
-              onClick={() => setIsOpen(true)}
+              onClick={() => setDrawerOpen(DrawerType.SELECT_FOOD)}
               className='gap-1 p-2 w-full justify-center items-center h-10'
             >
               {ingredient?.food ? (
@@ -227,12 +232,6 @@ export function ShoppingListPage(): React.JSX.Element {
               )}
             </Row>
           </Main>
-          <DrawerSelectFood
-            foodsSelected={[]}
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
-            onSelect={(food) => setIngredient({ ...ingredient, food })}
-          />
         </Item>
       </Modal>
     </Layout>

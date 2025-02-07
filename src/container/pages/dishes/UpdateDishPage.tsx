@@ -194,7 +194,6 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
               <FormField
                 control={form.control}
                 name='imageIds'
-                isRequired
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('fields:images.label')}</FormLabel>
@@ -236,7 +235,6 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
               <FormField
                 control={form.control}
                 name='ingredients'
-                isRequired
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('fields:ingredients.label')}</FormLabel>
