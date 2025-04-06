@@ -14,7 +14,7 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       yup
         .string()
         .required(errorMessage.fields('tags').REQUIRED)
-        .typeError(errorMessage.fields('tags').NOT_STRING),
+        .typeError(errorMessage.fields('tags').NOT_STRING)
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -45,7 +45,7 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
       yup
         .string()
         .required(errorMessage.fields('images').REQUIRED)
-        .typeError(errorMessage.fields('images').NOT_STRING),
+        .typeError(errorMessage.fields('images').NOT_STRING)
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -66,15 +66,16 @@ const add: yup.ObjectSchema<CreateDishApi> = yup.object({
           .typeError(errorMessage.fields('foodId').NOT_STRING),
         quantity: yup
           .number()
-          .required(errorMessage.fields('quantity').REQUIRED)
+          .optional()
+          .default(undefined)
           .typeError(errorMessage.fields('quantity').NOT_STRING),
         unit: yup
           .string()
           .oneOf(Array.from(Object.values(IngredientUnit)))
           .optional()
           .transform((value) => (value === '' ? undefined : value))
-          .default(IngredientUnit.UNIT),
-      }),
+          .default(undefined),
+      })
     )
     .required(errorMessage.fields('ingredients').REQUIRED)
     .typeError(errorMessage.fields('ingredients').NOT_ARRAY),
@@ -118,7 +119,7 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
       yup
         .string()
         .required(errorMessage.fields('tags').REQUIRED)
-        .typeError(errorMessage.fields('tags').NOT_STRING),
+        .typeError(errorMessage.fields('tags').NOT_STRING)
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -129,7 +130,7 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
       yup
         .string()
         .required(errorMessage.fields('images').REQUIRED)
-        .typeError(errorMessage.fields('images').NOT_STRING),
+        .typeError(errorMessage.fields('images').NOT_STRING)
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))
@@ -144,15 +145,14 @@ const update: yup.ObjectSchema<UpdateDishApi> = yup.object({
           .typeError(errorMessage.fields('foodId').NOT_STRING),
         quantity: yup
           .number()
-          .required(errorMessage.fields('quantity').REQUIRED)
+          .optional()
           .typeError(errorMessage.fields('quantity').NOT_STRING),
         unit: yup
           .string()
           .oneOf(Array.from(Object.values(IngredientUnit)))
           .optional()
-          .transform((value) => (value === '' ? undefined : value))
-          .default(IngredientUnit.UNIT),
-      }),
+          .transform((value) => (value === '' ? undefined : value)),
+      })
     )
     .optional()
     .transform((value) => (value === '' ? undefined : value))

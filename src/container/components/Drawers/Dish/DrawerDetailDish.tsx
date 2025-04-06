@@ -1,12 +1,7 @@
-import {
-  ImageFullScreen,
-  ImageLoader,
-  Layout,
-  Modal,
-  ModalRemove,
-} from '@/components';
+import { ImageFullScreen, ImageLoader, Modal, ModalRemove } from '@/components';
+import { DrawerMotion } from '@/components/Drawer';
 import { Col, Row, RowBetween } from '@/components/Helpers';
-import { H2, P12, P16 } from '@/components/Texts';
+import { H2, H3, P12, P16 } from '@/components/Texts';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,13 +10,13 @@ import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { cn, writeUnit } from '@/services/utils';
+import { IMAGE_FALLBACK } from '@/static/constants';
 import { CollaboratorStatus, CollaboratorType, DishStatus } from '@/types';
+import { Dish } from '@/types/dto/Dish';
 import { useMutation } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import {
   Calendar,
   ChefHatIcon,
-  ChevronLeft,
   CircleEllipsisIcon,
   EditIcon,
   EyeIcon,
@@ -29,21 +24,22 @@ import {
   X,
 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useSearchParams } from 'next/navigation';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import tw from 'tailwind-styled-components';
-interface DetailDishPageProps {
-  idPage: string;
+
+interface DrawerDetailDishProps {
   className?: string;
+  isOpen: boolean;
+  onClose: () => void;
+  dish?: Dish;
 }
 
-export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
-  const { idPage, className } = props;
-  const searchParams = useSearchParams();
-  const { getDishesById } = useDishContext();
-  const dish = getDishesById(idPage, Boolean(searchParams.get('weekly')));
+export function DrawerDetailDish(
+  props: DrawerDetailDishProps
+): React.JSX.Element {
+  const { className, isOpen, onClose, dish } = props;
   const { t } = useTranslation();
   const { currentUser } = useAuthContext();
   const [isImageFullScreenOpen, setIsImageFullScreenOpen] =
@@ -116,70 +112,46 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
   }, [currentUser, dish]);
 
   return dish ? (
-    <Layout className={'text_background p-0'}>
-      <RowBetween className='bg-primary fixed top-0 z-40 w-full items-center px-3 py-5'>
-        <Row
-          className='items-center'
-          onClick={() => {
-            if (searchParams.get('weekly')) {
-              router.push(ROUTES.dishes.week);
-            } else if (searchParams.get('user')) {
-              router.back();
-            } else {
-              router.push(ROUTES.dishes.index);
-            }
-          }}
-        >
-          <ChevronLeft className='text-background' size={30} />
-          <P16 className='text-background translate-y-0.5'>
-            {t('generics.back')}
-          </P16>
-        </Row>
-        <H2 className='text-background'>
-          {dish.name.substring(0, 16)}
-          {dish.name.length > 16 && '...'}
-        </H2>
+    <DrawerMotion
+      className='mt-0 rounded-t-none'
+      headerClassName='rounded-t-none'
+      isOpen={isOpen}
+      onClose={onClose}
+      icon={
         <CircleEllipsisIcon
-          onClick={() => setIsEditOpen(true)}
-          className='text-primary-foreground'
+          size={20}
+          className='text-white'
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsEditOpen(true);
+          }}
         />
-      </RowBetween>
+      }
+    >
       <Content className={className}>
-        <motion.div
-          initial={{
-            x: 100,
-          }}
-          animate={{
-            x: 0,
-          }}
-          transition={{
-            duration: 0.2,
-            type: 'spring',
-            damping: 13,
-            stiffness: 150,
-          }}
-        >
-          <RowBetween className='items-start'>
-            <Row className='flex-wrap gap-1 mr-2'>
-              {dish?.tags?.map((tag) => (
-                <Badge variant={'outline'} key={tag}>
-                  {tag}
-                </Badge>
-              ))}
-              {dish.chef && (
-                <Badge className='flex items-center gap-1' variant={'outline'}>
-                  <ChefHatIcon size={15} />
-                  {dish.chef.userName}
-                </Badge>
-              )}
-              <Badge className='flex items-center gap-1' variant={'outline'}>
-                {dish.status === DishStatus.PRIVATE ? (
-                  <EyeOffIcon size={15} />
-                ) : (
-                  <EyeIcon size={15} />
-                )}
+        <H2 className='leading-none'>{dish.name}</H2>
+        <RowBetween className='items-start mt-5'>
+          <Row className='flex-wrap gap-1 mr-2'>
+            {dish?.tags?.map((tag) => (
+              <Badge variant={'outline'} key={tag}>
+                {tag}
               </Badge>
-            </Row>
+            ))}
+            {dish.chef && (
+              <Badge className='flex items-center gap-1' variant={'outline'}>
+                <ChefHatIcon size={15} />
+                {dish.chef.userName}
+              </Badge>
+            )}
+            <Badge className='flex items-center gap-1' variant={'outline'}>
+              {dish.status === DishStatus.PRIVATE ? (
+                <EyeOffIcon size={15} />
+              ) : (
+                <EyeIcon size={15} />
+              )}
+            </Badge>
+          </Row>
+          {dish.ingredients.length > 0 && (
             <Input
               min={1}
               isArrow
@@ -208,43 +180,44 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
               className='w-14 h-7'
               iconSize={22}
             />
-          </RowBetween>
-          <Grid2>
+          )}
+        </RowBetween>
+        <Grid2>
+          {dish.ingredients.length > 0 && (
             <TextContainer>
-              <H2 className='text-center'>{'Ingrédients'}</H2>
+              <H3 className=''>{t('generics.ingretients')}</H3>
               <ul className='mt-2 list-disc'>
                 {dish.ingredients.map((ingredient) => (
-                  <li className='gap-2 ml-4 text-primary' key={ingredient.id}>
+                  <li
+                    className='gap-2 ml-4 text-primary leading-none mb-2'
+                    key={ingredient.id}
+                  >
                     <strong>{writeUnit(ingredient, newRation, t, dish)}</strong>{' '}
                     {ingredient.food.name}
                   </li>
                 ))}
               </ul>
             </TextContainer>
-            {imageCover && (
-              <Image
-                onClick={() => setIsImageFullScreenOpen(true)}
-                src={imageCover.url}
-                alt={dish.name}
-                height={250}
-                width={150}
-                quality={20}
-              />
-            )}
-          </Grid2>
+          )}
+          <Image
+            onClick={() => imageCover && setIsImageFullScreenOpen(true)}
+            src={imageCover?.url ?? IMAGE_FALLBACK}
+            alt={dish.name}
+            height={250}
+            width={150}
+            quality={1}
+          />
+        </Grid2>
+        {dish.instructions && (
           <Col className='mt-5'>
-            <TextContainer className=''>
-              <H2 className='text-center'>{t('dishes:instruction')}</H2>
-              <Col className='mt-2'>
-                {dish.instructions && (
-                  <Main
-                    dangerouslySetInnerHTML={{ __html: dish.instructions }}
-                  />
-                )}
-              </Col>
-            </TextContainer>
+            <H3 className='text-center'>{t('dishes:instruction')}</H3>
+            <Col className='mt-2'>
+              {dish.instructions && (
+                <Main dangerouslySetInnerHTML={{ __html: dish.instructions }} />
+              )}
+            </Col>
           </Col>
-        </motion.div>
+        )}
         <Button
           onClick={(e) => {
             e.stopPropagation();
@@ -255,7 +228,7 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
             setWeeklyDishes([...weeklyDishes, dish]);
           }}
           className={cn(
-            'fixed bottom-23 right-2 gap-2',
+            'fixed bottom-10 right-2 gap-2',
             isWeeklyDish ? 'bg-primary/90' : 'bg-primary/60'
           )}
         >
@@ -315,16 +288,17 @@ export function DetailDishPage(props: DetailDishPageProps): React.JSX.Element {
           )}
         </Col>
       </Modal>
-    </Layout>
+    </DrawerMotion>
   ) : (
     <></>
   );
 }
 
 const Content = tw(Col)`
-  px-3
-  pb-33
-  pt-23
+  px-5
+  pb-18
+  justify-between
+  items-between
 `;
 
 const Grid2 = tw.div`

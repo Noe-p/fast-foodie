@@ -50,12 +50,16 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
             {t('filters.reset')}
           </Button>
         </RowBetween>
-        <Row className='gap-1'>
+        <Row className='gap-1 flex-wrap'>
           {chefs.map((chef) => (
             <Badge
               variant={filters.chef === chef ? 'active' : 'outline'}
               key={chef}
-              onClick={() => chef === filters.chef ? setFilters({ ...filters, chef: undefined }) : setFilters({ ...filters, chef })}
+              onClick={() =>
+                chef === filters.chef
+                  ? setFilters({ ...filters, chef: undefined })
+                  : setFilters({ ...filters, chef })
+              }
             >
               {chef}
             </Badge>
@@ -67,7 +71,7 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
         <RowBetween className='items-center'>
           <H3>{t('filters.tag')}</H3>
           <Button
-            size="sm"
+            size='sm'
             variant='outline'
             disabled={!filters.tag}
             onClick={() =>
@@ -80,19 +84,27 @@ export function FilterDishDrawer(props: FilterDishDrawerProps): JSX.Element {
             {t('filters.reset')}
           </Button>
         </RowBetween>
-        <Row className='gap-1'>
-          {tags.length > 0 && tags.map((tag) => (
-            <Badge
-              variant={filters.tag === tag ? 'active' : 'outline'}
-              key={tag} onClick={() => tag === filters.tag ? setFilters({ ...filters, tag: undefined }) : setFilters({ ...filters, tag })}
+        <Row className='gap-1 flex-wrap'>
+          {tags.length > 0 &&
+            tags.map((tag) => (
+              <Badge
+                variant={filters.tag === tag ? 'active' : 'outline'}
+                key={tag}
+                onClick={() =>
+                  tag === filters.tag
+                    ? setFilters({ ...filters, tag: undefined })
+                    : setFilters({ ...filters, tag })
+                }
               >
                 {tag}
-            </Badge>
-          ))}
+              </Badge>
+            ))}
         </Row>
       </Col>
       <Row className='mt-10 justify-end gap-2 mb-10'>
-        <Button onClick={()=> setOpen(false)} variant='default'>{t('generics.save')}</Button>
+        <Button onClick={() => setOpen(false)} variant='default'>
+          {t('generics.save')}
+        </Button>
       </Row>
     </DrawerDialog>
   );

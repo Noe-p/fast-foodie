@@ -9,6 +9,7 @@
   "fields": {
     "missing": "One or more fields are missing"
   },
+  "copyFailed": "Copy failed",
   "api": {
     "validation": {
       "single": "Error on field: {{field}}",

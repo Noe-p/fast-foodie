@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useDishContext } from '@/contexts';
 import { ApiService } from '@/services/api';
+import { areSimilar } from '@/services/utils';
 import { Food } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 import { CircleEllipsis, EditIcon, PlusIcon, SearchIcon } from 'lucide-react';
@@ -73,16 +74,14 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
   ) {
     if (!foods) return {};
 
-    // Filtrer les aliments par recherche et ceux déjà sélectionnés
+    // Filtrer les aliments en fonction de la recherche et de ceux déjà sélectionnés
     const filteredFoods = foods
-      .filter((food) =>
-        food.name.toLowerCase().includes(searchFood.toLowerCase())
-      )
+      .filter((food) => areSimilar(food.name, searchFood, false)) // 🔥 Recherche flexible
       .filter((food) => !foodsSelected.includes(food.id));
 
     // Grouper les aliments par rayon
     return filteredFoods.reduce((grouped, food) => {
-      const category = food.aisle || 'Other'; // Utilisez "Other" pour les aliments sans rayon
+      const category = food.aisle || 'Other'; // Catégorie par défaut
       if (!grouped[category]) {
         grouped[category] = [];
       }
@@ -109,6 +108,7 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
           <Input
             icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
             className='w-full'
+            isRemovable={true}
             placeholder={t('generics.search')}
             onChange={(e) => setSearchFood(e)}
           />

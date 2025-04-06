@@ -1,9 +1,11 @@
 import { Col, Layout, P14, Row, RowBetween, RowCenter } from '@/components';
 import { Table } from '@/components/Table';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
+import { areSimilar } from '@/services/utils';
 import {
   CollaboratorStatus,
   CollaboratorType,
@@ -24,9 +26,9 @@ export function HomePage(): React.JSX.Element {
   const { t } = useTranslation();
   const { currentUser } = useAuthContext();
   const [filters, setFilters] = useState<LocalSearchParams>({
-    search: undefined,
-    tag: undefined,
-    chef: undefined,
+    search: '',
+    tag: '',
+    chef: '',
   });
   const [chefs, setChefs] = useState<string[]>([]);
   const { dishes, tags, isPending, refresh } = useDishContext();
@@ -56,21 +58,47 @@ export function HomePage(): React.JSX.Element {
 
   function filterDishes(filters: LocalSearchParams, dishes?: Dish[]): Dish[] {
     if (!dishes) return [];
+
     return dishes
       .filter((dish) => {
         if (filters.tag && !dish.tags.includes(filters.tag)) return false;
-        if (
-          filters.search &&
-          !dish.name.toLowerCase().includes(filters.search.toLowerCase())
-        )
+        if (filters.search && !areSimilar(filters.search, dish.name, false))
           return false;
         if (filters.chef && dish.chef.userName !== filters.chef) return false;
         if (!chefs.includes(dish.chef.userName)) return false;
         return true;
-        //SI Un chef d'un des plats n'est pas dans la liste des chefs, on ne l'affiche pas
       })
       .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
   }
+
+  useEffect(() => {
+    const savedFilters = window.localStorage.getItem('filters');
+
+    if (savedFilters) {
+      try {
+        const parsedFilters = JSON.parse(savedFilters);
+        if (parsedFilters && typeof parsedFilters === 'object') {
+          setFilters((prevFilters) => ({
+            ...prevFilters,
+            tag: parsedFilters.tag || '',
+            chef: parsedFilters.chef || '',
+          }));
+        }
+      } catch (e) {
+        console.error('[D] Error parsing filters', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (filters.tag || filters.chef) {
+      const newFilters = {
+        tag: filters.tag,
+        chef: filters.chef,
+      };
+      window.localStorage.setItem('filters', JSON.stringify(newFilters));
+    }
+  }, [filters.tag, filters.chef]);
 
   return (
     <Layout>
@@ -88,15 +116,17 @@ export function HomePage(): React.JSX.Element {
         }
       >
         <Tabs defaultValue='card'>
-          <Col>
-            <RowBetween className='lain_background w-full p-5 rounded-sm shadow-md'>
+          <Col className='lain_background w-full p-3 rounded-sm shadow-md'>
+            <RowBetween className=''>
               <Input
                 icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
                 className='w-full'
+                isRemovable
                 placeholder={t('generics.search')}
                 onChange={(v) => {
                   setFilters({ ...filters, search: v });
                 }}
+                value={filters.search}
               />
               <FilterDishDrawer
                 setFilters={setFilters}
@@ -105,6 +135,41 @@ export function HomePage(): React.JSX.Element {
                 chefs={chefs}
               />
             </RowBetween>
+            {(filters.chef || filters.tag) && (
+              <Row className='mt-2 gap-1 items-end'>
+                <P14 className='text-primary/80'>
+                  {t('generics.filters') + ' :'}
+                </P14>
+                {filters.chef && (
+                  <Badge
+                    onClick={() => {
+                      setFilters({ ...filters, chef: '' });
+                      window.localStorage.setItem(
+                        'filters',
+                        JSON.stringify({ ...filters, chef: '' })
+                      );
+                    }}
+                    variant={'active'}
+                  >
+                    {filters.chef}
+                  </Badge>
+                )}
+                {filters.tag && (
+                  <Badge
+                    onClick={() => {
+                      setFilters({ ...filters, tag: '' });
+                      window.localStorage.setItem(
+                        'filters',
+                        JSON.stringify({ ...filters, tag: '' })
+                      );
+                    }}
+                    variant={'active'}
+                  >
+                    {filters.tag}
+                  </Badge>
+                )}
+              </Row>
+            )}
           </Col>
 
           <Row className='justify-end mt-2'>
@@ -158,13 +223,18 @@ export function HomePage(): React.JSX.Element {
               }}
             >
               <Col className='items-center gap-5'>
-                {filterDishes(filters, dishes)?.length === 0 ? (
+                {!isPending && filterDishes(filters, dishes)?.length === 0 ? (
                   <P14 className='text-primary mt-20 text-center w-full'>
                     {t('generics.noResults')}
                   </P14>
                 ) : (
-                  filterDishes(filters, dishes)?.map((dish: Dish) => (
-                    <DishesCard from='dish' key={dish.id} dish={dish} />
+                  filterDishes(filters, dishes)?.map((dish: Dish, i) => (
+                    <DishesCard
+                      id={dish.id}
+                      from='dish'
+                      key={dish.id}
+                      dish={dish}
+                    />
                   ))
                 )}
               </Col>

@@ -1,16 +1,15 @@
-
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react';
 
 type SSRRect = {
-  bottom: number
-  height: number
-  left: number
-  right: number
-  top: number
-  width: number
-  x: number
-  y: number
-}
+  bottom: number;
+  height: number;
+  left: number;
+  right: number;
+  top: number;
+  width: number;
+  x: number;
+  y: number;
+};
 const EmptySSRRect: SSRRect = {
   bottom: 0,
   height: 0,
@@ -20,7 +19,7 @@ const EmptySSRRect: SSRRect = {
   width: 0,
   x: 0,
   y: 0,
-}
+};
 
 /**
  * useScroll React custom hook
@@ -41,41 +40,44 @@ const EmptySSRRect: SSRRect = {
  * @returns An object containing the current scroll position in the Y and X axis, as well as the scroll direction.
  */
 const useScroll = () => {
-  const [lastScrollTop, setLastScrollTop] = useState<number>(0)
+  const [lastScrollTop, setLastScrollTop] = useState<number>(0);
   const [bodyOffset, setBodyOffset] = useState<DOMRect | SSRRect>(
     typeof window === 'undefined' || !window.document
       ? EmptySSRRect
       : document.body.getBoundingClientRect()
-  )
-  const [scrollY, setScrollY] = useState<number>(bodyOffset.top)
-  const [scrollX, setScrollX] = useState<number>(bodyOffset.left)
-  const [scrollDirection, setScrollDirection] =
-    useState<'down' | 'up' | undefined>()
+  );
+  const [scrollY, setScrollY] = useState<number>(bodyOffset.top);
+  const [scrollX, setScrollX] = useState<number>(bodyOffset.left);
+  const [scrollDirection, setScrollDirection] = useState<
+    'down' | 'up' | undefined
+  >();
 
   const listener = () => {
     setBodyOffset(
       typeof window === 'undefined' || !window.document
         ? EmptySSRRect
         : document.body.getBoundingClientRect()
-    )
-    setScrollY(-bodyOffset.top)
-    setScrollX(bodyOffset.left)
-    setScrollDirection(lastScrollTop > -bodyOffset.top ? 'down' : 'up')
-    setLastScrollTop(-bodyOffset.top)
-  }
+    );
+    setScrollY(-bodyOffset.top);
+    setScrollX(bodyOffset.left);
+    setScrollDirection(lastScrollTop > -bodyOffset.top ? 'down' : 'up');
+    setLastScrollTop(-bodyOffset.top);
+  };
 
   useEffect(() => {
-    window.addEventListener('scroll', listener)
+    window.addEventListener('scroll', listener);
     return () => {
-      window.removeEventListener('scroll', listener)
-    }
-  })
+      window.removeEventListener('scroll', listener);
+    };
+  });
 
   return {
     scrollY,
     scrollX,
     scrollDirection,
-  }
-}
+    bottom: bodyOffset.bottom,
+    height: bodyOffset.height,
+  };
+};
 
-export { useScroll }
+export { useScroll };

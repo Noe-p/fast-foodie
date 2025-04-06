@@ -16,6 +16,7 @@ export enum DrawerType {
   CREATE_ALIMENT = 'CREATE_ALIMENT',
   UPDATE_FOOD = 'UPDATE_FOOD',
   SELECT_FOOD = 'SELECT_FOOD',
+  DETAIL_DISH = 'DETAIL_DISH',
 }
 
 interface State {

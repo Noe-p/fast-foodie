@@ -8,6 +8,9 @@ export enum IngredientUnit {
   TABLESPOON = 'tbsp',
   TEASPOON = 'tsp',
   CUP = 'cup',
+  SLICE = 'slice',
+  PACKETS = 'packet',
+  PIECE = 'piece',
 }
 
 export interface CreateIngredientApi {

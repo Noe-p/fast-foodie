@@ -24,7 +24,7 @@
     "price": "Prix",
     "category": "Catégorie",
     "image": "Image",
-    "submit": "Créer un plat"
+    "submit": "Créer le plat"
   },
   "ingredients": {
     "add": "Ajouter un ingrédient"
@@ -36,15 +36,20 @@
   "aisleType": {
     "FRUITS_AND_VEGETABLES": "Fruits et légumes",
     "BUTCHERY": "Boucherie",
+    "DELI_BUTCHERY": "Boucherie/Charcuterie",
     "FISHMONGER": "Poissonnerie",
     "DELI": "Charcuterie",
+    "WORLD_FOOD": "Produits du monde",
     "DAIRY_PRODUCTS": "Produits laitiers",
+    "FRESH_PRODUCTS": "Produits frais",
     "SAVORY_GROCERY": "Épicerie salée",
     "SWEET_GROCERY": "Épicerie sucrée",
     "SPICES": "Épices",
     "BAKERY_AND_PASTRY": "Boulangerie et pâtisserie",
     "FROZEN_PRODUCTS": "Produits surgelés",
     "PREPARED_MEALS": "Plats préparés",
+    "CONFECTIONERY": "Confiserie",
+    "DRINKS_AND_SNACKS": "Apéritifs",
     "NON_ALCOHOLIC_BEVERAGES": "Boissons sans alcool",
     "ALCOHOLIC_BEVERAGES": "Boissons alcoolisées",
     "CLEANING_PRODUCTS": "Produits ménagers",

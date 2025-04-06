@@ -25,6 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DrawerDetailDish } from '@/container/components/Drawers';
+import { Dish } from '@/types/dto/Dish';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import React, { useState } from 'react';
@@ -49,6 +51,8 @@ export function Table<TData, TValue>({
 }: TableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [dish, setDish] = useState<Dish>();
 
   const table = useReactTable({
     data,
@@ -140,7 +144,9 @@ export function Table<TData, TValue>({
                     onClick={() => {
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       const rowOriginal = row.original as any;
-                      redirection && redirection(rowOriginal.id);
+                      const dish = rowOriginal as Dish;
+                      setDish(dish);
+                      setIsOpen(true);
                     }}
                     key={row.id}
                   >
@@ -165,6 +171,11 @@ export function Table<TData, TValue>({
           )}
         </BaseTable>
       </div>
+      <DrawerDetailDish
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        dish={dish}
+      />
     </div>
   );
 }

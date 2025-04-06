@@ -4,7 +4,6 @@ import { MEDIA_QUERIES } from '@/static/constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
-import styled from 'styled-components';
 import tw from 'tailwind-styled-components';
 import { useEventListener, useMediaQuery } from 'usehooks-ts';
 import { Col, Row, RowBetween } from '../Helpers';
@@ -91,7 +90,7 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
                     <Title className='leading-none'>{title}</Title>
                   </Row>
                   <Row className='gap-2 items-center'>
-                    {!!icon && <IconContainer>{icon}</IconContainer>}
+                    {icon && icon}
                     <CloseIcon size={20} onClick={props.onClose} />
                   </Row>
                 </RowBetween>
@@ -142,15 +141,6 @@ const CloseIcon = tw(X)`
   cursor-pointer
   ml-2
   text-primary-foreground
-`;
-
-const IconContainer = styled.div`
-  width: 20px;
-  height: 20px;
-  svg {
-    width: 100%;
-    height: 100%;
-  }
 `;
 
 const Title = tw(H2)`

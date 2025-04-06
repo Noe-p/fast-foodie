@@ -32,7 +32,7 @@ const defaultState: State = {
   shoppingList: [],
   tags: [],
   foods: [],
-  isPending: false,
+  isPending: true,
 };
 
 // Création du contexte

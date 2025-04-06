@@ -22,7 +22,7 @@ import { CreateIngredients } from '@/container/components';
 import { useAppContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { formatValidationErrorMessage } from '@/services/error';
-import { CreateDishApi, DishStatus, MediaDto } from '@/types';
+import { CreateDishApi, DishStatus, IngredientUnit, MediaDto } from '@/types';
 import { dishValidation } from '@/validations/dish';
 import router from 'next/router';
 
@@ -53,7 +53,21 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
   });
 
   const { mutate: createDish, isPending } = useMutation({
-    mutationFn: ApiService.dishes.create,
+    mutationFn: (values: CreateDishApi) => {
+      if (values.ingredients) {
+        values.ingredients = values.ingredients.map((ingredient) => {
+          if (ingredient.quantity && !ingredient.unit) {
+            // Si une quantité est présente mais pas d'unité, on définit l'unité par défaut
+            return {
+              ...ingredient,
+              unit: IngredientUnit.UNIT,
+            };
+          }
+          return ingredient;
+        });
+      }
+      return ApiService.dishes.create(values);
+    },
     onSuccess: () => {
       form.reset();
       refresh();

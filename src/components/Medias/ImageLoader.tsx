@@ -31,7 +31,6 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
     <Container $height={height} $isLoading={loading}>
       <ProgressStyled $isLoading={loading} value={progress} />
       <ImageStyled
-        onLoadStart={() => setProgress(13)}
         onLoad={handleImageLoad}
         layout='fill'
         $isLoaded={!loading}
@@ -64,7 +63,6 @@ const Container = styled.div<ContainerProps>`
 `;
 
 const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
-  object-cover
   rounded-sm
   transition-opacity
   duration-300

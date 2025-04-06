@@ -39,11 +39,16 @@
     "refuse": "Refuser",
     "fullAccess": "Accès total",
     "readOnly": "Lecture seule",
-    "seeMore": "Voir plus"
+    "seeMore": "Voir plus",
+    "filters": "Filtres",
+    "ingretients": "Ingrédients",
+    "addToClipboard": "Copier la liste",
+    "total": "Total",
+    "dishes": "plats"
   },
   "collaboratorType": {
-    "FULL_ACCESS": "Vous partagez les aliments, la liste des plats de la semaine et la liste de courses avec ce collaborateur. Vous pouvez modifier les plats et le collaborateur peut modifier vos plats.",
-    "READ_ONLY": "Vous avez accès aux plats du collaborateur et le collaborateur peut voir vos plats."
+    "FULL_ACCESS": "Accès total",
+    "READ_ONLY": "Lecture seule"
   },
   "weeklyDish": "Plat de la semaine",
   "appOnlyForPhone": "Cette application est uniquement disponible sur mobile",
@@ -51,7 +56,8 @@
     "title": "Liste de courses",
     "addSuccess": "Ingrédient ajouté à la liste de courses",
     "add": "Ajouter à la liste",
-    "empty": "La liste de courses est vide"
+    "empty": "La liste de courses est vide",
+    "copiedToClipboard": "Liste copiée dans le presse-papier"
   },
   "filters": {
     "title": "Filtres",
@@ -110,7 +116,11 @@
       "unit": "Unité",
       "tsp": "c. à café",
       "tbsp": "c. à soupe",
-      "cup": "Tasse"
+      "cup": "Tasse",
+      "a_lot": "Beaucoup",
+      "piece": "Morceau",
+      "slice": "Tranche",
+      "packet": "Paquet"
     }
   },
   "home": {

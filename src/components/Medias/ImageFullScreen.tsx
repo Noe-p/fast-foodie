@@ -1,5 +1,4 @@
 import { DRAWER_VARIANTS } from '@/services/motion';
-import { cn } from '@/services/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -56,21 +55,21 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
-   useEffect(() => {
-      let interval: NodeJS.Timeout;
-      if (loading) {
-        interval = setInterval(() => {
-          setProgress((prev) => (prev < 100 ? prev + Math.random() * 10 : 100));
-        }, 300);
-      }
-      return () => clearInterval(interval);
-    }, [isOpen]);
-  
-    const handleImageLoad = () => {
-      setProgress(100);
-      const timer = setTimeout(() => setLoading(false), 500);
-      return () => clearTimeout(timer);
-    };
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (loading) {
+      interval = setInterval(() => {
+        setProgress((prev) => (prev < 100 ? prev + Math.random() * 10 : 100));
+      }, 300);
+    }
+    return () => clearInterval(interval);
+  }, [isOpen]);
+
+  const handleImageLoad = () => {
+    setProgress(100);
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  };
 
   return (
     <AnimatePresence initial={false} mode='wait'>
@@ -81,12 +80,16 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
           animate='visible'
           exit='exit'
         >
-          <CloseButton className='border-white' variant='outline' onClick={()=> {
-            onClose();
-            setLoading(true);
-            setProgress(0);
-          }}>
-            <X className='text-white'/>
+          <CloseButton
+            className='border-white'
+            variant='outline'
+            onClick={() => {
+              onClose();
+              setLoading(true);
+              setProgress(0);
+            }}
+          >
+            <X className='text-white' />
           </CloseButton>
           <Carousel
             opts={{
@@ -97,14 +100,14 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
             <CarouselContent>
               {images.map((image) => (
                 <CarouselItem key={image}>
-                    {loading && <Progress value={progress} className={cn("w-40", images.length > 1 && "translate-x-1/2")} />}
-                    <Image
-                      onLoadStart={() => setProgress(13)}
-                      onLoad={handleImageLoad}
-                      style={{ display: loading ? 'none' : 'block' }}
-                      src={image} 
-                      alt='image'
-                    />
+                  <ProgressStyled $isLoading={loading} value={progress} />
+                  <Image
+                    onLoadStart={() => setProgress(13)}
+                    onLoad={handleImageLoad}
+                    src={image}
+                    alt='image'
+                    $isLoaded={!loading}
+                  />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -161,13 +164,32 @@ interface ContainerProps {
   $isLoading?: boolean | undefined;
 }
 
-const Image = tw.img`
+const Image = tw.img<{ $isLoaded: boolean }>`
   w-full
   h-full
   max-w-screen
   max-h-screen
   object-contain
   object-center
+  ${(props) => (props.$isLoaded ? 'opacity-100' : 'opacity-0')}
+  transition-opacity
+  duration-300
+  ease-in-out
+`;
+
+const ProgressStyled = tw(Progress)<{ $isLoading: boolean }>`
+  w-1/2
+  transition-opacity
+  duration-300
+  ease-in-out
+  absolute
+  top-1/2
+  left-1/2
+  transform
+  -translate-x-1/2
+  -translate-y-1/2
+  w-1/2
+  ${(props) => (props.$isLoading ? 'opacity-100' : 'opacity-0')}
 `;
 
 const Pagination = tw.div`

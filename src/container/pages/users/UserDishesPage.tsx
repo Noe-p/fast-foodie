@@ -21,6 +21,7 @@ import { dishColumns } from '@/container/components/Tables';
 import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
+import { areSimilar } from '@/services/utils';
 import { CollaboratorDto, User } from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -59,8 +60,7 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
     if (!dishes) return [];
     return dishes
       .filter((dish) => {
-        if (search && !dish.name.toLowerCase().includes(search.toLowerCase()))
-          return false;
+        if (search && !areSimilar(search, dish.name, false)) return false;
         if (chef && dish.chef.id !== chef.id) return false;
         return true;
       })

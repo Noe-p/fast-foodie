@@ -1,5 +1,4 @@
 import { useToast } from '@/components/ui/use-toast';
-import { ApiService } from '@/services/api';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
@@ -8,10 +7,10 @@ import tw from 'tailwind-styled-components';
 
 import {
   Col,
-  H2,
   InputTags,
   Layout,
   P16,
+  P18,
   Row,
   RowBetween,
   TextEditor,
@@ -31,6 +30,7 @@ import { Input } from '@/components/ui/input';
 import { CreateIngredients } from '@/container/components';
 import { useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
+import { ApiService } from '@/services/api';
 import { formatValidationErrorMessage } from '@/services/error';
 import { DishStatus, IngredientUnit, MediaDto, UpdateDishApi } from '@/types';
 import { Dish } from '@/types/dto/Dish';
@@ -61,7 +61,7 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
         dish?.ingredients?.map((ingredient) => ({
           foodId: ingredient.food.id,
           quantity: ingredient.quantity,
-          unit: ingredient.unit ?? IngredientUnit.UNIT,
+          unit: ingredient.unit,
         })) ?? [],
       tags: dish?.tags ?? [],
       imageIds: dish?.images.map((image) => image.id) ?? [],
@@ -71,8 +71,22 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
   });
 
   const { mutate: UpdateDish, isPending } = useMutation({
-    mutationFn: (values: UpdateDishApi) =>
-      ApiService.dishes.update(values, dish?.id ?? ''),
+    mutationFn: (values: UpdateDishApi) => {
+      if (values.ingredients) {
+        values.ingredients = values.ingredients.map((ingredient) => {
+          if (ingredient.quantity && !ingredient.unit) {
+            // Si une quantité est présente mais pas d'unité, on définit l'unité par défaut
+            return {
+              ...ingredient,
+              unit: IngredientUnit.UNIT,
+            };
+          }
+          return ingredient;
+        });
+      }
+
+      return ApiService.dishes.update(values, dish?.id ?? '');
+    },
     onSuccess: (data) => {
       form.reset();
       refresh();
@@ -96,7 +110,7 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
         dish.ingredients?.map((ingredient) => ({
           foodId: ingredient.food.id,
           quantity: ingredient.quantity,
-          unit: ingredient.unit ?? IngredientUnit.UNIT,
+          unit: ingredient.unit,
         })) || [];
 
       form.reset({
@@ -126,10 +140,10 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
             {t('generics.back')}
           </P16>
         </Row>
-        <H2 className='text-background'>
-          {dish.name.substring(0, 16)}
-          {dish.name.length > 16 && '...'}
-        </H2>
+        <P18 className='text-background'>
+          {dish.name.substring(0, 25)}
+          {dish.name.length > 25 && '...'}
+        </P18>
       </RowBetween>
       <Content className={className}>
         <motion.div

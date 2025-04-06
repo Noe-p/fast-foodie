@@ -67,7 +67,7 @@ export function CreateIngredients(props: CreateIngredientsProps): JSX.Element {
               }}
               type='number'
               className='text-xs w-13'
-              placeholder={t('...')}
+              placeholder={'...'}
             />
             <Select
               onValueChange={(unit) => {
@@ -75,10 +75,10 @@ export function CreateIngredients(props: CreateIngredientsProps): JSX.Element {
                 newIngredients[index].unit = unit;
                 onIngredientChange(newIngredients);
               }}
-              defaultValue={ingredient.unit ?? IngredientUnit.UNIT}
+              defaultValue={ingredient.unit}
             >
               <SelectTrigger className='w-30 mr-2'>
-                <SelectValue placeholder='Select a fruit' />
+                <SelectValue placeholder='...' />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -123,11 +123,7 @@ export function CreateIngredients(props: CreateIngredientsProps): JSX.Element {
               { quantity: undefined, foodId: '' },
             ]);
           } else {
-            if (
-              values &&
-              values[values.length - 1].quantity &&
-              values[values.length - 1].foodId
-            ) {
+            if (values && values[values.length - 1].foodId) {
               onIngredientChange([
                 ...(values || []),
                 { quantity: undefined, foodId: '' },

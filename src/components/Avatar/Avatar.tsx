@@ -15,12 +15,18 @@ export const Avatar = forwardRef(function (
 ) {
   const { user, size = 25 } = props;
   const [firstLetter, setFirstLetter] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user?.userName) {
       setFirstLetter(user.userName.charAt(0).toUpperCase());
     }
   }, [user]);
+
+  const handleImageLoad = () => {
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  };
 
   return (
     <Main
@@ -32,9 +38,11 @@ export const Avatar = forwardRef(function (
         <ImageStyled
           src={user.profilePicture.url}
           alt={user.userName}
-          quality={10}
+          quality={80}
           width={size}
           height={size}
+          onLoad={handleImageLoad}
+          $isLoaded={!loading}
         />
       ) : (
         <P10
@@ -61,10 +69,18 @@ const Main = tw.div`
   border-secondary
 `;
 
-const ImageStyled = tw(Image)`
+const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
   bg-white
   rounded-full
   w-full
   h-full
   object-cover
+  object-center
+  transition-opacity
+  duration-300
+  ease-in-out
+  ${(props) =>
+    props.$isLoaded
+      ? 'opacity-100'
+      : 'opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}
 `;

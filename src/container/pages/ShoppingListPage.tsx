@@ -29,7 +29,7 @@ import {
 } from '@/services/utils';
 import { Food, IngredientUnit } from '@/types';
 import { Ingredient } from '@/types/dto/Ingredient';
-import { CheckIcon, PlusIcon, XIcon } from 'lucide-react';
+import { CheckIcon, ClipboardCopy, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
@@ -45,10 +45,10 @@ export function ShoppingListPage(): React.JSX.Element {
   }>({
     quantity: undefined,
     food: undefined,
-    unit: IngredientUnit.UNIT,
+    unit: undefined,
   });
   const { toast } = useToast();
-  const { setDrawerOpen, foodSelected } = useAppContext();
+  const { setDrawerOpen, foodSelected, setFoodSelected } = useAppContext();
 
   function removeItemFromShoppingList(aisle: string, id: string) {
     const newShoppingList = shoppingList.map((group) => {
@@ -79,7 +79,7 @@ export function ShoppingListPage(): React.JSX.Element {
   }
 
   function addFood(food?: Food, quantity?: number, unit?: IngredientUnit) {
-    if (!food || !quantity || !unit) {
+    if (!food) {
       toast({
         title: t('errors:fields.missing'),
         variant: 'destructive',
@@ -95,10 +95,11 @@ export function ShoppingListPage(): React.JSX.Element {
     setShoppingList(newShoppingList);
     setIsDrawerOpen(false);
     setIngredient({
-      quantity: 0,
+      quantity: undefined,
       food: undefined,
-      unit: IngredientUnit.UNIT,
+      unit: undefined,
     });
+    setFoodSelected(undefined);
     toast({
       title: t('shoppingList.addSuccess'),
     });
@@ -109,6 +110,41 @@ export function ShoppingListPage(): React.JSX.Element {
       setIngredient({ ...ingredient, food: foodSelected });
     }
   }, [foodSelected]);
+
+  function copyToClipboard() {
+    const listContent = shoppingList
+      .map((shopping) => {
+        const foodItems = shopping.foods
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(
+            (food) =>
+              `- [${food.isCheck ? 'x' : ' '}] ${
+                food.name
+              }: ${writeUnitFromQuantity(t, food.quantity, food.unit)}`
+          )
+          .join('\n');
+        return `## ${t(`dishes:aisleType.${shopping.aisle}`)}\n${foodItems}`;
+      })
+      .join('\n\n');
+
+    // Ajout du titre principal "Liste de course"
+    const finalContent = `# Liste de course\n\n${listContent}`;
+
+    navigator.clipboard
+      .writeText(finalContent)
+      .then(() => {
+        toast({
+          title: t('shoppingList.copiedToClipboard'),
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: t('errors:copyFailed'),
+          variant: 'destructive',
+        });
+        console.error('Failed to copy: ', error);
+      });
+  }
 
   return (
     <Layout>
@@ -140,7 +176,7 @@ export function ShoppingListPage(): React.JSX.Element {
                       <P16 className='translate-y-0.5'>{food.name}</P16>
                       <P16 className='translate-y-0.5'>
                         <strong>
-                          {writeUnitFromQuantity(food.quantity, food.unit, t)}
+                          {writeUnitFromQuantity(t, food.quantity, food.unit)}
                         </strong>
                       </P16>
                     </Row>
@@ -157,13 +193,22 @@ export function ShoppingListPage(): React.JSX.Element {
             </Todo>
           </Col>
         ))}
-        <Button
-          className='fixed bg-primary/90 bottom-23 right-2 gap-2'
-          onClick={() => setIsDrawerOpen(true)}
-        >
-          <PlusIcon size={15} />
-          {t('generics.add')}
-        </Button>
+        <Row className='fixed bottom-23 right-2 gap-1'>
+          <Button
+            className='bg-primary/90 gap-1'
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            <PlusIcon size={15} />
+            {t('generics.add')}
+          </Button>
+          <Button
+            className='bg-primary/90 gap-1'
+            onClick={() => copyToClipboard()}
+          >
+            <ClipboardCopy size={15} />
+            {t('generics.addToClipboard')}
+          </Button>
+        </Row>
       </Col>
       <Modal
         className={cn('relative h-fit')}
@@ -196,11 +241,10 @@ export function ShoppingListPage(): React.JSX.Element {
             onValueChange={(unit) =>
               setIngredient({ ...ingredient, unit: unit as IngredientUnit })
             }
-            defaultValue={IngredientUnit.UNIT}
-            value={ingredient?.unit ?? IngredientUnit.UNIT}
+            value={ingredient?.unit}
           >
             <SelectTrigger className='w-30 mr-3'>
-              <SelectValue placeholder={t('fields:unit.placeholder')} />
+              <SelectValue placeholder={'...'} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

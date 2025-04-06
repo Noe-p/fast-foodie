@@ -109,7 +109,7 @@ export function InputTags(props: InputTagsProps): JSX.Element {
           {tagsAlreadyExist.filter((tag) => !tags.includes(tag)).length > 0 && (
             <Col>
               <P18 className='mt-3 font-bold'>{t('dishes:tags.list')}</P18>
-              <Col className='gap-2 mt-2'>
+              <Col className='gap-1 mt-2 max-h-60 overflow-y-auto'>
                 {tagsAlreadyExist
                   .filter((tag) => !tags.includes(tag))
                   .map((tag) => (
