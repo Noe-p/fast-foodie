@@ -8,7 +8,8 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/api\.fast-foodie\.sakana-san\.fr\/files\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
+      urlPattern:
+        /^https:\/\/api\.fast-foodie\.sakana-san\.fr\/files\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'external-images-cache',
@@ -39,7 +40,7 @@ const settings = {
       },
       {
         protocol: 'https',
-        hostname: 'api.fast-foodie.sakana-san.fr',
+        hostname: 'api.fast-foodie.noe-philippe.fr',
         port: '',
         pathname: '/files/**',
       },
