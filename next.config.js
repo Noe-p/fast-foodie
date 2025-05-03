@@ -9,7 +9,7 @@ const withPWA = require('next-pwa')({
   runtimeCaching: [
     {
       urlPattern:
-        /^https:\/\/api\.fast-foodie\.sakana-san\.fr\/files\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
+        /^https:\/\/api\.fast-foodie\.noe-philippe\.fr\/files\/.*\.(png|jpg|jpeg|svg|gif|webp)$/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'external-images-cache',
