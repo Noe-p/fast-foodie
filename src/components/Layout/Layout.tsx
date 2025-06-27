@@ -9,15 +9,16 @@ interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-
-
 export function Layout(props: LayoutProps): React.JSX.Element {
   const { children, className } = props;
   const isPhone = useMediaQuery('(max-width: 700px)');
   const { t } = useTranslation();
 
   return !isPhone ? (
-    <Main {...props} className='flex flex-col justify-center items-center h-screen w-screen'>
+    <Main
+      {...props}
+      className='flex flex-col justify-center items-center h-screen w-screen'
+    >
       <P16>{t('appOnlyForPhone')}</P16>
     </Main>
   ) : (
@@ -35,7 +36,6 @@ const Main = tw.div`
 const Page = tw.div`
   flex
   flex-col
-  z-0
   min-h-screen
   p-3
   pb-25

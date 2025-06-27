@@ -198,7 +198,7 @@ const Main = tw(motion.div)`
   left-0
   bottom-0
   right-0
-  z-[9999]
+  z-[99999]
   flex
   flex-col
   justify-center
@@ -212,14 +212,14 @@ const CloseButton = tw(Button)`
   absolute
   top-4
   right-4
-  z-50
+  z-[99999]
   h-12
   w-12
   rounded-full
   bg-black/30
   hover:bg-black/50
   text-white
-  hover:text-primary
+  hover:text-white
   border-white/20
   hover:border-white/40
   transition-all
@@ -243,7 +243,7 @@ const PaginationContainer = tw.div`
   py-2
   rounded-full
   backdrop-blur-sm
-  z-50
+  z-[99999]
 `;
 
 const ImageCounter = tw.div`
@@ -258,5 +258,5 @@ const ImageCounter = tw.div`
   text-sm
   font-medium
   backdrop-blur-sm
-  z-50
+  z-[99999]
 `;
