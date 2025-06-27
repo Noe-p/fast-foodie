@@ -198,7 +198,7 @@ const Main = tw(motion.div)`
   left-0
   bottom-0
   right-0
-  z-50
+  z-[9999]
   flex
   flex-col
   justify-center

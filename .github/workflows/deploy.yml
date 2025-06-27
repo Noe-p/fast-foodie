@@ -78,16 +78,14 @@ jobs:
           script: |
             mkdir -p ~/fast-foodie
 
-      - name: Copy Compose files to server
+      - name: Copy Compose file to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: |
-            docker-compose.yml
-            docker-compose.api.yml
+          source: 'docker-compose.yml'
           target: '~/fast-foodie/'
           strip_components: 0
 
@@ -101,5 +99,10 @@ jobs:
           script: |
             cd ~/fast-foodie
             echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-            docker compose -f docker-compose.yml -f docker-compose.api.yml pull
-            docker compose -f docker-compose.yml -f docker-compose.api.yml up -d --remove-orphans
+            if [ -f docker-compose.api.yml ]; then
+              docker compose -f docker-compose.yml -f docker-compose.api.yml pull
+              docker compose -f docker-compose.yml -f docker-compose.api.yml up -d --remove-orphans
+            else
+              docker compose -f docker-compose.yml pull
+              docker compose -f docker-compose.yml up -d --remove-orphans
+            fi
