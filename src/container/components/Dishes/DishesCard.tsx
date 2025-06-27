@@ -34,6 +34,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
       ) : (
         <ImageLoader
           height={420}
+          width={315}
           quality={80}
           src={
             dish.images.length > 0

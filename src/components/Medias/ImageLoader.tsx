@@ -138,7 +138,6 @@ const Container = tw.div<ContainerProps>`
   w-full
   max-w-xs
   mx-auto
-  ${(props) => (props.$isLoading ? 'animate-pulse' : '')}
 `;
 
 const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
