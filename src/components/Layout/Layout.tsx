@@ -39,5 +39,4 @@ const Page = tw.div`
   min-h-screen
   p-3
   pb-25
-  overflow-hidden
 `;

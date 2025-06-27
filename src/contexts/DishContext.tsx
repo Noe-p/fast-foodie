@@ -67,7 +67,7 @@ function useDishProvider() {
   const [shoppingList, setShoppingListState] = useState<ShoppingList[]>([]);
   const [localTags, setLocalTags] = useState<string[]>([]);
   const [localFoods, setLocalFoods] = useState<Food[]>([]);
-  const [isLoaded, setIsLoaded] = useState(defaultState.isPending);
+  const [isPending, setIsPending] = useState(defaultState.isPending);
   const { t } = useTranslation();
 
   // Gestion des plats hebdomadaires
@@ -191,8 +191,14 @@ function useDishProvider() {
 
   // Actualisation des données depuis l'API
   async function refresh() {
-    if (isLoaded) return;
-    setIsLoaded(true);
+    if (isPending) return;
+
+    const shouldShowLoader = localDishes.length === 0;
+
+    if (shouldShowLoader) {
+      setIsPending(true);
+    }
+
     try {
       const [dishes, foods] = await Promise.all([
         ApiService.dishes.get(),
@@ -209,7 +215,9 @@ function useDishProvider() {
         variant: 'destructive',
       });
     } finally {
-      setIsLoaded(false);
+      if (shouldShowLoader) {
+        setIsPending(false);
+      }
     }
   }
 
@@ -248,8 +256,8 @@ function useDishProvider() {
     foods: localFoods,
     clearData,
     clearWeeklyDishes,
-    isPending: isLoaded,
     getDishesById,
+    isPending,
   };
 }
 
