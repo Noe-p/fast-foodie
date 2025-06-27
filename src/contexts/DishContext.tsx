@@ -32,7 +32,7 @@ const defaultState: State = {
   shoppingList: [],
   tags: [],
   foods: [],
-  isPending: true,
+  isPending: false,
 };
 
 // Création du contexte
@@ -72,7 +72,6 @@ function useDishProvider() {
 
   // Gestion des plats hebdomadaires
   const setWeeklyDishes = (dishes: Dish[]) => {
-    console.log('[D] DishContext', dishes);
     setStateWeeklyDishes(dishes);
     window.localStorage.setItem('weeklyDishes', JSON.stringify(dishes));
     const newShoppingList = generateShoppingListFromDishes(dishes);

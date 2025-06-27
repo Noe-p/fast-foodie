@@ -1,15 +1,18 @@
 version: '3.8'
 
 networks:
-  noe-philippe-network:
+  fast-foodie-network:
     driver: bridge
 
 services:
   fast-foodie:
-    image: 'noephilippe/fast-foodie:latest'
+    image: ${GHCR_REGISTRY}/${OWNER_LC}/fast-foodie:${SHA}
     container_name: fast-foodie
     restart: always
     ports:
       - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
     networks:
-      - noe-philippe-network
+      - fast-foodie-network
