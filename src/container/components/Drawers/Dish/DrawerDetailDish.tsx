@@ -112,145 +112,118 @@ export function DrawerDetailDish(
   }, [currentUser, dish]);
 
   return dish ? (
-    <DrawerMotion
-      className='mt-0 rounded-t-none'
-      headerClassName='rounded-t-none'
-      isOpen={isOpen}
-      onClose={onClose}
-      icon={
-        <CircleEllipsisIcon
-          size={20}
-          className='text-white'
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditOpen(true);
-          }}
-        />
-      }
-    >
-      <Content className={className}>
-        <H2 className='leading-none'>{dish.name}</H2>
-        <RowBetween className='items-start mt-5'>
-          <Row className='flex-wrap gap-1 mr-2'>
-            {dish?.tags?.map((tag) => (
-              <Badge variant={'outline'} key={tag}>
-                {tag}
-              </Badge>
-            ))}
-            {dish.chef && (
-              <Badge className='flex items-center gap-1' variant={'outline'}>
-                <ChefHatIcon size={15} />
-                {dish.chef.userName}
-              </Badge>
-            )}
-            <Badge className='flex items-center gap-1' variant={'outline'}>
-              {dish.status === DishStatus.PRIVATE ? (
-                <EyeOffIcon size={15} />
-              ) : (
-                <EyeIcon size={15} />
-              )}
-            </Badge>
-          </Row>
-          {dish.ingredients.length > 0 && (
-            <Input
-              min={1}
-              isArrow
-              type='number'
-              onChange={(v) => {
-                setNewRation(Number(v));
-                if (isWeeklyDish) {
-                  setWeeklyDishes(
-                    weeklyDishes.map((d) =>
-                      d.id === dish.id
-                        ? {
-                            ...d,
-                            ration: Number(v),
-                            ingredients: d.ingredients.map((ingredient) => ({
-                              ...ingredient,
-                              quantity:
-                                (ingredient.quantity / d.ration) * Number(v),
-                            })),
-                          }
-                        : d
-                    )
-                  );
-                }
-              }}
-              value={newRation.toString()}
-              className='w-14 h-7'
-              iconSize={22}
-            />
-          )}
-        </RowBetween>
-        <RowBetween className='gap-4 mt-4 items-start'>
-          {dish.ingredients.length > 0 && (
-            <TextContainer>
-              <H3 className=''>{t('generics.ingretients')}</H3>
-              <ul className='mt-2 list-disc'>
-                {dish.ingredients.map((ingredient) => (
-                  <li
-                    className='gap-2 ml-4 text-primary leading-none mb-2'
-                    key={ingredient.id}
-                  >
-                    <strong>{writeUnit(ingredient, newRation, t, dish)}</strong>{' '}
-                    {ingredient.food.name}
-                  </li>
-                ))}
-              </ul>
-            </TextContainer>
-          )}
-          <Image
-            onClick={() => imageCover && setIsImageFullScreenOpen(true)}
-            src={imageCover?.url ?? IMAGE_FALLBACK}
-            alt={dish.name}
-            height={250}
-            width={150}
-            quality={80}
+    <>
+      <DrawerMotion
+        className='mt-0 rounded-t-none'
+        headerClassName='rounded-t-none'
+        isOpen={isOpen}
+        onClose={onClose}
+        icon={
+          <CircleEllipsisIcon
+            size={20}
+            className='text-white'
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditOpen(true);
+            }}
           />
-        </RowBetween>
-        {dish.instructions && (
-          <Col className='mt-5'>
-            <H3 className='text-center'>{t('dishes:instruction')}</H3>
-            <Col className='mt-2'>
-              {dish.instructions && (
-                <Main dangerouslySetInnerHTML={{ __html: dish.instructions }} />
-              )}
-            </Col>
-          </Col>
-        )}
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (isWeeklyDish) {
-              setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
-              return;
-            }
-            setWeeklyDishes([...weeklyDishes, dish]);
-          }}
-          className={cn(
-            'fixed bottom-10 right-2 gap-2',
-            isWeeklyDish ? 'bg-primary/90' : 'bg-primary/60'
-          )}
-        >
-          {isWeeklyDish ? <X size={15} /> : <Calendar size={15} />}
-          <P12 className={'text-background'}>
-            {isWeeklyDish ? t('dishes:week.remove') : t('dishes:week.add')}
-          </P12>
-        </Button>
-      </Content>
-      <ImageFullScreen
-        startIndex={0}
-        images={dish.images.map((image) => image.url)}
-        isOpen={isImageFullScreenOpen}
-        onClose={() => setIsImageFullScreenOpen(false)}
-      />
-      <Modal
-        className='h-min relative'
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
+        }
       >
-        <Col className='gap-1'>
-          <RowBetween
+        <Content className={className}>
+          <H2 className='leading-none'>{dish.name}</H2>
+          <RowBetween className='items-start mt-5'>
+            <Row className='flex-wrap gap-1 mr-2'>
+              {dish?.tags?.map((tag) => (
+                <Badge variant={'outline'} key={tag}>
+                  {tag}
+                </Badge>
+              ))}
+              {dish.chef && (
+                <Badge className='flex items-center gap-1' variant={'outline'}>
+                  <ChefHatIcon size={15} />
+                  {dish.chef.userName}
+                </Badge>
+              )}
+              <Badge className='flex items-center gap-1' variant={'outline'}>
+                {dish.status === DishStatus.PRIVATE ? (
+                  <EyeOffIcon size={15} />
+                ) : (
+                  <EyeIcon size={15} />
+                )}
+              </Badge>
+            </Row>
+            {dish.ingredients.length > 0 && (
+              <Input
+                min={1}
+                isArrow
+                type='number'
+                onChange={(v) => {
+                  setNewRation(Number(v));
+                  if (isWeeklyDish) {
+                    setWeeklyDishes(
+                      weeklyDishes.map((d) =>
+                        d.id === dish.id
+                          ? {
+                              ...d,
+                              ration: Number(v),
+                              ingredients: d.ingredients.map((ingredient) => ({
+                                ...ingredient,
+                                quantity:
+                                  (ingredient.quantity / d.ration) * Number(v),
+                              })),
+                            }
+                          : d
+                      )
+                    );
+                  }
+                }}
+                value={newRation.toString()}
+                className='w-14 h-7'
+                iconSize={22}
+              />
+            )}
+          </RowBetween>
+          <RowBetween className='gap-4 mt-4 items-start'>
+            {dish.ingredients.length > 0 && (
+              <TextContainer>
+                <H3 className=''>{t('generics.ingretients')}</H3>
+                <ul className='mt-2 list-disc'>
+                  {dish.ingredients.map((ingredient) => (
+                    <li
+                      className='gap-2 ml-4 text-primary leading-none mb-2'
+                      key={ingredient.id}
+                    >
+                      <strong>
+                        {writeUnit(ingredient, newRation, t, dish)}
+                      </strong>{' '}
+                      {ingredient.food.name}
+                    </li>
+                  ))}
+                </ul>
+              </TextContainer>
+            )}
+            <Image
+              onClick={() => imageCover && setIsImageFullScreenOpen(true)}
+              src={imageCover?.url ?? IMAGE_FALLBACK}
+              alt={dish.name}
+              height={250}
+              width={150}
+              quality={80}
+            />
+          </RowBetween>
+          {dish.instructions && (
+            <Col className='mt-5'>
+              <H3 className='text-center'>{t('dishes:instruction')}</H3>
+              <Col className='mt-2'>
+                {dish.instructions && (
+                  <Main
+                    dangerouslySetInnerHTML={{ __html: dish.instructions }}
+                  />
+                )}
+              </Col>
+            </Col>
+          )}
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               if (isWeeklyDish) {
@@ -259,36 +232,71 @@ export function DrawerDetailDish(
               }
               setWeeklyDishes([...weeklyDishes, dish]);
             }}
-            className={`${
-              isWeeklyDish
-                ? 'bg-primary text-background'
-                : 'bg-background text-primary'
-            } p-2 rounded-lg gap-2 items-center`}
+            className={cn(
+              'fixed bottom-10 right-2 gap-2',
+              isWeeklyDish ? 'bg-primary/90' : 'bg-primary/60'
+            )}
           >
-            <Calendar />
-            <P16
-              className={`${isWeeklyDish ? 'text-background' : 'text-primary'}`}
-            >
+            {isWeeklyDish ? <X size={15} /> : <Calendar size={15} />}
+            <P12 className={'text-background'}>
               {isWeeklyDish ? t('dishes:week.remove') : t('dishes:week.add')}
-            </P16>
-          </RowBetween>
-          {!youAreInReadOnlyMode && (
+            </P12>
+          </Button>
+        </Content>
+        <Modal
+          className='h-min relative'
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+        >
+          <Col className='gap-1'>
             <RowBetween
-              onClick={() => {
-                router.push(ROUTES.dishes.update(dish.id));
+              onClick={(e) => {
+                e.stopPropagation();
+                if (isWeeklyDish) {
+                  setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
+                  return;
+                }
+                setWeeklyDishes([...weeklyDishes, dish]);
               }}
-              className='bg-background text-primary p-2 rounded-lg gap-2 items-center'
+              className={`${
+                isWeeklyDish
+                  ? 'bg-primary text-background'
+                  : 'bg-background text-primary'
+              } p-2 rounded-lg gap-2 items-center`}
             >
-              <EditIcon />
-              <P16>{t('generics.edit')}</P16>
+              <Calendar />
+              <P16
+                className={`${
+                  isWeeklyDish ? 'text-background' : 'text-primary'
+                }`}
+              >
+                {isWeeklyDish ? t('dishes:week.remove') : t('dishes:week.add')}
+              </P16>
             </RowBetween>
-          )}
-          {currentUser?.id === dish.chef.id && (
-            <ModalRemove isPending={isPending} onRemove={() => remove()} />
-          )}
-        </Col>
-      </Modal>
-    </DrawerMotion>
+            {!youAreInReadOnlyMode && (
+              <RowBetween
+                onClick={() => {
+                  router.push(ROUTES.dishes.update(dish.id));
+                }}
+                className='bg-background text-primary p-2 rounded-lg gap-2 items-center'
+              >
+                <EditIcon />
+                <P16>{t('generics.edit')}</P16>
+              </RowBetween>
+            )}
+            {currentUser?.id === dish.chef.id && (
+              <ModalRemove isPending={isPending} onRemove={() => remove()} />
+            )}
+          </Col>
+        </Modal>
+      </DrawerMotion>
+      <ImageFullScreen
+        startIndex={0}
+        images={dish.images.map((image) => image.url)}
+        isOpen={isImageFullScreenOpen}
+        onClose={() => setIsImageFullScreenOpen(false)}
+      />
+    </>
   ) : (
     <></>
   );
