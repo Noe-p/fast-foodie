@@ -1,40 +1,115 @@
 import Image, { ImageProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import tw from 'tailwind-styled-components';
 import { Progress } from '../ui/progress';
 
-interface ImageLoaderProps extends ImageProps {}
+interface ImageLoaderProps
+  extends Omit<ImageProps, 'onLoad' | 'onError' | 'width' | 'height' | 'src'> {
+  width: number;
+  height: number;
+  src: string;
+  fallbackSrc?: string;
+  showProgress?: boolean;
+  onLoadComplete?: () => void;
+  onError?: () => void;
+}
 
 export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
-  const { width, height, ...rest } = props;
+  const {
+    width,
+    height,
+    fallbackSrc = '/images/image-fallback.jpg',
+    showProgress = true,
+    onLoadComplete,
+    onError,
+    className,
+    src,
+    ...rest
+  } = props;
+
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [hasError, setHasError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src);
+  const [showLoader, setShowLoader] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (loading && showProgress) {
+      timer = setTimeout(() => setShowLoader(true), 150);
+    } else {
+      setShowLoader(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading, showProgress]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (loading) {
+    if (loading && showProgress) {
       interval = setInterval(() => {
-        setProgress((prev) => (prev < 100 ? prev + Math.random() * 10 : 100));
-      }, 300);
+        setProgress((prev) => {
+          if (prev >= 90) return prev; // S'arrêter à 90% jusqu'au vrai chargement
+          return prev + Math.random() * 15;
+        });
+      }, 200);
     }
     return () => clearInterval(interval);
-  }, [loading]);
+  }, [loading, showProgress]);
 
   const handleImageLoad = () => {
     setProgress(100);
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
+    setLoading(false);
+    setHasError(false);
+    onLoadComplete?.();
+  };
+
+  const handleImageError = () => {
+    if (currentSrc !== fallbackSrc) {
+      setCurrentSrc(fallbackSrc);
+      setProgress(0);
+      setLoading(true);
+      setHasError(false);
+    } else {
+      setLoading(false);
+      setHasError(true);
+      onError?.();
+    }
+  };
+
+  const handleImageStart = () => {
+    setLoading(true);
+    setProgress(0);
+    setHasError(false);
   };
 
   return (
-    <Container $height={height} $isLoading={loading}>
-      <ProgressStyled $isLoading={loading} value={progress} />
+    <Container $height={height} $width={width} $isLoading={loading}>
+      {loading && showProgress && showLoader && (
+        <LoadingOverlay>
+          <ProgressContainer>
+            <Progress value={progress} className='w-full h-2' />
+          </ProgressContainer>
+        </LoadingOverlay>
+      )}
+
+      {hasError && (
+        <ErrorOverlay>
+          <ErrorIcon>⚠️</ErrorIcon>
+          <ErrorText>Erreur de chargement</ErrorText>
+        </ErrorOverlay>
+      )}
+
       <ImageStyled
-        onLoad={handleImageLoad}
-        layout='fill'
-        $isLoaded={!loading}
-        priority={true}
+        width={width || 800}
+        height={height || 600}
+        onLoadStart={handleImageStart}
+        onLoadingComplete={handleImageLoad}
+        onError={handleImageError}
+        className={className}
+        $isLoaded={!loading && !hasError}
+        priority={props.priority}
+        quality={props.quality || 90}
+        src={currentSrc}
         {...rest}
       />
     </Container>
@@ -42,47 +117,82 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
 }
 
 interface ContainerProps {
-  $height?: number | `${number}` | undefined;
-  $width?: number | `${number}` | undefined;
-  $isLoading?: boolean | undefined;
+  $height?: number | string;
+  $width?: number | string;
+  $isLoading?: boolean;
 }
 
-const Container = styled.div<ContainerProps>`
-  position: relative;
-  width: 100%;
-  height: ${({ $height }) => $height}px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ $isLoading }) =>
-    $isLoading ? 'hsl(var(--background))' : 'transparent'};
-  background: ${({ $isLoading }) =>
-    $isLoading ? 'hsl(var(--background))' : 'transparent'};
-  border-radius: 0.5rem;
-  transition: background-color 0.3s ease-in-out;
+const Container = tw.div<ContainerProps>`
+  relative
+  flex
+  justify-center
+  items-center
+  bg-gray-100
+  dark:bg-gray-800
+  rounded-lg
+  overflow-hidden
+  transition-all
+  duration-300
+  ease-in-out
+  aspect-[3/4]
+  w-full
+  max-w-xs
+  mx-auto
+  ${(props) => (props.$isLoading ? 'animate-pulse' : '')}
 `;
 
 const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
-  rounded-sm
-  transition-opacity
+  transition-all
   duration-300
   ease-in-out
-  object-center
   object-cover
-  ${(props) => (props.$isLoaded ? 'opacity-100' : 'opacity-0')}
+  w-full
+  h-full
+  ${(props) =>
+    props.$isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
 `;
 
-const ProgressStyled = tw(Progress)<{ $isLoading: boolean }>`
-  w-1/2
-  transition-opacity
-  duration-300
-  ease-in-out
+const LoadingOverlay = tw.div`
   absolute
-  top-1/2
-  left-1/2
-  transform
-  -translate-x-1/2
-  -translate-y-1/2
+  inset-0
+  flex
+  items-center
+  justify-center
+  bg-white/80
+  dark:bg-gray-900/80
+  backdrop-blur-sm
+  z-10
+`;
+
+const ProgressContainer = tw.div`
+  flex
+  flex-col
+  items-center
+  gap-2
   w-1/2
-  ${(props) => (props.$isLoading ? 'opacity-100' : 'opacity-0')}
+  max-w-xs
+`;
+
+const ErrorOverlay = tw.div`
+  absolute
+  inset-0
+  flex
+  flex-col
+  items-center
+  justify-center
+  bg-red-50
+  dark:bg-red-900/20
+  z-10
+`;
+
+const ErrorIcon = tw.div`
+  text-2xl
+  mb-2
+`;
+
+const ErrorText = tw.span`
+  text-sm
+  font-medium
+  text-red-600
+  dark:text-red-400
 `;

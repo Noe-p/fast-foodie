@@ -1,3 +1,5 @@
+'use client';
+
 import { DRAWER_VARIANTS } from '@/services/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -9,10 +11,12 @@ import {
   CarouselApi,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
   PaginationDot,
   useDotButton,
 } from '../ui/carousel';
-import { Progress } from '../ui/progress';
+import { ImageLoader } from './ImageLoader';
 
 interface ImageFullScreenProps {
   images: string[];
@@ -21,54 +25,91 @@ interface ImageFullScreenProps {
   onClose: () => void;
   startIndex?: number;
   onLastImageShown?: () => void;
+  projectName?: string;
 }
 
 export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
-  const { images, className, onClose, isOpen, startIndex, onLastImageShown } =
-    props;
+  const {
+    images,
+    className,
+    onClose,
+    isOpen,
+    startIndex = 0,
+    onLastImageShown,
+    projectName,
+  } = props;
 
   const [api, setApi] = useState<CarouselApi>();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(startIndex);
   const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(api);
 
   function isLastImageShown(index: number): boolean {
     return index === images.length - 1;
   }
 
+  // Réinitialiser l'index quand la galerie s'ouvre
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(startIndex);
+    }
+  }, [isOpen, startIndex]);
+
+  // Précharger les images adjacentes
+  useEffect(() => {
+    const preloadImages = () => {
+      const nextIndex = (currentIndex + 1) % images.length;
+      const prevIndex =
+        currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+
+      const preloadImage = (src: string) => {
+        const img = new window.Image();
+        img.src = src;
+      };
+
+      preloadImage(images[nextIndex]);
+      preloadImage(images[prevIndex]);
+    };
+
+    if (isOpen && images.length > 0) {
+      preloadImages();
+    }
+  }, [currentIndex, images, isOpen]);
+
   useEffect(() => {
     if (!api) return;
     setCurrentIndex(api.selectedScrollSnap());
     api.on('select', () => {
-      setCurrentIndex(api.selectedScrollSnap());
+      const newIndex = api.selectedScrollSnap();
+      setCurrentIndex(newIndex);
     });
     return () => {
       api.off('select', () => {
         setCurrentIndex(api.selectedScrollSnap());
       });
     };
-  }, [api]);
+  }, [api, currentIndex]);
 
   useEffect(() => {
     isLastImageShown(currentIndex) && onLastImageShown?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (loading) {
-      interval = setInterval(() => {
-        setProgress((prev) => (prev < 100 ? prev + Math.random() * 10 : 100));
-      }, 300);
-    }
-    return () => clearInterval(interval);
-  }, [isOpen]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!api) return;
 
-  const handleImageLoad = () => {
-    setProgress(100);
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
+    if (e.key === 'ArrowLeft') {
+      api.scrollPrev();
+    }
+    if (e.key === 'ArrowRight') {
+      api.scrollNext();
+    }
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
   };
 
   return (
@@ -79,50 +120,72 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
           initial='hidden'
           animate='visible'
           exit='exit'
+          className={className}
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
         >
-          <CloseButton
-            className='border-white'
-            variant='outline'
-            onClick={() => {
-              onClose();
-              setLoading(true);
-              setProgress(0);
-            }}
-          >
-            <X className='text-white' />
+          {/* Bouton de fermeture */}
+          <CloseButton onClick={handleClose} aria-label='Fermer la galerie'>
+            <X className='h-6 w-6' />
           </CloseButton>
+
+          {/* Carousel principal */}
           <Carousel
             opts={{
               startIndex,
+              loop: true,
             }}
             setApi={setApi}
+            className='w-full h-full max-w-7xl max-h-[80vh]'
           >
             <CarouselContent>
-              {images.map((image) => (
-                <CarouselItem key={image}>
-                  <ProgressStyled $isLoading={loading} value={progress} />
-                  <Image
-                    onLoadStart={() => setProgress(13)}
-                    onLoad={handleImageLoad}
-                    src={image}
-                    alt='image'
-                    $isLoaded={!loading}
-                  />
+              {images.map((image, index) => (
+                <CarouselItem key={image} className='h-[80vh]'>
+                  <div className='relative w-full h-full flex items-center justify-center p-4'>
+                    <ImageLoader
+                      src={image}
+                      alt={`Image ${index + 1} sur ${images.length}`}
+                      width={800}
+                      height={600}
+                      className='max-w-full max-h-full object-contain'
+                      priority={index === startIndex}
+                      quality={90}
+                      showProgress={true}
+                      fallbackSrc='/images/image-fallback.jpg'
+                      onLoadComplete={() => {
+                        // Optionnel : callback quand l'image est chargée
+                      }}
+                      onError={() => {
+                        // Optionnel : callback en cas d'erreur
+                      }}
+                    />
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {/* <CarouselPrevious className='left-10' /> */}
-            {/* <CarouselNext className='right-10' /> */}
+
+            {/* Boutons de navigation */}
+            <CarouselPrevious className='left-4 bg-black/30 hover:bg-black/50 text-white hover:text-primary border-white/20 hover:border-white/40' />
+            <CarouselNext className='right-4 bg-black/30 hover:bg-black/50 text-white hover:text-primary border-white/20 hover:border-white/40' />
           </Carousel>
-          <Pagination>
+
+          {/* Indicateurs de position */}
+          <PaginationContainer>
             {scrollSnaps.map((snap, index) => (
               <PaginationDot
                 key={snap}
                 onClick={() => onDotButtonClick(index)}
                 $isActive={index === selectedIndex}
+                aria-label={`Aller à l'image ${index + 1}`}
+                aria-current={index === selectedIndex}
               />
             ))}
-          </Pagination>
+          </PaginationContainer>
+
+          {/* Compteur d'images */}
+          <ImageCounter>
+            {currentIndex + 1} / {images.length}
+          </ImageCounter>
         </Main>
       )}
     </AnimatePresence>
@@ -137,9 +200,12 @@ const Main = tw(motion.div)`
   right-0
   z-50
   flex
+  flex-col
   justify-center
   items-center
-  noise backdrop-blur-sm
+  bg-black/90
+  backdrop-blur-sm
+  focus:outline-none
 `;
 
 const CloseButton = tw(Button)`
@@ -150,53 +216,47 @@ const CloseButton = tw(Button)`
   h-12
   w-12
   rounded-full
-  hover:bg-gray-100
-  hover:border-gray-500
-  transition
+  bg-black/30
+  hover:bg-black/50
+  text-white
+  hover:text-primary
+  border-white/20
+  hover:border-white/40
+  transition-all
   duration-300
   ease-in-out
   hover:scale-105
+  focus:outline-none
+  focus:ring-0
 `;
 
-interface ContainerProps {
-  $height?: number | `${number}` | undefined;
-  $width?: number | `${number}` | undefined;
-  $isLoading?: boolean | undefined;
-}
-
-const Image = tw.img<{ $isLoaded: boolean }>`
-  w-full
-  h-full
-  max-w-screen
-  max-h-screen
-  object-contain
-  object-center
-  ${(props) => (props.$isLoaded ? 'opacity-100' : 'opacity-0')}
-  transition-opacity
-  duration-300
-  ease-in-out
-`;
-
-const ProgressStyled = tw(Progress)<{ $isLoading: boolean }>`
-  w-1/2
-  transition-opacity
-  duration-300
-  ease-in-out
-  absolute
-  top-1/2
-  left-1/2
-  transform
-  -translate-x-1/2
-  -translate-y-1/2
-  w-1/2
-  ${(props) => (props.$isLoading ? 'opacity-100' : 'opacity-0')}
-`;
-
-const Pagination = tw.div`
+const PaginationContainer = tw.div`
   flex
   gap-2
   absolute
-  bottom-5
+  bottom-6
+  left-1/2
   transform
+  -translate-x-1/2
+  bg-black/30
+  px-4
+  py-2
+  rounded-full
+  backdrop-blur-sm
+  z-50
+`;
+
+const ImageCounter = tw.div`
+  absolute
+  top-4
+  left-4
+  bg-black/30
+  text-white
+  px-3
+  py-1
+  rounded-full
+  text-sm
+  font-medium
+  backdrop-blur-sm
   z-50
 `;

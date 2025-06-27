@@ -182,7 +182,7 @@ export function DrawerDetailDish(
             />
           )}
         </RowBetween>
-        <Grid2>
+        <RowBetween className='gap-4 mt-4 items-start'>
           {dish.ingredients.length > 0 && (
             <TextContainer>
               <H3 className=''>{t('generics.ingretients')}</H3>
@@ -205,9 +205,9 @@ export function DrawerDetailDish(
             alt={dish.name}
             height={250}
             width={150}
-            quality={1}
+            quality={80}
           />
-        </Grid2>
+        </RowBetween>
         {dish.instructions && (
           <Col className='mt-5'>
             <H3 className='text-center'>{t('dishes:instruction')}</H3>
@@ -317,6 +317,7 @@ const Image = tw(ImageLoader)`
 `;
 
 const TextContainer = tw(Col)`
+  w-full
   
 `;
 

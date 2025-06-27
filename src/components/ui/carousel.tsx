@@ -284,7 +284,12 @@ CarouselNext.displayName = 'CarouselNext';
 export {
   Carousel,
   CarouselContent,
-  CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  PaginationDot,
+  useDotButton,
+  type CarouselApi,
 };
 
 type UseDotButtonType = {
@@ -293,7 +298,7 @@ type UseDotButtonType = {
   onDotButtonClick: (index: number) => void;
 };
 
-export const useDotButton = (
+const useDotButton = (
   emblaApi: EmblaCarouselType | undefined
 ): UseDotButtonType => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -332,7 +337,7 @@ export const useDotButton = (
   };
 };
 
-export const PaginationDot = tw.div<{ $isActive: boolean }>`
+const PaginationDot = tw.div<{ $isActive: boolean }>`
   w-3
   h-3
   rounded-full
