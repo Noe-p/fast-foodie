@@ -40,6 +40,22 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   const [currentSrc, setCurrentSrc] = useState(isValidSrc ? src : fallbackSrc);
   const [showLoader, setShowLoader] = useState(false);
 
+  // Reset des états quand isValidSrc change
+  useEffect(() => {
+    if (!isValidSrc) {
+      setLoading(false);
+      setProgress(0);
+      setHasError(false);
+      setShowLoader(false);
+      setCurrentSrc(fallbackSrc);
+    } else {
+      setLoading(true);
+      setProgress(0);
+      setHasError(false);
+      setCurrentSrc(src);
+    }
+  }, [isValidSrc, src, fallbackSrc]);
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (loading && showProgress && isValidSrc) {
@@ -59,6 +75,9 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
           return prev + Math.random() * 15;
         });
       }, 200);
+    } else {
+      // Reset de la progression si les conditions ne sont pas remplies
+      setProgress(0);
     }
     return () => clearInterval(interval);
   }, [loading, showProgress, isValidSrc]);
@@ -166,7 +185,7 @@ const LoadingOverlay = tw.div`
   flex
   items-center
   justify-center
-  z-10
+  z-5
   bg-background
 `;
 
@@ -188,7 +207,7 @@ const ErrorOverlay = tw.div`
   justify-center
   bg-red-50
   dark:bg-red-900/20
-  z-10
+  z-5
 `;
 
 const ErrorIcon = tw.div`
