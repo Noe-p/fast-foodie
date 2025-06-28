@@ -10,6 +10,7 @@ import { useAuthContext, useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { cn, writeUnit } from '@/services/utils';
+import { IMAGE_FALLBACK } from '@/static/constants';
 import { CollaboratorStatus, CollaboratorType, DishStatus } from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { useMutation } from '@tanstack/react-query';
@@ -204,7 +205,7 @@ export function DrawerDetailDish(
             )}
             <Image
               onClick={() => imageCover && setIsImageFullScreenOpen(true)}
-              src={imageCover?.url || ''}
+              src={imageCover?.url ?? IMAGE_FALLBACK}
               alt={dish.name}
               height={250}
               width={150}

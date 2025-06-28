@@ -8,7 +8,6 @@ interface ImageLoaderProps
   width: number;
   height: number;
   src: string;
-  fallbackSrc?: string;
   showProgress?: boolean;
   onLoadComplete?: () => void;
   onError?: () => void;
@@ -19,7 +18,6 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   const {
     width,
     height,
-    fallbackSrc = '/images/image-fallback.jpg',
     showProgress = true,
     onLoadComplete,
     onError,
@@ -30,47 +28,33 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
     ...rest
   } = props;
 
-  // Vérifier si l'image source est valide
-  const isValidSrc =
-    src && src.trim() !== '' && src !== 'undefined' && src !== 'null';
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState(isValidSrc ? src : fallbackSrc);
+  const [currentSrc, setCurrentSrc] = useState(src);
   const [showLoader, setShowLoader] = useState(false);
 
-  // Reset des états quand isValidSrc change
+  // Reset des états quand src change
   useEffect(() => {
-    if (!isValidSrc) {
-      // Si pas d'image valide, afficher directement le fallback sans loading
-      setLoading(false);
-      setProgress(0);
-      setHasError(false);
-      setShowLoader(false);
-      setCurrentSrc(fallbackSrc);
-    } else {
-      // Si image valide, commencer le chargement
-      setLoading(true);
-      setProgress(0);
-      setHasError(false);
-      setCurrentSrc(src);
-    }
-  }, [isValidSrc, src, fallbackSrc]);
+    setLoading(true);
+    setProgress(0);
+    setHasError(false);
+    setCurrentSrc(src);
+  }, [src]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (loading && showProgress && isValidSrc) {
+    if (loading && showProgress) {
       timer = setTimeout(() => setShowLoader(true), 150);
     } else {
       setShowLoader(false);
     }
     return () => clearTimeout(timer);
-  }, [loading, showProgress, isValidSrc]);
+  }, [loading, showProgress]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (loading && showProgress && isValidSrc) {
+    if (loading && showProgress) {
       interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) return prev; // S'arrêter à 90% jusqu'au vrai chargement
@@ -82,7 +66,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
       setProgress(0);
     }
     return () => clearInterval(interval);
-  }, [loading, showProgress, isValidSrc]);
+  }, [loading, showProgress]);
 
   const handleImageLoad = () => {
     setProgress(100);
@@ -92,29 +76,20 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   };
 
   const handleImageError = () => {
-    if (currentSrc !== fallbackSrc) {
-      setCurrentSrc(fallbackSrc);
-      setProgress(0);
-      setLoading(true);
-      setHasError(false);
-    } else {
-      setLoading(false);
-      setHasError(true);
-      onError?.();
-    }
+    setLoading(false);
+    setHasError(true);
+    onError?.();
   };
 
   const handleImageStart = () => {
-    if (isValidSrc) {
-      setLoading(true);
-      setProgress(0);
-      setHasError(false);
-    }
+    setLoading(true);
+    setProgress(0);
+    setHasError(false);
   };
 
   return (
     <Container $height={height} $width={width} $isLoading={loading || false}>
-      {loading && showProgress && showLoader && isValidSrc && (
+      {loading && showProgress && showLoader && (
         <LoadingOverlay className={overlayClassName}>
           <ProgressContainer>
             <Progress value={progress} className='w-full h-2' />
