@@ -34,7 +34,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   const isValidSrc =
     src && src.trim() !== '' && src !== 'undefined' && src !== 'null';
 
-  const [loading, setLoading] = useState(isValidSrc);
+  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(isValidSrc ? src : fallbackSrc);
@@ -43,12 +43,14 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   // Reset des états quand isValidSrc change
   useEffect(() => {
     if (!isValidSrc) {
+      // Si pas d'image valide, afficher directement le fallback sans loading
       setLoading(false);
       setProgress(0);
       setHasError(false);
       setShowLoader(false);
       setCurrentSrc(fallbackSrc);
     } else {
+      // Si image valide, commencer le chargement
       setLoading(true);
       setProgress(0);
       setHasError(false);

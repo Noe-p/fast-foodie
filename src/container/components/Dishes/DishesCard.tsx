@@ -1,7 +1,6 @@
 import { ColCenter, H2, ImageLoader } from '@/components';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDishContext } from '@/contexts/DishContext';
-import { IMAGE_FALLBACK } from '@/static/constants';
 import { Dish } from '@/types/dto/Dish';
 import { CalendarCheck } from 'lucide-react';
 import { useState } from 'react';
@@ -40,11 +39,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
           height={420}
           width={315}
           quality={80}
-          src={
-            dish.images.length > 0
-              ? imageCover?.url ?? IMAGE_FALLBACK
-              : IMAGE_FALLBACK
-          }
+          src={dish.images.length > 0 && imageCover?.url ? imageCover.url : ''}
           alt={dish.name}
         />
       )}
