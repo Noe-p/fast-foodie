@@ -1,7 +1,7 @@
 import { User } from '@/types';
-import Image from 'next/image';
 import { LegacyRef, forwardRef, useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
+import { SafeImage } from '../Medias/SafeImage';
 import { P10 } from '../Texts';
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,15 +35,24 @@ export const Avatar = forwardRef(function (
       {...props}
     >
       {user?.profilePicture ? (
-        <ImageStyled
-          src={user.profilePicture.url}
-          alt={user.userName}
-          quality={80}
-          width={size}
-          height={size}
-          onLoad={handleImageLoad}
-          $isLoaded={!loading}
-        />
+        <ImageContainer $isLoaded={!loading}>
+          <SafeImage
+            src={user.profilePicture.url}
+            alt={user.userName}
+            quality={80}
+            width={size}
+            height={size}
+            onLoad={handleImageLoad}
+            className='bg-white rounded-full w-full h-full object-cover object-center transition-opacity duration-300 ease-in-out'
+            style={{
+              opacity: !loading ? 1 : 0,
+              position: loading ? 'absolute' : 'relative',
+              top: loading ? '50%' : 'auto',
+              left: loading ? '50%' : 'auto',
+              transform: loading ? 'translate(-50%, -50%)' : 'none',
+            }}
+          />
+        </ImageContainer>
       ) : (
         <P10
           className='text-white translate-y-0.5'
@@ -69,18 +78,8 @@ const Main = tw.div`
   border-secondary
 `;
 
-const ImageStyled = tw(Image)<{ $isLoaded: boolean }>`
-  bg-white
-  rounded-full
+const ImageContainer = tw.div<{ $isLoaded: boolean }>`
+  relative
   w-full
   h-full
-  object-cover
-  object-center
-  transition-opacity
-  duration-300
-  ease-in-out
-  ${(props) =>
-    props.$isLoaded
-      ? 'opacity-100'
-      : 'opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'}
 `;

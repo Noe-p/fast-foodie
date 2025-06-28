@@ -1,6 +1,6 @@
 import { ColCenter, H2, ImageLoader } from '@/components';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDishContext } from '@/contexts';
+import { useDishContext } from '@/contexts/DishContext';
 import { IMAGE_FALLBACK } from '@/static/constants';
 import { Dish } from '@/types/dto/Dish';
 import { CalendarCheck } from 'lucide-react';
@@ -28,7 +28,11 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
   );
 
   return (
-    <Main onClick={() => setIsOpen(true)} className={className} {...props}>
+    <Main
+      onClick={() => dish && setIsOpen(true)}
+      className={className}
+      {...props}
+    >
       {!dish ? (
         <Skeleton className='h-[420px] w-full rounded-md' />
       ) : (
@@ -49,7 +53,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
       ) : (
         <Skeleton className='mt-4 w-3/4 h-10' />
       )}
-      {dish && (
+      {dish ? (
         <WeeklyDishButton
           className={`${
             isWeeklyDish
@@ -67,6 +71,8 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
         >
           <CalendarCheck size={18} />
         </WeeklyDishButton>
+      ) : (
+        <Skeleton className='absolute right-4 bottom-3 h-10 w-10 rounded-full' />
       )}
       <DrawerDetailDish
         isOpen={isOpen}

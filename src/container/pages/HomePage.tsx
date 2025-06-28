@@ -2,8 +2,10 @@ import { Col, Layout, P14, Row, RowBetween, RowCenter } from '@/components';
 import { Table } from '@/components/Table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuthContext, useDishContext } from '@/contexts';
+import { useAuthContext } from '@/contexts';
+import { useDishContext } from '@/contexts/DishContext';
 import { ROUTES } from '@/routes';
 import { areSimilar } from '@/services/utils';
 import {
@@ -31,7 +33,7 @@ export function HomePage(): React.JSX.Element {
     chef: '',
   });
   const [chefs, setChefs] = useState<string[]>([]);
-  const { dishes, tags, isPending, refresh } = useDishContext();
+  const { dishes, tags, isLoading, hasData, refresh } = useDishContext();
 
   useEffect(() => {
     if (currentUser) {
@@ -116,7 +118,7 @@ export function HomePage(): React.JSX.Element {
         }
       >
         <Tabs defaultValue='card'>
-          <Col className='lain_background w-full p-3 rounded-sm shadow-md'>
+          <Col className='lain_background top-0 left-0 w-full p-3 fixed z-10 shadow-lg'>
             <RowBetween className=''>
               <Input
                 icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
@@ -172,74 +174,91 @@ export function HomePage(): React.JSX.Element {
             )}
           </Col>
 
-          <Row className='justify-end mt-2'>
-            <TabsList>
-              <TabsTrigger value='card'>
-                <Grid2X2 size={20} />
-              </TabsTrigger>
-              <TabsTrigger value='list'>
-                <AlignJustify size={20} />
-              </TabsTrigger>
-            </TabsList>
-          </Row>
+          <div className='pt-20'>
+            <Row className='justify-end mt-2'>
+              <TabsList>
+                <TabsTrigger value='card'>
+                  <Grid2X2 size={20} />
+                </TabsTrigger>
+                <TabsTrigger value='list'>
+                  <AlignJustify size={20} />
+                </TabsTrigger>
+              </TabsList>
+            </Row>
 
-          <TabsContent value='list'>
-            <motion.div
-              initial={{
-                x: 100,
-              }}
-              animate={{
-                x: 0,
-              }}
-              transition={{
-                duration: 0.2,
-                type: 'spring',
-                damping: 13,
-                stiffness: 150,
-              }}
-            >
-              <Table
-                columns={dishColumns}
-                data={filterDishes(filters, dishes) ?? []}
-                redirection={(id) => {
-                  router.push(`${ROUTES.dishes.detail(id)}?dish=true`);
+            <TabsContent value='list'>
+              <motion.div
+                initial={{
+                  x: 100,
                 }}
-              />
-            </motion.div>
-          </TabsContent>
-          <TabsContent value='card'>
-            <motion.div
-              initial={{
-                x: 100,
-              }}
-              animate={{
-                x: 0,
-              }}
-              transition={{
-                duration: 0.2,
-                type: 'spring',
-                damping: 13,
-                stiffness: 150,
-              }}
-            >
-              <Col className='items-center gap-5'>
-                {!isPending && filterDishes(filters, dishes)?.length === 0 ? (
-                  <P14 className='text-primary mt-20 text-center w-full'>
-                    {t('generics.noResults')}
-                  </P14>
+                animate={{
+                  x: 0,
+                }}
+                transition={{
+                  duration: 0.2,
+                  type: 'spring',
+                  damping: 13,
+                  stiffness: 150,
+                }}
+              >
+                {isLoading || !hasData ? (
+                  <div className='space-y-4'>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div
+                        key={`table-skeleton-${i}`}
+                        className='flex items-center space-x-4'
+                      >
+                        <Skeleton className='h-12 w-12 rounded-full' />
+                        <div className='space-y-2 flex-1'>
+                          <Skeleton className='h-4 w-[250px]' />
+                          <Skeleton className='h-4 w-[200px]' />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  filterDishes(filters, dishes)?.map((dish: Dish, i) => (
-                    <DishesCard
-                      id={dish.id}
-                      from='dish'
-                      key={dish.id}
-                      dish={dish}
-                    />
-                  ))
+                  <Table
+                    columns={dishColumns}
+                    data={filterDishes(filters, dishes) ?? []}
+                    redirection={(id) => {
+                      router.push(`${ROUTES.dishes.detail(id)}?dish=true`);
+                    }}
+                  />
                 )}
-              </Col>
-            </motion.div>
-          </TabsContent>
+              </motion.div>
+            </TabsContent>
+            <TabsContent value='card'>
+              <motion.div
+                initial={{
+                  x: 100,
+                }}
+                animate={{
+                  x: 0,
+                }}
+                transition={{
+                  duration: 0.2,
+                  type: 'spring',
+                  damping: 13,
+                  stiffness: 150,
+                }}
+              >
+                <Col className='items-center gap-5'>
+                  {isLoading || !hasData
+                    ? Array.from({ length: 6 }).map((_, i) => (
+                        <DishesCard key={`skeleton-${i}`} />
+                      ))
+                    : filterDishes(filters, dishes)?.map((dish: Dish, i) => (
+                        <DishesCard
+                          id={dish.id}
+                          from='dish'
+                          key={dish.id}
+                          dish={dish}
+                        />
+                      ))}
+                </Col>
+              </motion.div>
+            </TabsContent>
+          </div>
         </Tabs>
       </PullToRefresh>
     </Layout>

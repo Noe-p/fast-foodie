@@ -309,13 +309,6 @@ const Content = tw(Col)`
   items-between
 `;
 
-const Grid2 = tw.div`
-  grid
-  grid-cols-2
-  gap-4
-  mt-4
-`;
-
 const Image = tw(ImageLoader)`
   w-full
   rounded-lg
@@ -341,7 +334,7 @@ export const WysiwygRenderStyle = `
   padding: 0px;
   overflow-x: hidden;
   width: 100%;
-  text-align: justify;
+  text-align: left;
   font-size: 15px;
   color: hsl(218.03 56.8% 24.51%);
   line-height: 1.3;

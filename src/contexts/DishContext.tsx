@@ -1,29 +1,41 @@
 import { useToast } from '@/components/ui/use-toast';
 import { ApiService } from '@/services/api';
 import { generateShoppingListFromDishes } from '@/services/utils';
-import { Food, ShoppingList } from '@/types';
+import { Food, ShoppingList as ShoppingListType } from '@/types';
 import { Dish } from '@/types/dto/Dish';
-import React, { useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthContext } from './AuthContext';
 
 // Types pour le contexte
 interface State {
-  dishes?: Dish[];
+  dishes: Dish[];
   weeklyDishes: Dish[];
-  shoppingList: ShoppingList[];
+  shoppingList: ShoppingListType[];
   tags: string[];
-  foods?: Food[];
-  isPending?: boolean;
+  foods: Food[];
+  isInitializing: boolean;
+  isRefreshing: boolean;
+  hasCachedData: boolean;
+  lastSyncTime: number | null;
+  error: string | null;
 }
 
 interface Context extends State {
   setWeeklyDishes: (dishes: Dish[]) => void;
   clearData: () => void;
   refresh: () => Promise<void>;
-  setShoppingList: (list: ShoppingList[]) => void;
+  setShoppingList: (list: ShoppingListType[]) => void;
   clearWeeklyDishes: () => void;
   getDishesById: (id: string, fromWeekly: boolean) => Dish | undefined;
+  isLoading: boolean;
+  hasData: boolean;
 }
 
 const defaultState: State = {
@@ -32,12 +44,17 @@ const defaultState: State = {
   shoppingList: [],
   tags: [],
   foods: [],
-  isPending: false,
+  isInitializing: true,
+  isRefreshing: false,
+  hasCachedData: false,
+  lastSyncTime: null,
+  error: null,
 };
 
 // Création du contexte
 const DishContext = React.createContext<Context>({
   ...defaultState,
+  isLoading: true,
   setWeeklyDishes: () => {
     throw new Error('DishContext.setWeeklyDishes has not been set');
   },
@@ -56,208 +73,266 @@ const DishContext = React.createContext<Context>({
   getDishesById: () => {
     throw new Error('DishContext.getDishesById has not been set');
   },
+  hasData: false,
 });
+
+// Clés de stockage local
+const STORAGE_KEYS = {
+  DISHES: 'dishes',
+  WEEKLY_DISHES: 'weeklyDishes',
+  SHOPPING_LIST: 'shoppingList',
+  FOODS: 'foods',
+  LAST_SYNC: 'lastSyncTime',
+} as const;
 
 // Hook pour gérer les données du contexte
 function useDishProvider() {
   const { toast } = useToast();
   const { currentUser } = useAuthContext();
-  const [weeklyDishes, setStateWeeklyDishes] = useState<Dish[]>([]);
-  const [localDishes, setLocalDishes] = useState<Dish[]>([]);
-  const [shoppingList, setShoppingListState] = useState<ShoppingList[]>([]);
-  const [localTags, setLocalTags] = useState<string[]>([]);
-  const [localFoods, setLocalFoods] = useState<Food[]>([]);
-  const [isPending, setIsPending] = useState(defaultState.isPending);
   const { t } = useTranslation();
 
-  // Gestion des plats hebdomadaires
-  const setWeeklyDishes = (dishes: Dish[]) => {
-    setStateWeeklyDishes(dishes);
-    window.localStorage.setItem('weeklyDishes', JSON.stringify(dishes));
-    const newShoppingList = generateShoppingListFromDishes(dishes);
-    setShoppingList(newShoppingList);
+  // États principaux
+  const [dishes, setDishes] = useState<Dish[]>([]);
+  const [weeklyDishes, setWeeklyDishesState] = useState<Dish[]>([]);
+  const [shoppingList, setShoppingListState] = useState<ShoppingListType[]>([]);
+  const [foods, setFoods] = useState<Food[]>([]);
+
+  // États de chargement
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hasCachedData, setHasCachedData] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Références pour éviter les appels multiples
+  const refreshPromiseRef = useRef<Promise<void> | null>(null);
+  const isInitializedRef = useRef(false);
+
+  // Calcul des tags basé sur les plats
+  const tags = useMemo(() => {
+    const allTags = dishes.map((dish) => dish.tags).flat();
+    return Array.from(new Set(allTags));
+  }, [dishes]);
+
+  // État de chargement global
+  const isLoading = useMemo(() => {
+    return isInitializing || (isRefreshing && !hasCachedData);
+  }, [isInitializing, isRefreshing, hasCachedData]);
+
+  // Vérifier si on a des données disponibles
+  const hasData = useMemo(() => {
+    return dishes.length > 0 || foods.length > 0;
+  }, [dishes.length, foods.length]);
+
+  // Utilitaires de stockage local
+  const storage = {
+    get: (key: string, defaultValue: any) => {
+      try {
+        const item = window.localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+      } catch {
+        return defaultValue;
+      }
+    },
+
+    set: (key: string, value: any) => {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        console.error(`Erreur lors de la sauvegarde de ${key}:`, error);
+      }
+    },
+
+    remove: (key: string) => {
+      try {
+        window.localStorage.removeItem(key);
+      } catch (error) {
+        console.error(`Erreur lors de la suppression de ${key}:`, error);
+      }
+    },
   };
 
-  const clearWeeklyDishes = () => {
-    setStateWeeklyDishes([]);
-    setShoppingListState([]);
-    window.localStorage.removeItem('weeklyDishes');
-    window.localStorage.removeItem('shoppingList');
-  };
-
-  const getWeeklyDishes = (): Dish[] => {
-    const storedDishes = window.localStorage.getItem('weeklyDishes');
-    return storedDishes ? JSON.parse(storedDishes) : [];
-  };
-
-  // Gestion des plats locaux
-  const getLocalDishes = (): Dish[] => {
-    const storedDishes = window.localStorage.getItem('dishes');
-    return storedDishes ? JSON.parse(storedDishes) : [];
-  };
-
-  const updateLocalDishes = (newDishes: Dish[]) => {
-    const oldDishes = getLocalDishes();
-
-    // Créer une nouvelle liste mise à jour des plats
-    const updatedDishes = oldDishes
-      .map((oldDish) => {
-        const newDish = newDishes.find((dish) => dish.id === oldDish.id);
-        // Si le plat existe dans la nouvelle liste et a une date de mise à jour différente, on le remplace
-        return newDish && newDish.updatedAt !== oldDish.updatedAt
-          ? newDish
-          : oldDish;
+  // Fonction pour fusionner les données avec le cache
+  const mergeWithCache = useCallback((newData: any[], cachedData: any[]) => {
+    const updatedData = cachedData
+      .map((cachedItem) => {
+        const newItem = newData.find((item) => item.id === cachedItem.id);
+        return newItem && newItem.updatedAt !== cachedItem.updatedAt
+          ? newItem
+          : cachedItem;
       })
-      .filter((dish) => newDishes.some((newDish) => newDish.id === dish.id)); // Retirer les plats qui n'existent plus dans la nouvelle liste
+      .filter((item) => newData.some((newItem) => newItem.id === item.id));
 
-    // Ajouter les nouveaux plats qui n'existaient pas auparavant
-    newDishes.forEach((newDish) => {
-      if (!oldDishes.some((oldDish) => oldDish.id === newDish.id)) {
-        updatedDishes.push(newDish);
+    // Ajouter les nouveaux éléments
+    newData.forEach((newItem) => {
+      if (!cachedData.some((cachedItem) => cachedItem.id === newItem.id)) {
+        updatedData.push(newItem);
       }
     });
 
-    // Mettre à jour le stockage local
-    setLocalDishes(updatedDishes);
-    window.localStorage.setItem('dishes', JSON.stringify(updatedDishes));
-  };
-
-  const clearLocalDishes = () => {
-    setLocalDishes([]);
-    setLocalTags([]);
-    window.localStorage.removeItem('dishes');
-  };
-
-  const getDishesById = (id: string, fromWeekly: boolean) => {
-    const weeklyDish = weeklyDishes.find((dish) => dish.id === id);
-    return fromWeekly ? weeklyDish : localDishes.find((dish) => dish.id === id);
-  };
-
-  // Gestion de la liste de courses
-  const setShoppingList = (list: ShoppingList[]) => {
-    setShoppingListState(list);
-    window.localStorage.setItem('shoppingList', JSON.stringify(list));
-  };
-
-  const getShoppingList = (): ShoppingList[] => {
-    const storedList = window.localStorage.getItem('shoppingList');
-    return storedList ? JSON.parse(storedList) : [];
-  };
-
-  // Gestion des tags
-  const setTags = () => {
-    const allTags = localDishes?.map((dish) => dish.tags).flat();
-    const uniqueTags = Array.from(new Set(allTags));
-    setLocalTags(uniqueTags);
-  };
-
-  // Gestion des aliments locaux
-  const clearLocalFoods = () => {
-    setLocalFoods([]);
-    window.localStorage.removeItem('foods');
-  };
-
-  const getLocalFoods = (): Food[] => {
-    const storedFoods = window.localStorage.getItem('foods');
-    return storedFoods ? JSON.parse(storedFoods) : [];
-  };
-
-  const updateLocalFoods = (newFoods: Food[]) => {
-    const oldFoods = getLocalFoods();
-
-    // Créer une nouvelle liste mise à jour des aliments
-    const updatedFoods = oldFoods
-      .map((oldFood) => {
-        // Cherche le nouvel aliment avec le même id
-        const newFood = newFoods.find((food) => food.id === oldFood.id);
-        // Si l'aliment existe dans la nouvelle liste et a une date de mise à jour différente, on le remplace
-        return newFood && newFood.updatedAt !== oldFood.updatedAt
-          ? newFood
-          : oldFood;
-      })
-      .filter((food) => newFoods.some((newFood) => newFood.id === food.id)); // Retirer les aliments qui n'existent plus dans la nouvelle liste
-
-    // Ajouter les nouveaux aliments qui n'existaient pas auparavant
-    newFoods.forEach((newFood) => {
-      if (!oldFoods.some((oldFood) => oldFood.id === newFood.id)) {
-        updatedFoods.push(newFood);
-      }
-    });
-
-    // Mettre à jour le stockage local
-    setLocalFoods(updatedFoods);
-    window.localStorage.setItem('foods', JSON.stringify(updatedFoods));
-  };
-
-  // Actualisation des données depuis l'API
-  async function refresh() {
-    if (isPending) return;
-
-    const shouldShowLoader = localDishes.length === 0;
-
-    if (shouldShowLoader) {
-      setIsPending(true);
-    }
-
-    try {
-      const [dishes, foods] = await Promise.all([
-        ApiService.dishes.get(),
-        ApiService.foods.get(),
-      ]);
-
-      updateLocalDishes(dishes);
-      updateLocalFoods(foods);
-      setTags();
-    } catch (error: any) {
-      toast({
-        title: t(error.data.response.title),
-        description: t(error.data.response.message),
-        variant: 'destructive',
-      });
-    } finally {
-      if (shouldShowLoader) {
-        setIsPending(false);
-      }
-    }
-  }
-
-  //Supprimer les données
-  const clearData = () => {
-    clearLocalDishes();
-    clearWeeklyDishes();
-    clearLocalFoods();
-  };
-
-  // Initialisation des données
-  useEffect(() => {
-    setStateWeeklyDishes(getWeeklyDishes());
-    setLocalDishes(getLocalDishes());
-    setShoppingListState(getShoppingList());
+    return updatedData;
   }, []);
 
+  // Chargement initial des données en cache
+  const loadCachedData = useCallback(() => {
+    const cachedDishes = storage.get(STORAGE_KEYS.DISHES, []);
+    const cachedWeeklyDishes = storage.get(STORAGE_KEYS.WEEKLY_DISHES, []);
+    const cachedShoppingList = storage.get(STORAGE_KEYS.SHOPPING_LIST, []);
+    const cachedFoods = storage.get(STORAGE_KEYS.FOODS, []);
+    const cachedLastSync = storage.get(STORAGE_KEYS.LAST_SYNC, null);
+
+    setDishes(cachedDishes);
+    setWeeklyDishesState(cachedWeeklyDishes);
+    setShoppingListState(cachedShoppingList);
+    setFoods(cachedFoods);
+    setLastSyncTime(cachedLastSync);
+    setHasCachedData(cachedDishes.length > 0 || cachedFoods.length > 0);
+  }, []);
+
+  // Fonction de rafraîchissement des données
+  const refresh = useCallback(async () => {
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
+
+    refreshPromiseRef.current = (async () => {
+      if (!currentUser) return;
+
+      setIsRefreshing(true);
+      setError(null);
+
+      try {
+        const [newDishes, newFoods] = await Promise.all([
+          ApiService.dishes.get(),
+          ApiService.foods.get(),
+        ]);
+
+        // Fusionner avec les données en cache
+        const mergedDishes = mergeWithCache(newDishes, dishes);
+        const mergedFoods = mergeWithCache(newFoods, foods);
+
+        // Mettre à jour les états
+        setDishes(mergedDishes);
+        setFoods(mergedFoods);
+        setLastSyncTime(Date.now());
+        setHasCachedData(true);
+
+        // Sauvegarder en cache
+        storage.set(STORAGE_KEYS.DISHES, mergedDishes);
+        storage.set(STORAGE_KEYS.FOODS, mergedFoods);
+        storage.set(STORAGE_KEYS.LAST_SYNC, Date.now());
+      } catch (error: any) {
+        const errorMessage = t(
+          error.data?.response?.message || 'errors.generic'
+        );
+        setError(errorMessage);
+
+        toast({
+          title: t(error.data?.response?.title || 'errors.generic'),
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsRefreshing(false);
+        refreshPromiseRef.current = null;
+      }
+    })();
+
+    return refreshPromiseRef.current;
+  }, [currentUser, dishes, foods, mergeWithCache, storage, t, toast]);
+
+  // Gestion des plats hebdomadaires
+  const setWeeklyDishes = useCallback(
+    (newWeeklyDishes: Dish[]) => {
+      setWeeklyDishesState(newWeeklyDishes);
+      storage.set(STORAGE_KEYS.WEEKLY_DISHES, newWeeklyDishes);
+
+      // Générer la liste de courses
+      const newShoppingList = generateShoppingListFromDishes(newWeeklyDishes);
+      setShoppingListState(newShoppingList);
+      storage.set(STORAGE_KEYS.SHOPPING_LIST, newShoppingList);
+    },
+    [storage]
+  );
+
+  const clearWeeklyDishes = useCallback(() => {
+    setWeeklyDishesState([]);
+    setShoppingListState([]);
+    storage.remove(STORAGE_KEYS.WEEKLY_DISHES);
+    storage.remove(STORAGE_KEYS.SHOPPING_LIST);
+  }, [storage]);
+
+  // Gestion de la liste de courses
+  const setShoppingList = useCallback(
+    (list: ShoppingListType[]) => {
+      setShoppingListState(list);
+      storage.set(STORAGE_KEYS.SHOPPING_LIST, list);
+    },
+    [storage]
+  );
+
+  // Fonction utilitaire pour récupérer un plat par ID
+  const getDishesById = useCallback(
+    (id: string, fromWeekly: boolean) => {
+      const sourceArray = fromWeekly ? weeklyDishes : dishes;
+      return sourceArray.find((dish) => dish.id === id);
+    },
+    [weeklyDishes, dishes]
+  );
+
+  // Nettoyage des données
+  const clearData = useCallback(() => {
+    setDishes([]);
+    setWeeklyDishesState([]);
+    setShoppingListState([]);
+    setFoods([]);
+    setHasCachedData(false);
+    setLastSyncTime(null);
+    setError(null);
+
+    // Nettoyer le stockage local
+    Object.values(STORAGE_KEYS).forEach(storage.remove);
+  }, [storage]);
+
+  // Initialisation
   useEffect(() => {
-    if (currentUser) {
+    if (isInitializedRef.current) return;
+
+    loadCachedData();
+    setIsInitializing(false);
+    isInitializedRef.current = true;
+  }, [loadCachedData]);
+
+  // Rafraîchissement automatique quand l'utilisateur change
+  useEffect(() => {
+    if (currentUser && hasCachedData) {
+      // Rafraîchir en arrière-plan si on a des données en cache
+      refresh();
+    } else if (currentUser && !hasCachedData) {
+      // Charger immédiatement si pas de cache
       refresh();
     }
-  }, [currentUser]);
-
-  useEffect(() => {
-    setTags();
-  }, [localDishes]);
+  }, [currentUser, hasCachedData, refresh]);
 
   return {
-    dishes: localDishes,
+    dishes,
     weeklyDishes,
+    shoppingList,
+    tags,
+    foods,
+    isInitializing,
+    isRefreshing,
+    hasCachedData,
+    lastSyncTime,
+    error,
+    isLoading,
     setWeeklyDishes,
     refresh,
-    shoppingList,
     setShoppingList,
-    tags: localTags,
-    foods: localFoods,
     clearData,
     clearWeeklyDishes,
     getDishesById,
-    isPending,
+    hasData,
   };
 }
 

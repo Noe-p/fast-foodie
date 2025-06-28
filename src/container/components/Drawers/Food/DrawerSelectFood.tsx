@@ -105,14 +105,16 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
         title={t('dishes:foods.select')}
       >
         <Content className={className}>
-          <Input
-            icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
-            className='w-full'
-            isRemovable={true}
-            placeholder={t('generics.search')}
-            onChange={(e) => setSearchFood(e)}
-          />
-          <div className='pb-13 mt-4'>
+          <div className='sticky top-0 z-10 mb-4'>
+            <Input
+              icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
+              className='w-full'
+              isRemovable={true}
+              placeholder={t('generics.search')}
+              onChange={(e) => setSearchFood(e)}
+            />
+          </div>
+          <div className='flex-1 overflow-y-auto pb-20'>
             {Object.keys(groupedFoods).map((category) => (
               <div key={category} className='mb-6'>
                 <H2 className='text-xl font-bold mb-2'>

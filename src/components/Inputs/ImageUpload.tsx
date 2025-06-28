@@ -139,17 +139,26 @@ export default function ImageUpload(props: ImageUploadProps) {
       </div>
 
       <div className='mt-3'>
-        {uploadedFiles.length > 0 && (
+        {(uploadedFiles.length > 0 || uploadingFiles.length > 0) && (
           <P14 className='text-foreground'>{t('file.filesUploaded')}</P14>
         )}
         <div className='flex flex-wrap mt-2 space-x-1'>
           {uploadingFiles.map((file) => (
-            <div
-              key={file.name}
-              className='flex items-center justify-center w-15 h-20 border bg-gray-50 rounded-md border-dashed border-gray-500'
-            >
-              <Loader2 className='w-6 h-6 animate-spin text-gray-500' />
-            </div>
+            <ImageCard key={file.name}>
+              <Image src={URL.createObjectURL(file)} alt={file.name} />
+              <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-30'>
+                <Loader2 className='w-6 h-6 animate-spin text-white' />
+              </div>
+              <RemoveButton
+                onClick={() => {
+                  setUploadingFiles((prev) =>
+                    prev.filter((f) => f.name !== file.name)
+                  );
+                }}
+              >
+                <X size={15} />
+              </RemoveButton>
+            </ImageCard>
           ))}
           {uploadedFiles.map((file) => (
             <ImageCard

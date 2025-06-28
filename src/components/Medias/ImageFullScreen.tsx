@@ -152,6 +152,7 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
                       quality={90}
                       showProgress={true}
                       fallbackSrc='/images/image-fallback.jpg'
+                      overlayClassName='bg-black'
                       onLoadComplete={() => {
                         // Optionnel : callback quand l'image est chargée
                       }}
@@ -165,8 +166,8 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
             </CarouselContent>
 
             {/* Boutons de navigation */}
-            <CarouselPrevious className='left-4 bg-black/30 hover:bg-black/50 text-white hover:text-primary border-white/20 hover:border-white/40' />
-            <CarouselNext className='right-4 bg-black/30 hover:bg-black/50 text-white hover:text-primary border-white/20 hover:border-white/40' />
+            <CarouselPrevious className='left-4 bg-black/30 text-white border-white/20' />
+            <CarouselNext className='right-4 bg-black/30 text-white border-white/20' />
           </Carousel>
 
           {/* Indicateurs de position */}
@@ -198,7 +199,7 @@ const Main = tw(motion.div)`
   left-0
   bottom-0
   right-0
-  z-[99999]
+  z-50
   flex
   flex-col
   justify-center
@@ -212,7 +213,7 @@ const CloseButton = tw(Button)`
   absolute
   top-4
   right-4
-  z-[99999]
+  z-50
   h-12
   w-12
   rounded-full
@@ -243,7 +244,7 @@ const PaginationContainer = tw.div`
   py-2
   rounded-full
   backdrop-blur-sm
-  z-[99999]
+  z-50
 `;
 
 const ImageCounter = tw.div`
@@ -258,5 +259,5 @@ const ImageCounter = tw.div`
   text-sm
   font-medium
   backdrop-blur-sm
-  z-[99999]
+  z-50
 `;

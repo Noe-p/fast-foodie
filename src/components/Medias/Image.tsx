@@ -1,18 +1,20 @@
+import { ImageProps as NextImageProps } from 'next/image';
 import React from 'react';
-import tw from 'tailwind-styled-components';
+import { SafeImage } from './SafeImage';
 
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
-
-export function Image(props: ImageProps): React.JSX.Element {
-  const { className } = props;
-
-  return <ImageStyled {...props} className={className} />;
+interface ImageProps extends Omit<NextImageProps, 'fetchPriority'> {
+  // Props spécifiques à notre composant
 }
 
-const ImageStyled = tw.img`
-  w-full
-  h-full
-  object-cover
-  object-center
-  rounded-lg
-`;
+export function Image(props: ImageProps): React.JSX.Element {
+  const { className, ...rest } = props;
+
+  return (
+    <SafeImage
+      {...rest}
+      className={`w-full h-full object-cover object-center rounded-lg ${
+        className || ''
+      }`}
+    />
+  );
+}

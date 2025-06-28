@@ -222,7 +222,7 @@ const CarouselPrevious = React.forwardRef<
         variant={variant}
         size={size}
         className={cn(
-          'absolute  h-12 w-12 p-2 rounded-full transition duration-300 hover:bg-gray-100 hover:border-gray-500 hover:scale-105',
+          'absolute  h-12 w-12 p-2 rounded-full transition duration-300',
           orientation === 'horizontal'
             ? '-left-12 top-1/2 -translate-y-1/2'
             : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -263,7 +263,7 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, CarouselNextProps>(
         variant={variant}
         size={size}
         className={cn(
-          'absolute h-12 w-12 rounded-full p-2  transition duration-300 hover:bg-gray-100 hover:border-gray-500 hover:scale-105',
+          'absolute h-12 w-12 rounded-full p-2  transition duration-300',
           orientation === 'horizontal'
             ? '-right-12 top-1/2 -translate-y-1/2'
             : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',

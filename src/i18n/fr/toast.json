@@ -21,6 +21,9 @@
     "success": "Mise à jour réussie",
     "error": "Erreur lors de la mise à jour"
   },
+  "dish": {
+    "update": "Plat mis à jour"
+  },
   "collaborator": {
     "add": {
       "success": "Collaborateur ajouté",

@@ -87,10 +87,13 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
 
       return ApiService.dishes.update(values, dish?.id ?? '');
     },
-    onSuccess: (data) => {
+    onSuccess: (dish) => {
       form.reset();
       refresh();
-      router.push(ROUTES.dishes.detail(data.id));
+      router.push(ROUTES.dishes.index);
+      toast({
+        title: t('toast:dish.update'),
+      });
     },
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -133,7 +136,7 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
       <RowBetween className='bg-primary fixed top-0 z-20 w-full items-center px-3 py-5'>
         <Row
           className='items-center'
-          onClick={() => router.push(ROUTES.dishes.detail(dish.id))}
+          onClick={() => router.push(ROUTES.dishes.index)}
         >
           <ChevronLeft className='text-background' size={30} />
           <P16 className='text-background translate-y-0.5'>

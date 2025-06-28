@@ -1,10 +1,10 @@
 import { P12 } from '@/components';
+import { SafeImage } from '@/components/Medias/SafeImage';
 import { CellText, HeaderText } from '@/components/Table';
 import { IMAGE_FALLBACK } from '@/static/constants';
 import { MediaDto, User } from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { ColumnDef } from '@tanstack/react-table';
-import Image from 'next/image';
 import { DishActions } from './DishActions';
 
 export const dishColumns: ColumnDef<Dish>[] = [
@@ -23,7 +23,7 @@ export const dishColumns: ColumnDef<Dish>[] = [
     cell: ({ row }) => {
       const image: MediaDto[] = row.getValue('images') as unknown as MediaDto[];
       return (
-        <Image
+        <SafeImage
           src={image[0] ? image[0]?.url : IMAGE_FALLBACK}
           alt='dish'
           className='w-10 h-10 object-cover rounded'

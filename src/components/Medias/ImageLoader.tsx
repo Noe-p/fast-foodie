@@ -12,6 +12,7 @@ interface ImageLoaderProps
   showProgress?: boolean;
   onLoadComplete?: () => void;
   onError?: () => void;
+  overlayClassName?: string;
 }
 
 export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
@@ -23,7 +24,9 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
     onLoadComplete,
     onError,
     className,
+    overlayClassName,
     src,
+    fetchPriority,
     ...rest
   } = props;
 
@@ -85,7 +88,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   return (
     <Container $height={height} $width={width} $isLoading={loading}>
       {loading && showProgress && showLoader && (
-        <LoadingOverlay>
+        <LoadingOverlay className={overlayClassName}>
           <ProgressContainer>
             <Progress value={progress} className='w-full h-2' />
           </ProgressContainer>
@@ -103,7 +106,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
         width={width || 800}
         height={height || 600}
         onLoadStart={handleImageStart}
-        onLoadingComplete={handleImageLoad}
+        onLoad={handleImageLoad}
         onError={handleImageError}
         className={className}
         $isLoaded={!loading && !hasError}
@@ -157,10 +160,8 @@ const LoadingOverlay = tw.div`
   flex
   items-center
   justify-center
-  bg-white/80
-  dark:bg-gray-900/80
-  backdrop-blur-sm
   z-10
+  bg-background
 `;
 
 const ProgressContainer = tw.div`
