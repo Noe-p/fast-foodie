@@ -26,6 +26,7 @@ import {
 import { useTranslation } from 'next-i18next';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import tw from 'tailwind-styled-components';
 
@@ -290,12 +291,16 @@ export function DrawerDetailDish(
           </Col>
         </Modal>
       </DrawerMotion>
-      <ImageFullScreen
-        startIndex={0}
-        images={dish.images.map((image) => image.url)}
-        isOpen={isImageFullScreenOpen}
-        onClose={() => setIsImageFullScreenOpen(false)}
-      />
+      {typeof window !== 'undefined' &&
+        createPortal(
+          <ImageFullScreen
+            startIndex={0}
+            images={dish.images.map((image) => image.url)}
+            isOpen={isImageFullScreenOpen}
+            onClose={() => setIsImageFullScreenOpen(false)}
+          />,
+          document.body
+        )}
     </>
   ) : (
     <></>
