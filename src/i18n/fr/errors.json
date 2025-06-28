@@ -1,4 +1,5 @@
 {
+  "generic": "Une erreur s'est produite",
   "generics": {
     "internalServerError": "Erreur interne du serveur",
     "connexion": "Erreur de connexion"

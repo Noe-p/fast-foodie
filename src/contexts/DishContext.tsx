@@ -223,12 +223,12 @@ function useDishProvider() {
         storage.set(STORAGE_KEYS.LAST_SYNC, Date.now());
       } catch (error: any) {
         const errorMessage = t(
-          error.data?.response?.message || 'errors.generic'
+          error.data?.response?.message || 'errors:generic'
         );
         setError(errorMessage);
 
         toast({
-          title: t(error.data?.response?.title || 'errors.generic'),
+          title: t(error.data?.response?.title || 'errors:generic'),
           description: errorMessage,
           variant: 'destructive',
         });

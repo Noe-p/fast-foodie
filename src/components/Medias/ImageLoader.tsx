@@ -30,25 +30,29 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
     ...rest
   } = props;
 
-  const [loading, setLoading] = useState(true);
+  // Vérifier si l'image source est valide
+  const isValidSrc =
+    src && src.trim() !== '' && src !== 'undefined' && src !== 'null';
+
+  const [loading, setLoading] = useState(isValidSrc);
   const [progress, setProgress] = useState(0);
   const [hasError, setHasError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState(src);
+  const [currentSrc, setCurrentSrc] = useState(isValidSrc ? src : fallbackSrc);
   const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (loading && showProgress) {
+    if (loading && showProgress && isValidSrc) {
       timer = setTimeout(() => setShowLoader(true), 150);
     } else {
       setShowLoader(false);
     }
     return () => clearTimeout(timer);
-  }, [loading, showProgress]);
+  }, [loading, showProgress, isValidSrc]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (loading && showProgress) {
+    if (loading && showProgress && isValidSrc) {
       interval = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) return prev; // S'arrêter à 90% jusqu'au vrai chargement
@@ -57,7 +61,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
       }, 200);
     }
     return () => clearInterval(interval);
-  }, [loading, showProgress]);
+  }, [loading, showProgress, isValidSrc]);
 
   const handleImageLoad = () => {
     setProgress(100);
@@ -80,14 +84,16 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   };
 
   const handleImageStart = () => {
-    setLoading(true);
-    setProgress(0);
-    setHasError(false);
+    if (isValidSrc) {
+      setLoading(true);
+      setProgress(0);
+      setHasError(false);
+    }
   };
 
   return (
-    <Container $height={height} $width={width} $isLoading={loading}>
-      {loading && showProgress && showLoader && (
+    <Container $height={height} $width={width} $isLoading={loading || false}>
+      {loading && showProgress && showLoader && isValidSrc && (
         <LoadingOverlay className={overlayClassName}>
           <ProgressContainer>
             <Progress value={progress} className='w-full h-2' />
