@@ -151,14 +151,7 @@ export function ImageFullScreen(props: ImageFullScreenProps): JSX.Element {
                       priority={index === startIndex}
                       quality={90}
                       showProgress={true}
-                      fallbackSrc='/images/image-fallback.jpg'
                       overlayClassName='bg-black'
-                      onLoadComplete={() => {
-                        // Optionnel : callback quand l'image est chargée
-                      }}
-                      onError={() => {
-                        // Optionnel : callback en cas d'erreur
-                      }}
                     />
                   </div>
                 </CarouselItem>
