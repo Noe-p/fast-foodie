@@ -1,3 +1,4 @@
+import { IMAGE_FALLBACK } from '@/static/constants';
 import Image, { ImageProps } from 'next/image';
 import React, { useEffect, useState } from 'react';
 import tw from 'tailwind-styled-components';
@@ -30,7 +31,6 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
 
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -38,7 +38,6 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   useEffect(() => {
     setLoading(true);
     setProgress(0);
-    setHasError(false);
     setCurrentSrc(src);
   }, [src]);
 
@@ -71,20 +70,17 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   const handleImageLoad = () => {
     setProgress(100);
     setLoading(false);
-    setHasError(false);
     onLoadComplete?.();
   };
 
   const handleImageError = () => {
     setLoading(false);
-    setHasError(true);
     onError?.();
   };
 
   const handleImageStart = () => {
     setLoading(true);
     setProgress(0);
-    setHasError(false);
   };
 
   return (
@@ -97,13 +93,6 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
         </LoadingOverlay>
       )}
 
-      {hasError && (
-        <ErrorOverlay>
-          <ErrorIcon>⚠️</ErrorIcon>
-          <ErrorText>Erreur de chargement</ErrorText>
-        </ErrorOverlay>
-      )}
-
       <ImageStyled
         width={width || 800}
         height={height || 600}
@@ -111,10 +100,10 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
         onLoad={handleImageLoad}
         onError={handleImageError}
         className={className}
-        $isLoaded={!loading && !hasError}
+        $isLoaded={!loading}
         priority={props.priority}
         quality={props.quality || 90}
-        src={currentSrc}
+        src={currentSrc || IMAGE_FALLBACK}
         {...rest}
       />
     </Container>
@@ -173,28 +162,4 @@ const ProgressContainer = tw.div`
   gap-2
   w-1/2
   max-w-xs
-`;
-
-const ErrorOverlay = tw.div`
-  absolute
-  inset-0
-  flex
-  flex-col
-  items-center
-  justify-center
-  bg-red-50
-  dark:bg-red-900/20
-  z-5
-`;
-
-const ErrorIcon = tw.div`
-  text-2xl
-  mb-2
-`;
-
-const ErrorText = tw.span`
-  text-sm
-  font-medium
-  text-red-600
-  dark:text-red-400
 `;
