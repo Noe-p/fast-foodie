@@ -105,7 +105,7 @@ export function HomePage(): React.JSX.Element {
   return (
     <Layout>
       <Tabs defaultValue='card'>
-        <Col className='lain_background top-0 left-0 w-full p-3 fixed z-10 shadow-lg'>
+        <Col className='lain_background top-0 left-0 w-full p-3 fixed z-20 shadow-lg'>
           <RowBetween className=''>
             <Input
               icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}

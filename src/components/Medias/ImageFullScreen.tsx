@@ -235,7 +235,7 @@ const PaginationContainer = tw.div`
   flex
   gap-2
   absolute
-  bottom-25
+  bottom-15
   left-1/2
   transform
   -translate-x-1/2

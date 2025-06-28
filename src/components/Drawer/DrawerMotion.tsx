@@ -4,6 +4,7 @@ import { MEDIA_QUERIES } from '@/static/constants';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { ReactNode, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import tw from 'tailwind-styled-components';
 import { useEventListener, useMediaQuery } from 'usehooks-ts';
 import { Col, Row, RowBetween } from '../Helpers';
@@ -42,7 +43,7 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
     title,
     icon,
     containerClassName,
-    zIndex = 50,
+    zIndex = 40,
   } = props;
   const isSmBreakpoint = useMediaQuery(MEDIA_QUERIES.MD);
 
@@ -62,48 +63,54 @@ export const DrawerMotion = (props: DrawerMotionProps) => {
   });
 
   return (
-    <AnimatePresence initial={false} mode='wait'>
-      {isOpen && (
-        <Overlay
-          onClick={shouldCloseOnOverlayClick ? onClose : undefined}
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          style={{ zIndex: zIndex - 1 }}
-        >
-          <DrawerContainer
-            onClick={(e: any) => e.stopPropagation()}
-            className={className}
-            style={{ width: defaultWidth, zIndex }}
-            variants={DRAWER_VARIANTS[defaultPlacement]}
-            initial='hidden'
-            animate='visible'
-            exit='exit'
-          >
-            <DrawerContent>
-              <Header className={headerClassName}>
-                <RowBetween>
-                  <Row className='flex-1'>
-                    <Title className='leading-none'>{title}</Title>
-                  </Row>
-                  <Row className='gap-2 items-center'>
-                    {icon && icon}
-                    <CloseIcon size={20} onClick={props.onClose} />
-                  </Row>
-                </RowBetween>
-              </Header>
-              <Divider />
-              <DrawerChildren className={containerClassName}>
-                {children}
-              </DrawerChildren>
-            </DrawerContent>
-          </DrawerContainer>
-        </Overlay>
-      )}
-    </AnimatePresence>
+    <>
+      {typeof window !== 'undefined' &&
+        createPortal(
+          <AnimatePresence initial={false} mode='wait'>
+            {isOpen && (
+              <Overlay
+                onClick={shouldCloseOnOverlayClick ? onClose : undefined}
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                }}
+                style={{ zIndex: zIndex - 1 }}
+              >
+                <DrawerContainer
+                  onClick={(e: any) => e.stopPropagation()}
+                  className={className}
+                  style={{ width: defaultWidth, zIndex }}
+                  variants={DRAWER_VARIANTS[defaultPlacement]}
+                  initial='hidden'
+                  animate='visible'
+                  exit='exit'
+                >
+                  <DrawerContent>
+                    <Header className={headerClassName}>
+                      <RowBetween>
+                        <Row className='flex-1'>
+                          <Title className='leading-none'>{title}</Title>
+                        </Row>
+                        <Row className='gap-2 items-center'>
+                          {icon && icon}
+                          <CloseIcon size={20} onClick={props.onClose} />
+                        </Row>
+                      </RowBetween>
+                    </Header>
+                    <Divider />
+                    <DrawerChildren className={containerClassName}>
+                      {children}
+                    </DrawerChildren>
+                  </DrawerContent>
+                </DrawerContainer>
+              </Overlay>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+    </>
   );
 };
 
