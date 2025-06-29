@@ -37,8 +37,11 @@
   },
   "file": {
     "upload": {
-      "success": "File uploaded",
-      "error": "Error during upload"
+      "error": "Upload error",
+      "timeout": "Upload timeout - file too large",
+      "tooLarge": "File too large",
+      "serverError": "Server error during upload",
+      "success": "File uploaded successfully"
     }
   }
 }

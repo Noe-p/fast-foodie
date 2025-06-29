@@ -38,11 +38,37 @@ export default function ImageUpload(props: ImageUploadProps) {
   const { mutate: fileUpload } = useMutation({
     mutationFn: ApiService.medias.fileUpload,
     onError: (error: any) => {
+      console.error('ImageUpload error:', error);
+
+      // Gestion spécifique des différents types d'erreurs
+      let errorMessage = t('toast:file.upload.error');
+
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        errorMessage =
+          t('toast:file.upload.timeout') ||
+          'Upload timeout - fichier trop volumineux';
+      } else if (error.response?.status === 413) {
+        errorMessage =
+          t('toast:file.upload.tooLarge') || 'Fichier trop volumineux';
+      } else if (error.response?.status >= 500) {
+        errorMessage = t('toast:file.upload.serverError') || 'Erreur serveur';
+      } else if (error.fileName) {
+        errorMessage = `Erreur lors de l'upload de ${error.fileName}`;
+      }
+
       toast({
-        title: t('toast:file.upload.error'),
-        description: t(error.data.message),
+        title: errorMessage,
+        description:
+          error.response?.data?.message || error.message || 'Erreur inconnue',
         variant: 'destructive',
       });
+
+      // Nettoyer le fichier en cours d'upload en cas d'erreur
+      if (error.fileName) {
+        setUploadingFiles((prev) =>
+          prev.filter((file) => file.name !== error.fileName)
+        );
+      }
     },
     onSuccess: (data, variables) => {
       setUploadedFiles((prev) => [...prev, data]);
@@ -91,21 +117,45 @@ export default function ImageUpload(props: ImageUploadProps) {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      // Validation des fichiers avant upload
+      const validFiles = acceptedFiles.filter((file) => {
+        const maxSize = 10 * 1024 * 1024; // 10MB max
+        if (file.size > maxSize) {
+          toast({
+            title: t('toast:file.upload.tooLarge'),
+            description: `${file.name} dépasse la taille maximale de 10MB`,
+            variant: 'destructive',
+          });
+          return false;
+        }
+        return true;
+      });
+
+      if (validFiles.length === 0) return;
+
       // Ajouter les nouveaux fichiers uniquement si nécessaire
       setUploadingFiles((prev) => {
-        const newFiles = acceptedFiles.filter(
+        const newFiles = validFiles.filter(
           (file) => !prev.some((existing) => existing.name === file.name)
         );
         return [...prev, ...newFiles];
       });
-      acceptedFiles.forEach((file) => {
+
+      validFiles.forEach((file) => {
         fileUpload(file);
       });
     },
-    [fileUpload]
+    [fileUpload, toast, t]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp', '.heic'],
+    },
+    maxSize: 10 * 1024 * 1024, // 10MB
+    multiple: multiple,
+  });
 
   return (
     <div>

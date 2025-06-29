@@ -40,8 +40,11 @@
   },
   "file": {
     "upload": {
-      "success": "Fichier téléchargé",
-      "error": "Erreur lors du téléchargement"
+      "error": "Erreur lors de l'upload",
+      "timeout": "Upload timeout - fichier trop volumineux",
+      "tooLarge": "Fichier trop volumineux",
+      "serverError": "Erreur serveur lors de l'upload",
+      "success": "Fichier uploadé avec succès"
     }
   }
 }

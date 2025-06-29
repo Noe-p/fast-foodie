@@ -11,7 +11,7 @@ class HTTPService {
     this.baseURL = `${process.env.NEXT_PUBLIC_API_URL}`;
     this.timeout = process.env.NEXT_PUBLIC_API_TIMEOUT
       ? +process.env.NEXT_PUBLIC_API_TIMEOUT
-      : 3000;
+      : 60000;
     this.token = '';
   }
 
@@ -83,6 +83,8 @@ class HTTPService {
       transformResponse: [this.handleResponse],
       timeout: this.timeout,
       validateStatus: (status: number) => status >= 200 && status < 500,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
     });
   }
 
