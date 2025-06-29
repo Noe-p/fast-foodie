@@ -107,6 +107,7 @@ function useDishProvider() {
   // Références pour éviter les appels multiples
   const refreshPromiseRef = useRef<Promise<void> | null>(null);
   const isInitializedRef = useRef(false);
+  const lastRefreshTimeRef = useRef<number>(0);
 
   // Calcul des tags basé sur les plats
   const tags = useMemo(() => {
@@ -154,18 +155,30 @@ function useDishProvider() {
 
   // Fonction pour fusionner les données avec le cache
   const mergeWithCache = useCallback((newData: any[], cachedData: any[]) => {
-    const updatedData = cachedData
-      .map((cachedItem) => {
-        const newItem = newData.find((item) => item.id === cachedItem.id);
-        return newItem && newItem.updatedAt !== cachedItem.updatedAt
-          ? newItem
-          : cachedItem;
-      })
-      .filter((item) => newData.some((newItem) => newItem.id === item.id));
+    // Si pas de données en cache, retourner directement les nouvelles données
+    if (cachedData.length === 0) {
+      return newData;
+    }
 
-    // Ajouter les nouveaux éléments
-    newData.forEach((newItem) => {
-      if (!cachedData.some((cachedItem) => cachedItem.id === newItem.id)) {
+    // Créer un Map pour une recherche plus rapide
+    const newDataMap = new Map(newData.map((item) => [item.id, item]));
+    const cachedDataMap = new Map(cachedData.map((item) => [item.id, item]));
+
+    const updatedData: any[] = [];
+
+    // Traiter les éléments en cache
+    Array.from(cachedDataMap.entries()).forEach(([id, cachedItem]) => {
+      const newItem = newDataMap.get(id);
+      if (newItem && newItem.updatedAt !== cachedItem.updatedAt) {
+        updatedData.push(newItem);
+      } else if (newItem) {
+        updatedData.push(cachedItem);
+      }
+    });
+
+    // Ajouter les nouveaux éléments qui ne sont pas en cache
+    Array.from(newDataMap.entries()).forEach(([id, newItem]) => {
+      if (!cachedDataMap.has(id)) {
         updatedData.push(newItem);
       }
     });
@@ -191,10 +204,17 @@ function useDishProvider() {
 
   // Fonction de rafraîchissement des données
   const refresh = useCallback(async () => {
+    // Éviter les appels trop fréquents (minimum 30 secondes entre les appels)
+    const now = Date.now();
+    if (now - lastRefreshTimeRef.current < 30000) {
+      return;
+    }
+
     if (refreshPromiseRef.current) {
       return refreshPromiseRef.current;
     }
 
+    lastRefreshTimeRef.current = now;
     refreshPromiseRef.current = (async () => {
       if (!currentUser) return;
 
@@ -239,7 +259,7 @@ function useDishProvider() {
     })();
 
     return refreshPromiseRef.current;
-  }, [currentUser, dishes, foods, mergeWithCache, storage, t, toast]);
+  }, [currentUser, mergeWithCache, storage, t, toast]);
 
   // Gestion des plats hebdomadaires
   const setWeeklyDishes = useCallback(
@@ -305,14 +325,20 @@ function useDishProvider() {
 
   // Rafraîchissement automatique quand l'utilisateur change
   useEffect(() => {
-    if (currentUser && hasCachedData) {
-      // Rafraîchir en arrière-plan si on a des données en cache
-      refresh();
-    } else if (currentUser && !hasCachedData) {
-      // Charger immédiatement si pas de cache
+    if (!currentUser) return;
+
+    // Éviter les appels multiples en vérifiant si on est déjà en train de rafraîchir
+    if (isRefreshing) return;
+
+    // Rafraîchir seulement si on n'a pas de données ou si les données sont anciennes
+    const shouldRefresh =
+      !hasCachedData ||
+      (lastSyncTime && Date.now() - lastSyncTime > 5 * 60 * 1000); // 5 minutes
+
+    if (shouldRefresh) {
       refresh();
     }
-  }, [currentUser, hasCachedData, refresh]);
+  }, [currentUser, hasCachedData, lastSyncTime, isRefreshing]);
 
   return {
     dishes,
