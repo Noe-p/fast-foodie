@@ -1,7 +1,7 @@
 import { FullPageLoader, LayoutPage } from '@/components';
 import { AuthWall } from '@/container/components';
 import { UpdateDishPage } from '@/container/pages';
-import { useDishContext } from '@/contexts';
+import { useDishes } from '@/hooks/useDishes';
 import { GetStaticPath, PageBaseProps } from '@/types';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
@@ -11,8 +11,8 @@ type UpdateDishProps = {
 
 export default function UpdateDish(props: UpdateDishProps): React.JSX.Element {
   const { idPage } = props;
-  const { getDishesById } = useDishContext();
-  const dish = getDishesById(idPage, false);
+  const { data: dishes = [] } = useDishes();
+  const dish = dishes.find((d) => d.id === idPage);
 
   return (
     <AuthWall>

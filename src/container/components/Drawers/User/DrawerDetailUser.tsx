@@ -4,12 +4,8 @@ import { Col, Row, RowBetween } from '@/components/Helpers';
 import { H2, P10, P12, P14 } from '@/components/Texts';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  DrawerType,
-  useAppContext,
-  useAuthContext,
-  useDishContext,
-} from '@/contexts';
+import { DrawerType, useAppContext, useAuthContext } from '@/contexts';
+import { useClearWeeklyDishes, useDishes } from '@/hooks';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { CollaboratorDto, CollaboratorStatus, CollaboratorType } from '@/types';
@@ -39,7 +35,8 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
   const { currentUser, removeToken, refreshUser } = useAuthContext();
   const { setDrawerOpen } = useAppContext();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { clearData, refresh } = useDishContext();
+  const { refetch } = useDishes();
+  const clearWeeklyDishes = useClearWeeklyDishes();
   const { toast } = useToast();
   const [isAddCollab, setIsAddCollab] = useState<boolean>(false);
   const [collaborators, setCollaborators] = useState<CollaboratorDto[]>([]);
@@ -54,7 +51,7 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
     removeToken();
     onClose();
     setIsLoading(false);
-    clearData();
+    clearWeeklyDishes.mutate();
   }
 
   const { mutate: removeCollab, isPending } = useMutation({
@@ -87,7 +84,7 @@ export function DrawerDetailUser(props: DrawerDetailUserProps): JSX.Element {
       ApiService.collaborators.accept(data.id),
     onSuccess: async (data) => {
       await refreshUser();
-      refresh();
+      await refetch();
       toast({
         title: t('toast:collaborator.add.success'),
       });

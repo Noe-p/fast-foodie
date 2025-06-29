@@ -1,6 +1,6 @@
 import { useToast } from '@/components/ui/use-toast';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
@@ -28,7 +28,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { CreateIngredients } from '@/container/components';
-import { useDishContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { formatValidationErrorMessage } from '@/services/error';
@@ -49,7 +48,7 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
   const { dish, className } = props;
   const { t } = useTranslation();
   const { toast } = useToast();
-  const { refresh } = useDishContext();
+  const queryClient = useQueryClient();
 
   const form = useForm<UpdateDishApi>({
     resolver: yupResolver(dishValidation.update),
@@ -87,9 +86,10 @@ export function UpdateDishPage(props: UpdateDishPageProps): React.JSX.Element {
 
       return ApiService.dishes.update(values, dish?.id ?? '');
     },
-    onSuccess: (dish) => {
+    onSuccess: async (dish) => {
       form.reset();
-      refresh();
+      // Invalider le cache des plats pour rafraîchir les données
+      await queryClient.invalidateQueries({ queryKey: ['dishes'] });
       router.push(ROUTES.dishes.index);
       toast({
         title: t('toast:dish.update'),

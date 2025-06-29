@@ -12,11 +12,9 @@ import { DrawerMotion } from '@/components/Drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useDishContext } from '@/contexts';
-import { ApiService } from '@/services/api';
+import { useDeleteFood, useFoods } from '@/hooks';
 import { areSimilar } from '@/services/utils';
 import { Food } from '@/types';
-import { useMutation } from '@tanstack/react-query';
 import { CircleEllipsis, EditIcon, PlusIcon, SearchIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
@@ -44,28 +42,20 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const [isDrawerEditOpen, setIsDrawerEditOpen] = useState(false);
   const [addFoodOpen, setAddFoodOpen] = useState(false);
-  const { foods, refresh } = useDishContext();
+  const { data: foods = [], refetch } = useFoods();
+  const deleteFood = useDeleteFood();
 
-  const { mutate: remove, isPending } = useMutation({
-    mutationFn: () => ApiService.foods.remove(foodLongPressed?.id ?? ''),
-    onSuccess: () => {
-      toast({
-        title: t('toast.remove.success.title'),
-        description: t('toast.remove.success.description'),
+  const handleRemove = () => {
+    if (foodLongPressed?.id) {
+      deleteFood.mutate(foodLongPressed.id, {
+        onSuccess: () => {
+          setIsRemoveOpen(false);
+          setFoodLongPressed(undefined);
+          setIsEditOpen(false);
+        },
       });
-      refresh();
-      setIsRemoveOpen(false);
-      setFoodLongPressed(undefined);
-      setIsEditOpen(false);
-    },
-    onError: (error: any) => {
-      toast({
-        title: t(error.data.response.title),
-        description: t(error.data.response.message),
-        variant: 'destructive',
-      });
-    },
-  });
+    }
+  };
 
   function filterAndGroupFoods(
     foods: Food[],
@@ -181,7 +171,10 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
             <EditIcon />
             <P16>{t('generics.edit')}</P16>
           </RowBetween>
-          <ModalRemove isPending={isPending} onRemove={() => remove()} />
+          <ModalRemove
+            isPending={deleteFood.isPending}
+            onRemove={handleRemove}
+          />
         </Col>
       </Modal>
 

@@ -1,6 +1,6 @@
 import { ColCenter, H2, ImageLoader } from '@/components';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDishContext } from '@/contexts/DishContext';
+import { useSetWeeklyDishes, useWeeklyDishes } from '@/hooks/useWeeklyDishes';
 import { IMAGE_FALLBACK } from '@/static/constants';
 import { Dish } from '@/types/dto/Dish';
 import { CalendarCheck } from 'lucide-react';
@@ -19,9 +19,10 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
   const { className, dish, from = 'dish' } = props;
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const { setWeeklyDishes, weeklyDishes } = useDishContext();
+  const { data: weeklyDishes = [] } = useWeeklyDishes();
+  const setWeeklyDishes = useSetWeeklyDishes();
 
-  const isWeeklyDish = weeklyDishes.some((d) => d.id === dish?.id);
+  const isWeeklyDish = weeklyDishes.some((d: Dish) => d.id === dish?.id);
 
   const imageCover = dish?.images.find(
     (image) => image.id === dish.favoriteImage
@@ -59,10 +60,12 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
           onClick={(e) => {
             e.stopPropagation();
             if (isWeeklyDish) {
-              setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
+              setWeeklyDishes.mutate(
+                weeklyDishes.filter((d: Dish) => d.id !== dish.id)
+              );
               return;
             }
-            setWeeklyDishes([...weeklyDishes, dish]);
+            setWeeklyDishes.mutate([...weeklyDishes, dish]);
           }}
         >
           <CalendarCheck size={18} />

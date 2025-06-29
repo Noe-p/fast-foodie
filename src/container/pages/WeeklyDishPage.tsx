@@ -2,7 +2,7 @@ import { Col, H2, Layout, P14, Row } from '@/components';
 import { Table } from '@/components/Table';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDishContext } from '@/contexts';
+import { useClearWeeklyDishes, useWeeklyDishes } from '@/hooks/useWeeklyDishes';
 import { ROUTES } from '@/routes';
 import { Dish } from '@/types/dto/Dish';
 import { motion } from 'framer-motion';
@@ -14,7 +14,8 @@ import { dishColumns } from '../components/Tables';
 
 export function WeeklyDishPage(): React.JSX.Element {
   const { t } = useTranslation();
-  const { weeklyDishes, clearWeeklyDishes } = useDishContext();
+  const { data: weeklyDishes = [] } = useWeeklyDishes();
+  const clearWeeklyDishes = useClearWeeklyDishes();
 
   return (
     <Layout id='scrollable'>
@@ -86,7 +87,7 @@ export function WeeklyDishPage(): React.JSX.Element {
         <Button
           disabled={weeklyDishes.length === 0}
           className={'fixed bg-primary/90 bottom-23 right-2 gap-2'}
-          onClick={() => clearWeeklyDishes()}
+          onClick={() => clearWeeklyDishes.mutate()}
         >
           <Trash2Icon size={15} />
           {t('dishes:removeAll')}

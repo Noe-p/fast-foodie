@@ -18,14 +18,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { useDishContext } from '@/contexts';
-import { ApiService } from '@/services/api';
+import { useUpdateFood } from '@/hooks';
 import { formatValidationErrorMessage } from '@/services/error';
 import { cn } from '@/services/utils';
 import { AisleType, Food, UpdateFoodApi } from '@/types';
 import { foodValidation } from '@/validations';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -42,7 +40,7 @@ export function DrawerEditFood(props: DrawerEditFoodProps): JSX.Element {
   const { className, isOpen, onClose, currentFood } = props;
   const { t } = useTranslation();
   const { toast } = useToast();
-  const { refresh } = useDishContext();
+  const updateFood = useUpdateFood();
 
   const form = useForm<UpdateFoodApi>({
     resolver: yupResolver(foodValidation.update),
@@ -50,30 +48,6 @@ export function DrawerEditFood(props: DrawerEditFoodProps): JSX.Element {
     defaultValues: {
       name: '',
       aisle: '',
-    },
-  });
-
-  const {
-    mutate: createFood,
-    isPending,
-    isError,
-  } = useMutation({
-    mutationFn: (data: UpdateFoodApi) =>
-      ApiService.foods.update(data, currentFood?.id ?? ''),
-    onSuccess: () => {
-      form.reset();
-      refresh();
-      onClose();
-    },
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
-      formatValidationErrorMessage(error.data.errors, form.setError);
-      toast({
-        title: t(error.data.response.title),
-        description: t(error.data.response.message),
-        variant: 'destructive',
-      });
     },
   });
 
@@ -85,6 +59,23 @@ export function DrawerEditFood(props: DrawerEditFoodProps): JSX.Element {
       });
     }
   }, [currentFood]);
+
+  const handleUpdateFood = () => {
+    if (currentFood?.id) {
+      updateFood.mutate(
+        { id: currentFood.id, data: form.getValues() },
+        {
+          onSuccess: () => {
+            form.reset();
+            onClose();
+          },
+          onError: (error: any) => {
+            formatValidationErrorMessage(error.data.errors, form.setError);
+          },
+        }
+      );
+    }
+  };
 
   return (
     <DrawerMotion
@@ -133,7 +124,7 @@ export function DrawerEditFood(props: DrawerEditFoodProps): JSX.Element {
                     {...field}
                   >
                     <FormControl
-                      className={cn(isError && 'border-destructive')}
+                      className={cn(updateFood.isError && 'border-destructive')}
                     >
                       <SelectTrigger>
                         <SelectValue
@@ -156,10 +147,10 @@ export function DrawerEditFood(props: DrawerEditFoodProps): JSX.Element {
               )}
             />
             <Button
-              disabled={isPending || !form.formState.isValid}
-              isLoading={isPending}
+              disabled={updateFood.isPending || !form.formState.isValid}
+              isLoading={updateFood.isPending}
               type='button'
-              onClick={() => createFood(form.getValues())}
+              onClick={handleUpdateFood}
             >
               {t('generics.update')}
             </Button>

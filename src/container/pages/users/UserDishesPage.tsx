@@ -18,7 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { DishesCard } from '@/container/components/Dishes/DishesCard';
 import { dishColumns } from '@/container/components/Tables';
-import { useAuthContext, useDishContext } from '@/contexts';
+import { useAuthContext } from '@/contexts';
+import { useDishes } from '@/hooks/useDishes';
 import { ROUTES } from '@/routes';
 import { ApiService } from '@/services/api';
 import { areSimilar } from '@/services/utils';
@@ -48,7 +49,7 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
   const { colabId } = props;
   const { t } = useTranslation();
   const [search, setSearch] = useState<string>();
-  const { dishes, refresh } = useDishContext();
+  const { data: dishes = [], refetch } = useDishes();
   const [chef, setChef] = useState<User>();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { toast } = useToast();
@@ -126,7 +127,7 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
       </RowBetween>
       <Content>
         <PullToRefresh
-          onRefresh={refresh}
+          onRefresh={refetch}
           pullingContent={
             <RowCenter className='w-screen items-center justify-center'>
               <Loader2 className='h-8 text-primary w-8 animate-spin' />

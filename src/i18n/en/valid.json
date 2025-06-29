@@ -1,5 +1,5 @@
 {
-  "api":  {
+  "api": {
     "collaborator": {
       "addedSuccess": "Collaborator added successfully",
       "deletedSuccess": "Collaborator deleted successfully"
@@ -23,6 +23,19 @@
       "addedSuccess": "File added successfully",
       "deletedSuccess": "File deleted successfully",
       "updatedSuccess": "File updated successfully"
+    }
+  },
+  "weeklyDishes": {
+    "set": {
+      "success": "Weekly dishes set successfully"
+    },
+    "clear": {
+      "success": "Weekly dishes cleared successfully"
+    }
+  },
+  "shoppingList": {
+    "update": {
+      "success": "Shopping list updated successfully"
     }
   }
 }

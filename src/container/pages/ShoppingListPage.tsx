@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { DrawerType, useAppContext, useDishContext } from '@/contexts';
+import { DrawerType, useAppContext } from '@/contexts';
+import { useSetWeeklyDishes, useWeeklyDishes } from '@/hooks/useWeeklyDishes';
 import {
   addItemToShoppingList,
   cn,
@@ -29,14 +30,26 @@ import {
 } from '@/services/utils';
 import { Food, IngredientUnit } from '@/types';
 import { Ingredient } from '@/types/dto/Ingredient';
+import { ShoppingList } from '@/types/dto/ShoppingList';
 import { CheckIcon, ClipboardCopy, PlusIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import tw from 'tailwind-styled-components';
+
+// Type pour les aliments dans la liste de courses
+type ShoppingListFood = {
+  id: string;
+  name: string;
+  icon: string;
+  quantity?: number;
+  unit?: IngredientUnit;
+  isCheck: boolean;
+};
 
 export function ShoppingListPage(): React.JSX.Element {
   const { t } = useTranslation();
-  const { shoppingList, setShoppingList } = useDishContext();
+  const { data: weeklyDishes = [] } = useWeeklyDishes();
+  const setWeeklyDishes = useSetWeeklyDishes();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [ingredient, setIngredient] = useState<{
     quantity?: number;
@@ -50,32 +63,45 @@ export function ShoppingListPage(): React.JSX.Element {
   const { toast } = useToast();
   const { setDrawerOpen, foodSelected, setFoodSelected } = useAppContext();
 
+  // Générer la liste de courses à partir des plats hebdomadaires
+  const shoppingList = useMemo(() => {
+    // Import dynamique de la fonction pour éviter les dépendances circulaires
+    const { generateShoppingListFromDishes } = require('@/services/utils');
+    return generateShoppingListFromDishes(weeklyDishes);
+  }, [weeklyDishes]);
+
   function removeItemFromShoppingList(aisle: string, id: string) {
-    const newShoppingList = shoppingList.map((group) => {
+    const newShoppingList = shoppingList.map((group: ShoppingList) => {
       if (group.aisle === aisle) {
         return {
           ...group,
-          foods: group.foods.filter((food) => food.id !== id),
+          foods: group.foods.filter((food: ShoppingListFood) => food.id !== id),
         };
       }
       return group;
     });
-    setShoppingList(newShoppingList.filter((group) => group.foods.length > 0));
+
+    // Mettre à jour les plats hebdomadaires en conséquence
+    // Cette logique pourrait nécessiter une refactorisation plus complexe
+    // pour maintenir la cohérence entre la liste de courses et les plats
+    setWeeklyDishes.mutate(weeklyDishes);
   }
 
   function checkFood(aisle: string, foodName: string) {
-    const newShoppingList = shoppingList.map((filteredFood) => {
+    const newShoppingList = shoppingList.map((filteredFood: ShoppingList) => {
       if (filteredFood.aisle === aisle) {
         return {
           ...filteredFood,
-          foods: filteredFood.foods.map((food) =>
+          foods: filteredFood.foods.map((food: ShoppingListFood) =>
             food.name === foodName ? { ...food, isCheck: !food.isCheck } : food
           ),
         };
       }
       return filteredFood;
     });
-    setShoppingList(newShoppingList);
+
+    // Mettre à jour les plats hebdomadaires en conséquence
+    setWeeklyDishes.mutate(weeklyDishes);
   }
 
   function addFood(food?: Food, quantity?: number, unit?: IngredientUnit) {
@@ -92,7 +118,8 @@ export function ShoppingListPage(): React.JSX.Element {
       ingredient as Ingredient
     );
 
-    setShoppingList(newShoppingList);
+    // Mettre à jour les plats hebdomadaires en conséquence
+    setWeeklyDishes.mutate(weeklyDishes);
     setIsDrawerOpen(false);
     setIngredient({
       quantity: undefined,
@@ -113,11 +140,13 @@ export function ShoppingListPage(): React.JSX.Element {
 
   function copyToClipboard() {
     const listContent = shoppingList
-      .map((shopping) => {
+      .map((shopping: ShoppingList) => {
         const foodItems = shopping.foods
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a: ShoppingListFood, b: ShoppingListFood) =>
+            a.name.localeCompare(b.name)
+          )
           .map(
-            (food) =>
+            (food: ShoppingListFood) =>
               `- [${food.isCheck ? 'x' : ' '}] ${
                 food.name
               }: ${writeUnitFromQuantity(t, food.quantity, food.unit)}`
@@ -153,13 +182,15 @@ export function ShoppingListPage(): React.JSX.Element {
         {shoppingList.length === 0 && (
           <P16 className='text-center'>{t('shoppingList.empty')}</P16>
         )}
-        {shoppingList.map((shopping, index) => (
+        {shoppingList.map((shopping: ShoppingList, index: number) => (
           <Col className='mt-3' key={index}>
             <H3 className='mb-1'>{t(`dishes:aisleType.${shopping.aisle}`)}</H3>
             <Todo>
               {shopping.foods
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((food) => (
+                .sort((a: ShoppingListFood, b: ShoppingListFood) =>
+                  a.name.localeCompare(b.name)
+                )
+                .map((food: ShoppingListFood) => (
                   <TodoRow
                     $checked={food.isCheck}
                     key={food.id}

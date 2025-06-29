@@ -6,14 +6,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { useAuthContext, useDishContext } from '@/contexts';
+import { useAuthContext } from '@/contexts';
+import { useDeleteDish, useSetWeeklyDishes, useWeeklyDishes } from '@/hooks';
 import { ROUTES } from '@/routes';
-import { ApiService } from '@/services/api';
 import { cn, writeUnit } from '@/services/utils';
 import { IMAGE_FALLBACK } from '@/static/constants';
 import { CollaboratorStatus, CollaboratorType, DishStatus } from '@/types';
 import { Dish } from '@/types/dto/Dish';
-import { useMutation } from '@tanstack/react-query';
 import {
   Calendar,
   ChefHatIcon,
@@ -46,34 +45,25 @@ export function DrawerDetailDish(
   const [isImageFullScreenOpen, setIsImageFullScreenOpen] =
     useState<boolean>(false);
   const [newRation, setNewRation] = useState<number>(dish?.ration ?? 2);
-  const { setWeeklyDishes, weeklyDishes, refresh, clearData } =
-    useDishContext();
+  const { data: weeklyDishes = [] } = useWeeklyDishes();
+  const setWeeklyDishes = useSetWeeklyDishes();
+  const deleteDish = useDeleteDish();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { toast } = useToast();
   const [youAreInReadOnlyMode, setYouAreInReadOnlyMode] = useState(true);
 
-  const isWeeklyDish = weeklyDishes.some((d) => d.id === dish?.id);
+  const isWeeklyDish = weeklyDishes.some((d: Dish) => d.id === dish?.id);
 
-  const { mutate: remove, isPending } = useMutation({
-    mutationFn: () => ApiService.dishes.remove(dish?.id ?? ''),
-    onSuccess: () => {
-      toast({
-        title: t('toast.remove.success.title'),
-        description: t('toast.remove.success.description'),
+  const handleRemove = () => {
+    if (dish?.id) {
+      deleteDish.mutate(dish.id, {
+        onSuccess: () => {
+          setIsEditOpen(false);
+          router.push(ROUTES.dishes.index);
+        },
       });
-      clearData();
-      refresh();
-      setIsEditOpen(false);
-      router.push(ROUTES.dishes.index);
-    },
-    onError: (error: any) => {
-      toast({
-        title: t(error.data.response.title),
-        description: t(error.data.response.message),
-        variant: 'destructive',
-      });
-    },
-  });
+    }
+  };
 
   useEffect(() => {
     setNewRation(dish?.ration ?? 2);
@@ -161,21 +151,22 @@ export function DrawerDetailDish(
                 onChange={(v) => {
                   setNewRation(Number(v));
                   if (isWeeklyDish) {
-                    setWeeklyDishes(
-                      weeklyDishes.map((d) =>
-                        d.id === dish.id
-                          ? {
-                              ...d,
-                              ration: Number(v),
-                              ingredients: d.ingredients.map((ingredient) => ({
+                    const updatedWeeklyDishes = weeklyDishes.map((d: Dish) =>
+                      d.id === dish.id
+                        ? {
+                            ...d,
+                            ration: Number(v),
+                            ingredients: d.ingredients.map(
+                              (ingredient: any) => ({
                                 ...ingredient,
                                 quantity:
                                   (ingredient.quantity / d.ration) * Number(v),
-                              })),
-                            }
-                          : d
-                      )
+                              })
+                            ),
+                          }
+                        : d
                     );
+                    setWeeklyDishes.mutate(updatedWeeklyDishes);
                   }
                 }}
                 value={newRation.toString()}
@@ -228,10 +219,13 @@ export function DrawerDetailDish(
             onClick={(e) => {
               e.stopPropagation();
               if (isWeeklyDish) {
-                setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
+                const filteredWeeklyDishes = weeklyDishes.filter(
+                  (d: Dish) => d.id !== dish.id
+                );
+                setWeeklyDishes.mutate(filteredWeeklyDishes);
                 return;
               }
-              setWeeklyDishes([...weeklyDishes, dish]);
+              setWeeklyDishes.mutate([...weeklyDishes, dish]);
             }}
             className={cn(
               'fixed bottom-10 right-2 gap-2',
@@ -254,10 +248,13 @@ export function DrawerDetailDish(
               onClick={(e) => {
                 e.stopPropagation();
                 if (isWeeklyDish) {
-                  setWeeklyDishes(weeklyDishes.filter((d) => d.id !== dish.id));
+                  const filteredWeeklyDishes = weeklyDishes.filter(
+                    (d: Dish) => d.id !== dish.id
+                  );
+                  setWeeklyDishes.mutate(filteredWeeklyDishes);
                   return;
                 }
-                setWeeklyDishes([...weeklyDishes, dish]);
+                setWeeklyDishes.mutate([...weeklyDishes, dish]);
               }}
               className={`${
                 isWeeklyDish
@@ -286,7 +283,10 @@ export function DrawerDetailDish(
               </RowBetween>
             )}
             {currentUser?.id === dish.chef.id && (
-              <ModalRemove isPending={isPending} onRemove={() => remove()} />
+              <ModalRemove
+                isPending={deleteDish.isPending}
+                onRemove={handleRemove}
+              />
             )}
           </Col>
         </Modal>

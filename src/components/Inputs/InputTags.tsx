@@ -1,6 +1,6 @@
-import { useDishContext } from '@/contexts';
+import { useDishes } from '@/hooks/useDishes';
 import { ApiService } from '@/services/api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, Trash2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,9 +23,15 @@ export function InputTags(props: InputTagsProps): JSX.Element {
   const { tags, onChange } = props;
   const { t } = useTranslation();
   const [addOpen, setAddOpen] = useState(false);
-  const { tags: tagsAlreadyExist, refresh } = useDishContext();
+  const { data: dishes = [] } = useDishes();
+  const queryClient = useQueryClient();
   const [newTag, setNewTag] = useState('');
   const { toast } = useToast();
+
+  // Extraire les tags existants depuis les plats
+  const tagsAlreadyExist = Array.from(
+    new Set(dishes.map((dish) => dish.tags).flat())
+  );
 
   if (!tags || !tagsAlreadyExist) return <></>;
 
@@ -39,7 +45,8 @@ export function InputTags(props: InputTagsProps): JSX.Element {
   const { mutate: remove, isPending } = useMutation({
     mutationFn: (id: string) => ApiService.dishes.deleteTag(id),
     onSuccess: async () => {
-      await refresh();
+      // Invalider le cache des plats pour rafraîchir les tags
+      await queryClient.invalidateQueries({ queryKey: ['dishes'] });
       toast({
         title: t('dishes:tags.removed'),
       });

@@ -1,7 +1,7 @@
 import { useToast } from '@/components/ui/use-toast';
 import { ApiService } from '@/services/api';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useForm } from 'react-hook-form';
 import tw from 'tailwind-styled-components';
@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { CreateIngredients } from '@/container/components';
-import { useAppContext, useDishContext } from '@/contexts';
+import { useAppContext } from '@/contexts';
 import { ROUTES } from '@/routes';
 import { formatValidationErrorMessage } from '@/services/error';
 import { CreateDishApi, DishStatus, IngredientUnit, MediaDto } from '@/types';
@@ -35,7 +35,7 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { setDrawerOpen } = useAppContext();
-  const { refresh } = useDishContext();
+  const queryClient = useQueryClient();
 
   const form = useForm<CreateDishApi>({
     resolver: yupResolver(dishValidation.add),
@@ -68,9 +68,10 @@ export function CreateDishPage(props: CreateDishPageProps): React.JSX.Element {
       }
       return ApiService.dishes.create(values);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       form.reset();
-      refresh();
+      // Invalider le cache des plats pour rafraîchir les données
+      await queryClient.invalidateQueries({ queryKey: ['dishes'] });
       router.push(ROUTES.dishes.index);
     },
 

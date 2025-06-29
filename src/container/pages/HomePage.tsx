@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/contexts';
-import { useDishContext } from '@/contexts/DishContext';
+import { useDishes, useDishTags } from '@/hooks';
 import { ROUTES } from '@/routes';
 import { areSimilar } from '@/services/utils';
 import {
@@ -33,7 +33,9 @@ export function HomePage(): React.JSX.Element {
     chef: '',
   });
   const [chefs, setChefs] = useState<string[]>([]);
-  const { dishes, tags, isLoading, hasData, refresh } = useDishContext();
+  const { data: dishes = [], isLoading, error, refetch } = useDishes();
+  const tags = useDishTags();
+  const hasData = dishes.length > 0;
 
   useEffect(() => {
     if (currentUser) {
@@ -163,7 +165,7 @@ export function HomePage(): React.JSX.Element {
 
         <div className='pt-20'>
           <PullToRefresh
-            onRefresh={refresh}
+            onRefresh={refetch}
             pullingContent={
               <RowCenter className='w-screen items-center justify-center'>
                 <Loader2 className='h-8 text-primary w-8 animate-spin' />

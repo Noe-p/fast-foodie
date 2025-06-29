@@ -1,6 +1,6 @@
 import { P12, P14, P16 } from '@/components';
 import { Row } from '@/components/Helpers';
-import { useDishContext } from '@/contexts';
+import { useFoods } from '@/hooks/useFoods';
 import { Food } from '@/types';
 import { PlusIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
@@ -20,7 +20,7 @@ export function SelectFood(props: SelectFoodProps): JSX.Element {
   const { className, onSelect, foodsSelected, value, defaultValue } = props;
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const { foods } = useDishContext();
+  const { data: foods = [] } = useFoods();
 
   useEffect(() => {
     if (defaultValue) {

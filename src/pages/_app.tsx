@@ -1,5 +1,5 @@
 import { Toaster } from '@/components/ui/toaster';
-import { AppProvider, AuthProvider, DishProvider } from '@/contexts';
+import { AppProvider, AuthProvider } from '@/contexts';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -30,9 +30,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   });
 
   // Only create the persister on the client side
-  const persister = isClient ? createSyncStoragePersister({
-    storage: window.localStorage,
-  }) : null;
+  const persister = isClient
+    ? createSyncStoragePersister({
+        storage: window.localStorage,
+      })
+    : null;
 
   if (!isClient || !persister) {
     return null; // You can return a loading spinner or any other placeholder here
@@ -44,13 +46,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       persistOptions={{ persister }}
     >
       <AuthProvider>
-        <DishProvider>
-          <AppProvider>
-            <Component {...pageProps} />
-            <Toaster />
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-          </AppProvider>
-        </DishProvider>
+        <AppProvider>
+          <Component {...pageProps} />
+          <Toaster />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        </AppProvider>
       </AuthProvider>
     </PersistQueryClientProvider>
   );

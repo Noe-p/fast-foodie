@@ -1,5 +1,5 @@
 {
-  "api":  {
+  "api": {
     "collaborator": {
       "addedSuccess": "Collaborateur ajouté avec succès",
       "deletedSuccess": "Collaborateur supprimé avec succès"
@@ -23,6 +23,19 @@
       "addedSuccess": "Fichier ajouté avec succès",
       "deletedSuccess": "Fichier supprimé avec succès",
       "updatedSuccess": "Fichier mis à jour avec succès"
+    }
+  },
+  "weeklyDishes": {
+    "set": {
+      "success": "Plats hebdomadaires définis avec succès"
+    },
+    "clear": {
+      "success": "Plats hebdomadaires supprimés avec succès"
+    }
+  },
+  "shoppingList": {
+    "update": {
+      "success": "Liste de courses mise à jour avec succès"
     }
   }
 }
