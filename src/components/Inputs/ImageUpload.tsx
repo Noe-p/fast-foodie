@@ -40,7 +40,7 @@ export default function ImageUpload(props: ImageUploadProps) {
     onError: (error: any) => {
       toast({
         title: t('toast:file.upload.error'),
-        description: t(error.data.response.message),
+        description: t(error.data.message),
         variant: 'destructive',
       });
     },

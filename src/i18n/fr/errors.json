@@ -43,7 +43,8 @@
       "exist": "Le média existe déjà",
       "notUpdated": "Le média n'a pas été mis à jour",
       "invalid": "Média invalide",
-      "notDeleted": "Le média n'a pas été supprimé"
+      "notDeleted": "Le média n'a pas été supprimé",
+      "invalidFormat": "Format de média invalide"
     },
     "apiKey": {
       "notFound": "Clé API non trouvée",

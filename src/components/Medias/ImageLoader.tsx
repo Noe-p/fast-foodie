@@ -1,6 +1,6 @@
 import { IMAGE_FALLBACK } from '@/static/constants';
 import Image, { ImageProps } from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { Progress } from '../ui/progress';
 
@@ -33,12 +33,19 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   const [progress, setProgress] = useState(0);
   const [currentSrc, setCurrentSrc] = useState(src);
   const [showLoader, setShowLoader] = useState(false);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset des états quand src change
   useEffect(() => {
     setLoading(true);
     setProgress(0);
     setCurrentSrc(src);
+
+    // Nettoyer l'intervalle existant
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
   }, [src]);
 
   useEffect(() => {
@@ -52,9 +59,14 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
   }, [loading, showProgress]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    // Nettoyer l'intervalle précédent
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
     if (loading && showProgress) {
-      interval = setInterval(() => {
+      progressIntervalRef.current = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 90) return prev; // S'arrêter à 90% jusqu'au vrai chargement
           return prev + Math.random() * 15;
@@ -64,16 +76,34 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
       // Reset de la progression si les conditions ne sont pas remplies
       setProgress(0);
     }
-    return () => clearInterval(interval);
+
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+    };
   }, [loading, showProgress]);
 
   const handleImageLoad = () => {
+    // Nettoyer l'intervalle immédiatement
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
     setProgress(100);
     setLoading(false);
     onLoadComplete?.();
   };
 
   const handleImageError = () => {
+    // Nettoyer l'intervalle immédiatement
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
     setLoading(false);
     onError?.();
   };
@@ -94,8 +124,8 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
       )}
 
       <ImageStyled
-        width={width || 800}
-        height={height || 600}
+        width={width}
+        height={height}
         onLoadStart={handleImageStart}
         onLoad={handleImageLoad}
         onError={handleImageError}

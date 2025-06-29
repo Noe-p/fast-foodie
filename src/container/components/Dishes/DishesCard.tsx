@@ -40,11 +40,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
           height={420}
           width={315}
           quality={80}
-          src={
-            dish.images.length > 0
-              ? imageCover?.url ?? IMAGE_FALLBACK
-              : IMAGE_FALLBACK
-          }
+          src={imageCover?.url ?? IMAGE_FALLBACK}
           alt={dish.name}
         />
       )}
