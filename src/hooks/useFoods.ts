@@ -106,7 +106,7 @@ export const useDeleteFood = () => {
       queryClient.removeQueries({ queryKey: foodKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: foodKeys.lists() });
       toast({
-        title: t('valid:food.deletedSuccess'),
+        title: t('valid:food.deletedSuccesss'),
       });
     },
     onError: (error: any) => {

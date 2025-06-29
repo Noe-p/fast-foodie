@@ -9,16 +9,7 @@
       "deletedSuccess": "Utilisateur supprimé avec succès",
       "updatedSuccess": "Utilisateur mis à jour avec succès"
     },
-    "food": {
-      "addedSuccess": "Aliment ajouté avec succès",
-      "deletedSuccess": "Aliment supprimé avec succès",
-      "updatedSuccess": "Aliment mis à jour avec succès"
-    },
-    "dish": {
-      "addedSuccess": "Plat ajouté avec succès",
-      "deletedSuccess": "Plat supprimé avec succès",
-      "updatedSuccess": "Plat mis à jour avec succès"
-    },
+
     "upload": {
       "addedSuccess": "Fichier ajouté avec succès",
       "deletedSuccess": "Fichier supprimé avec succès",
@@ -32,6 +23,16 @@
     "clear": {
       "success": "Plats hebdomadaires supprimés avec succès"
     }
+  },
+  "food": {
+    "addedSuccess": "Aliment ajouté avec succès",
+    "deletedSuccess": "Aliment supprimé avec succès",
+    "updatedSuccess": "Aliment mis à jour avec succès"
+  },
+  "dish": {
+    "addedSuccess": "Plat ajouté avec succès",
+    "deletedSuccess": "Plat supprimé avec succès",
+    "updatedSuccess": "Plat mis à jour avec succès"
   },
   "shoppingList": {
     "update": {
