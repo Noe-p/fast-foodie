@@ -48,7 +48,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
       {dish ? (
         <H2 className='mt-4 w-3/4 text-center leading-none'>{dish.name}</H2>
       ) : (
-        <Skeleton className='mt-4 w-3/4 h-10' />
+        <Skeleton className='mt-4 w-2/3 h-10' />
       )}
       {dish ? (
         <WeeklyDishButton
@@ -71,7 +71,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
           <CalendarCheck size={18} />
         </WeeklyDishButton>
       ) : (
-        <Skeleton className='absolute right-4 bottom-3 h-10 w-10 rounded-full' />
+        <Skeleton className='absolute right-4 bottom-4 h-10 w-10 rounded-full' />
       )}
       <DrawerDetailDish
         isOpen={isOpen}

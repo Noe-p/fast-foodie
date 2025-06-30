@@ -1,4 +1,4 @@
-export const IMAGE_FALLBACK = '/images/image-fallback.jpg';
+export const IMAGE_FALLBACK = '/images/image-fallback.webP';
 
 export const LOGO_URL = '/img/logo.svg';
 

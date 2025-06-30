@@ -85,7 +85,8 @@
       "notFound": "Plat non trouvé",
       "exist": "Le plat existe déjà",
       "notUpdated": "Le plat n'a pas été mis à jour",
-      "invalid": "Plat invalide"
+      "invalid": "Plat invalide",
+      "notCreated": "Le plat n'a pas été créé"
     },
     "user": {
       "notFound": "Utilisateur non trouvé",

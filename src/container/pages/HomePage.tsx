@@ -204,7 +204,7 @@ export function HomePage(): React.JSX.Element {
                     stiffness: 150,
                   }}
                 >
-                  {isLoading || !hasData ? (
+                  {isLoading ? (
                     <div className='space-y-4'>
                       {Array.from({ length: 5 }).map((_, i) => (
                         <div
@@ -219,6 +219,10 @@ export function HomePage(): React.JSX.Element {
                         </div>
                       ))}
                     </div>
+                  ) : !hasData ? (
+                    <RowCenter className='py-8'>
+                      <P14>{t('generics.noResults')}</P14>
+                    </RowCenter>
                   ) : (
                     <Table
                       columns={dishColumns}
@@ -246,18 +250,24 @@ export function HomePage(): React.JSX.Element {
                   }}
                 >
                   <Col className='items-center gap-5'>
-                    {isLoading || !hasData
-                      ? Array.from({ length: 6 }).map((_, i) => (
-                          <DishesCard key={`skeleton-${i}`} />
-                        ))
-                      : filterDishes(filters, dishes)?.map((dish: Dish, i) => (
-                          <DishesCard
-                            id={dish.id}
-                            from='dish'
-                            key={dish.id}
-                            dish={dish}
-                          />
-                        ))}
+                    {isLoading ? (
+                      Array.from({ length: 6 }).map((_, i) => (
+                        <DishesCard key={`skeleton-${i}`} />
+                      ))
+                    ) : !hasData ? (
+                      <RowCenter className='py-8'>
+                        <P14>{t('generics.noResults')}</P14>
+                      </RowCenter>
+                    ) : (
+                      filterDishes(filters, dishes)?.map((dish: Dish, i) => (
+                        <DishesCard
+                          id={dish.id}
+                          from='dish'
+                          key={dish.id}
+                          dish={dish}
+                        />
+                      ))
+                    )}
                   </Col>
                 </motion.div>
               </TabsContent>

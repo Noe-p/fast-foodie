@@ -104,10 +104,6 @@ export const useSetWeeklyDishes = () => {
         weeklyDishKeys.shoppingList(),
         data.shoppingList
       );
-
-      toast({
-        title: t('valid:weeklyDishes.set.success'),
-      });
     },
     onError: (error: any) => {
       toast({
@@ -140,10 +136,6 @@ export const useClearWeeklyDishes = () => {
         weeklyDishKeys.shoppingList(),
         data.shoppingList
       );
-
-      toast({
-        title: t('valid:weeklyDishes.clear.success'),
-      });
     },
     onError: (error: any) => {
       toast({
@@ -170,10 +162,6 @@ export const useUpdateShoppingList = () => {
     onSuccess: (data) => {
       // Mettre à jour le cache
       queryClient.setQueryData(weeklyDishKeys.shoppingList(), data);
-
-      toast({
-        title: t('valid:shoppingList.update.success'),
-      });
     },
     onError: (error: any) => {
       toast({
