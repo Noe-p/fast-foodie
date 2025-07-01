@@ -9,3 +9,6 @@ export * from './useWeeklyDishes';
 
 // Hook de scroll existant
 export * from './useScroll';
+
+// Nouveau hook
+export * from './usePageLoading';
