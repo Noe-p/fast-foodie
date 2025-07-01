@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next';
 import router from 'next/router';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import 'swiper/swiper.min.css';
+import 'swiper/css';
 import tw from 'tailwind-styled-components';
 import {
   Col,
