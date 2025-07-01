@@ -1,13 +1,14 @@
-// Hooks de base
-export * from './useOnlineStatus';
-export * from './usePageLoading';
-export * from './useScroll';
-
-// Hooks de données
+// Hooks pour les plats
 export * from './useDishes';
+
+// Hooks pour les aliments
 export * from './useFoods';
+
+// Hooks pour les plats hebdomadaires et liste de courses
 export * from './useWeeklyDishes';
 
-// Hooks de stockage hors-ligne
-export * from './useOfflineStorage';
-export * from './usePendingOperationsManager';
+// Hook de scroll existant
+export * from './useScroll';
+
+// Nouveau hook
+export * from './usePageLoading';

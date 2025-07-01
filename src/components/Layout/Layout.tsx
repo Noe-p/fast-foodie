@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import tw from 'tailwind-styled-components';
 import { useMediaQuery } from 'usehooks-ts';
-import { NetworkStatus, PendingOperationsPanel } from '../Helpers';
+import { NetworkStatus } from '../NetworkStatus';
 import { PageProgressBar } from '../Progress';
 import { P16 } from '../Texts';
 
@@ -28,13 +28,10 @@ export function Layout(props: LayoutProps): React.JSX.Element {
     </Main>
   ) : (
     <Main {...props}>
+      <NetworkStatus />
       <PageProgressBar isLoading={isLoading} />
       <Page className={className}>{children}</Page>
       <Tabbar />
-
-      {/* Composants de gestion hors-ligne */}
-      <NetworkStatus />
-      <PendingOperationsPanel />
     </Main>
   );
 }

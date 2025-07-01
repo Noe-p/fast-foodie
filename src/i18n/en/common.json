@@ -53,6 +53,7 @@
   },
   "weeklyDish": "Dish of the week",
   "appOnlyForPhone": "This app is only available on mobile",
+  "offline": "Offline",
   "shoppingList": {
     "title": "Shopping list",
     "addSuccess": "Ingredient added to the shopping list",
@@ -153,12 +154,5 @@
       "description": "Click or drop files here to upload"
     },
     "filesUploaded": "Files uploaded"
-  },
-  "offline": "Offline",
-  "online": "Online",
-  "sync": {
-    "pending": "Synchronizing...",
-    "success": "Data synchronized",
-    "error": "Synchronization error"
   }
 }

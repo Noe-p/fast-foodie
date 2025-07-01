@@ -31,14 +31,11 @@
     },
     "clear": {
       "success": "Weekly dishes cleared successfully"
-    },
-    "updatedSuccess": "Weekly dishes updated successfully",
-    "clearedSuccess": "Weekly dishes cleared successfully"
+    }
   },
   "shoppingList": {
     "update": {
       "success": "Shopping list updated successfully"
-    },
-    "updatedSuccess": "Shopping list updated successfully"
+    }
   }
 }
