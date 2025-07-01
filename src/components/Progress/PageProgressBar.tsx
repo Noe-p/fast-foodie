@@ -47,7 +47,7 @@ export function PageProgressBar(props: PageProgressBarProps): JSX.Element {
         >
           <Progress
             value={progress}
-            className='h-1 w-full rounded-none bg-transparent'
+            className='h-1 w-full rounded-none rounded-r-sm bg-transparent'
           />
         </ProgressBarContainer>
       )}

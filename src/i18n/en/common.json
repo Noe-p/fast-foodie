@@ -153,5 +153,12 @@
       "description": "Click or drop files here to upload"
     },
     "filesUploaded": "Files uploaded"
+  },
+  "offline": "Offline",
+  "online": "Online",
+  "sync": {
+    "pending": "Synchronizing...",
+    "success": "Data synchronized",
+    "error": "Synchronization error"
   }
 }

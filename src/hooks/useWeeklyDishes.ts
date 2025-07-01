@@ -6,6 +6,11 @@ import { Dish } from '@/types/dto/Dish';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  OFFLINE_STORAGE_KEYS,
+  offlineStorage,
+  usePendingOperations,
+} from './useOfflineStorage';
 
 // Clés de requête
 export const weeklyDishKeys = {
@@ -14,49 +19,28 @@ export const weeklyDishKeys = {
   shoppingList: () => [...weeklyDishKeys.all, 'shoppingList'] as const,
 };
 
-// Clés de stockage local
-const STORAGE_KEYS = {
-  WEEKLY_DISHES: 'weeklyDishes',
-  SHOPPING_LIST: 'shoppingList',
-} as const;
-
-// Utilitaires de stockage local
-const storage = {
-  get: (key: string, defaultValue: any) => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultValue;
-    } catch {
-      return defaultValue;
-    }
-  },
-
-  set: (key: string, value: any) => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(`Erreur lors de la sauvegarde de ${key}:`, error);
-    }
-  },
-
-  remove: (key: string) => {
-    try {
-      window.localStorage.removeItem(key);
-    } catch (error) {
-      console.error(`Erreur lors de la suppression de ${key}:`, error);
-    }
-  },
-};
-
-// Hook pour récupérer les plats hebdomadaires
+// Hook pour récupérer les plats hebdomadaires avec gestion hors-ligne
 export const useWeeklyDishes = () => {
   const { currentUser } = useAuthContext();
 
   return useQuery({
     queryKey: weeklyDishKeys.lists(),
-    queryFn: () => {
-      // Récupérer depuis le stockage local
-      return storage.get(STORAGE_KEYS.WEEKLY_DISHES, []);
+    queryFn: async () => {
+      try {
+        // Essayer de récupérer depuis l'API (si tu en as une)
+        // const weeklyDishes = await ApiService.weeklyDishes.get();
+        // offlineStorage.set(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES, weeklyDishes);
+        // return weeklyDishes;
+
+        // Pour l'instant, récupérer depuis le stockage local
+        return offlineStorage.get(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES, []);
+      } catch (error) {
+        // Fallback vers le stockage local
+        console.log(
+          'Mode hors-ligne: récupération des plats hebdomadaires depuis le stockage local'
+        );
+        return offlineStorage.get(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES, []);
+      }
     },
     enabled: !!currentUser,
     staleTime: Infinity, // Les données ne deviennent jamais "stale" automatiquement
@@ -64,15 +48,28 @@ export const useWeeklyDishes = () => {
   });
 };
 
-// Hook pour récupérer la liste de courses
+// Hook pour récupérer la liste de courses avec gestion hors-ligne
 export const useShoppingList = () => {
   const { currentUser } = useAuthContext();
 
   return useQuery({
     queryKey: weeklyDishKeys.shoppingList(),
-    queryFn: () => {
-      // Récupérer depuis le stockage local
-      return storage.get(STORAGE_KEYS.SHOPPING_LIST, []);
+    queryFn: async () => {
+      try {
+        // Essayer de récupérer depuis l'API (si tu en as une)
+        // const shoppingList = await ApiService.shoppingList.get();
+        // offlineStorage.set(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+        // return shoppingList;
+
+        // Pour l'instant, récupérer depuis le stockage local
+        return offlineStorage.get(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, []);
+      } catch (error) {
+        // Fallback vers le stockage local
+        console.log(
+          'Mode hors-ligne: récupération de la liste de courses depuis le stockage local'
+        );
+        return offlineStorage.get(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, []);
+      }
     },
     enabled: !!currentUser,
     staleTime: Infinity,
@@ -80,22 +77,53 @@ export const useShoppingList = () => {
   });
 };
 
-// Hook pour définir les plats hebdomadaires
+// Hook pour définir les plats hebdomadaires avec gestion hors-ligne
 export const useSetWeeklyDishes = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
     mutationFn: async (dishes: Dish[]) => {
-      // Sauvegarder dans le stockage local
-      storage.set(STORAGE_KEYS.WEEKLY_DISHES, dishes);
+      try {
+        // Essayer de sauvegarder via l'API (si tu en as une)
+        // await ApiService.weeklyDishes.set(dishes);
 
-      // Générer et sauvegarder la liste de courses
-      const shoppingList = generateShoppingListFromDishes(dishes);
-      storage.set(STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+        // Sauvegarder dans le stockage local
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES, dishes);
 
-      return { dishes, shoppingList };
+        // Générer et sauvegarder la liste de courses
+        const shoppingList = generateShoppingListFromDishes(dishes);
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+
+        // Ajouter à la file d'attente si hors-ligne
+        if (offlineStorage.isOffline()) {
+          addPendingOperation({
+            type: 'UPDATE',
+            entity: 'weeklyDishes',
+            data: { dishes, shoppingList },
+          });
+        }
+
+        return { dishes, shoppingList };
+      } catch (error) {
+        // Si hors-ligne, sauvegarder localement et ajouter à la file d'attente
+        if (offlineStorage.isOffline()) {
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES, dishes);
+          const shoppingList = generateShoppingListFromDishes(dishes);
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+
+          addPendingOperation({
+            type: 'UPDATE',
+            entity: 'weeklyDishes',
+            data: { dishes, shoppingList },
+          });
+
+          return { dishes, shoppingList };
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       // Mettre à jour le cache
@@ -104,6 +132,10 @@ export const useSetWeeklyDishes = () => {
         weeklyDishKeys.shoppingList(),
         data.shoppingList
       );
+
+      toast({
+        title: t('valid:weeklyDishes.updatedSuccess'),
+      });
     },
     onError: (error: any) => {
       toast({
@@ -115,19 +147,49 @@ export const useSetWeeklyDishes = () => {
   });
 };
 
-// Hook pour vider les plats hebdomadaires
+// Hook pour vider les plats hebdomadaires avec gestion hors-ligne
 export const useClearWeeklyDishes = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
     mutationFn: async () => {
-      // Supprimer du stockage local
-      storage.remove(STORAGE_KEYS.WEEKLY_DISHES);
-      storage.remove(STORAGE_KEYS.SHOPPING_LIST);
+      try {
+        // Essayer de supprimer via l'API (si tu en as une)
+        // await ApiService.weeklyDishes.clear();
 
-      return { dishes: [], shoppingList: [] };
+        // Supprimer du stockage local
+        offlineStorage.remove(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES);
+        offlineStorage.remove(OFFLINE_STORAGE_KEYS.SHOPPING_LIST);
+
+        // Ajouter à la file d'attente si hors-ligne
+        if (offlineStorage.isOffline()) {
+          addPendingOperation({
+            type: 'DELETE',
+            entity: 'weeklyDishes',
+            data: { clear: true },
+          });
+        }
+
+        return { dishes: [], shoppingList: [] };
+      } catch (error) {
+        // Si hors-ligne, supprimer localement et ajouter à la file d'attente
+        if (offlineStorage.isOffline()) {
+          offlineStorage.remove(OFFLINE_STORAGE_KEYS.WEEKLY_DISHES);
+          offlineStorage.remove(OFFLINE_STORAGE_KEYS.SHOPPING_LIST);
+
+          addPendingOperation({
+            type: 'DELETE',
+            entity: 'weeklyDishes',
+            data: { clear: true },
+          });
+
+          return { dishes: [], shoppingList: [] };
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       // Mettre à jour le cache
@@ -136,6 +198,10 @@ export const useClearWeeklyDishes = () => {
         weeklyDishKeys.shoppingList(),
         data.shoppingList
       );
+
+      toast({
+        title: t('valid:weeklyDishes.clearedSuccess'),
+      });
     },
     onError: (error: any) => {
       toast({
@@ -147,21 +213,55 @@ export const useClearWeeklyDishes = () => {
   });
 };
 
-// Hook pour mettre à jour la liste de courses
+// Hook pour mettre à jour la liste de courses avec gestion hors-ligne
 export const useUpdateShoppingList = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
     mutationFn: async (shoppingList: ShoppingListType[]) => {
-      // Sauvegarder dans le stockage local
-      storage.set(STORAGE_KEYS.SHOPPING_LIST, shoppingList);
-      return shoppingList;
+      try {
+        // Essayer de sauvegarder via l'API (si tu en as une)
+        // await ApiService.shoppingList.update(shoppingList);
+
+        // Sauvegarder dans le stockage local
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+
+        // Ajouter à la file d'attente si hors-ligne
+        if (offlineStorage.isOffline()) {
+          addPendingOperation({
+            type: 'UPDATE',
+            entity: 'shoppingList',
+            data: { shoppingList },
+          });
+        }
+
+        return shoppingList;
+      } catch (error) {
+        // Si hors-ligne, sauvegarder localement et ajouter à la file d'attente
+        if (offlineStorage.isOffline()) {
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.SHOPPING_LIST, shoppingList);
+
+          addPendingOperation({
+            type: 'UPDATE',
+            entity: 'shoppingList',
+            data: { shoppingList },
+          });
+
+          return shoppingList;
+        }
+        throw error;
+      }
     },
     onSuccess: (data) => {
       // Mettre à jour le cache
       queryClient.setQueryData(weeklyDishKeys.shoppingList(), data);
+
+      toast({
+        title: t('valid:shoppingList.updatedSuccess'),
+      });
     },
     onError: (error: any) => {
       toast({

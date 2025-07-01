@@ -153,5 +153,12 @@
       "description": "Cliquer ou déposer des fichiers ici pour les télécharger"
     },
     "filesUploaded": "Fichiers téléchargés"
+  },
+  "offline": "Hors-ligne",
+  "online": "En ligne",
+  "sync": {
+    "pending": "Synchronisation en cours...",
+    "success": "Données synchronisées",
+    "error": "Erreur de synchronisation"
   }
 }

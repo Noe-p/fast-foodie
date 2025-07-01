@@ -5,6 +5,11 @@ import { Dish } from '@/types/dto/Dish';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  OFFLINE_STORAGE_KEYS,
+  offlineStorage,
+  usePendingOperations,
+} from './useOfflineStorage';
 
 // Clés de requête
 export const dishKeys = {
@@ -15,14 +20,30 @@ export const dishKeys = {
   detail: (id: string) => [...dishKeys.details(), id] as const,
 };
 
-// Hook pour récupérer tous les plats
+// Hook pour récupérer tous les plats avec fallback hors-ligne
 export const useDishes = () => {
   const { currentUser } = useAuthContext();
   const { t } = useTranslation();
 
   return useQuery({
     queryKey: dishKeys.lists(),
-    queryFn: () => ApiService.dishes.get(),
+    queryFn: async () => {
+      try {
+        // Essayer de récupérer depuis l'API
+        const dishes = await ApiService.dishes.get();
+        // Sauvegarder en local pour le mode hors-ligne
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, dishes);
+        return dishes;
+      } catch (error) {
+        // Si l'API échoue, essayer de récupérer depuis le stockage local
+        console.log('Mode hors-ligne: récupération depuis le stockage local');
+        const offlineDishes = offlineStorage.get(
+          OFFLINE_STORAGE_KEYS.DISHES,
+          []
+        );
+        return offlineDishes;
+      }
+    },
     enabled: !!currentUser,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -44,14 +65,62 @@ export const useDish = (id: string) => {
   };
 };
 
-// Hook pour créer un plat
+// Hook pour créer un plat avec gestion hors-ligne
 export const useCreateDish = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
-    mutationFn: (data: any) => ApiService.dishes.create(data),
+    mutationFn: async (data: any) => {
+      try {
+        // Essayer de créer via l'API
+        const newDish = await ApiService.dishes.create(data);
+
+        // Mettre à jour le cache local
+        const currentDishes = offlineStorage.get(
+          OFFLINE_STORAGE_KEYS.DISHES,
+          []
+        );
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, [
+          ...currentDishes,
+          newDish,
+        ]);
+
+        return newDish;
+      } catch (error) {
+        // Si hors-ligne, ajouter à la file d'attente et créer localement
+        if (offlineStorage.isOffline()) {
+          const tempId = `temp_${Date.now()}`;
+          const tempDish = {
+            ...data,
+            id: tempId,
+            createdAt: new Date().toISOString(),
+          };
+
+          // Sauvegarder en local
+          const currentDishes = offlineStorage.get(
+            OFFLINE_STORAGE_KEYS.DISHES,
+            []
+          );
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, [
+            ...currentDishes,
+            tempDish,
+          ]);
+
+          // Ajouter à la file d'attente
+          addPendingOperation({
+            type: 'CREATE',
+            entity: 'dish',
+            data: { ...data, tempId },
+          });
+
+          return tempDish;
+        }
+        throw error;
+      }
+    },
     onSuccess: () => {
       // Invalider et refetch les listes de plats
       queryClient.invalidateQueries({ queryKey: dishKeys.lists() });
@@ -69,15 +138,56 @@ export const useCreateDish = () => {
   });
 };
 
-// Hook pour mettre à jour un plat
+// Hook pour mettre à jour un plat avec gestion hors-ligne
 export const useUpdateDish = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
-      ApiService.dishes.update(data, id),
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      try {
+        // Essayer de mettre à jour via l'API
+        const updatedDish = await ApiService.dishes.update(data, id);
+
+        // Mettre à jour le cache local
+        const currentDishes = offlineStorage.get(
+          OFFLINE_STORAGE_KEYS.DISHES,
+          []
+        );
+        const updatedDishes = currentDishes.map((dish: Dish) =>
+          dish.id === id ? updatedDish : dish
+        );
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, updatedDishes);
+
+        return updatedDish;
+      } catch (error) {
+        // Si hors-ligne, ajouter à la file d'attente et mettre à jour localement
+        if (offlineStorage.isOffline()) {
+          const currentDishes = offlineStorage.get(
+            OFFLINE_STORAGE_KEYS.DISHES,
+            []
+          );
+          const updatedDishes = currentDishes.map((dish: Dish) =>
+            dish.id === id
+              ? { ...dish, ...data, updatedAt: new Date().toISOString() }
+              : dish
+          );
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, updatedDishes);
+
+          // Ajouter à la file d'attente
+          addPendingOperation({
+            type: 'UPDATE',
+            entity: 'dish',
+            data: { id, ...data },
+          });
+
+          return updatedDishes.find((dish: Dish) => dish.id === id);
+        }
+        throw error;
+      }
+    },
     onSuccess: (_, { id }) => {
       // Invalider les requêtes spécifiques
       queryClient.invalidateQueries({ queryKey: dishKeys.detail(id) });
@@ -96,14 +206,54 @@ export const useUpdateDish = () => {
   });
 };
 
-// Hook pour supprimer un plat
+// Hook pour supprimer un plat avec gestion hors-ligne
 export const useDeleteDish = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const { addPendingOperation } = usePendingOperations();
 
   return useMutation({
-    mutationFn: (id: string) => ApiService.dishes.remove(id),
+    mutationFn: async (id: string) => {
+      try {
+        // Essayer de supprimer via l'API
+        await ApiService.dishes.remove(id);
+
+        // Mettre à jour le cache local
+        const currentDishes = offlineStorage.get(
+          OFFLINE_STORAGE_KEYS.DISHES,
+          []
+        );
+        const filteredDishes = currentDishes.filter(
+          (dish: Dish) => dish.id !== id
+        );
+        offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, filteredDishes);
+
+        return id;
+      } catch (error) {
+        // Si hors-ligne, ajouter à la file d'attente et supprimer localement
+        if (offlineStorage.isOffline()) {
+          const currentDishes = offlineStorage.get(
+            OFFLINE_STORAGE_KEYS.DISHES,
+            []
+          );
+          const filteredDishes = currentDishes.filter(
+            (dish: Dish) => dish.id !== id
+          );
+          offlineStorage.set(OFFLINE_STORAGE_KEYS.DISHES, filteredDishes);
+
+          // Ajouter à la file d'attente
+          addPendingOperation({
+            type: 'DELETE',
+            entity: 'dish',
+            data: { id },
+          });
+
+          return id;
+        }
+        throw error;
+      }
+    },
     onSuccess: (_, id) => {
       // Supprimer du cache et invalider les listes
       queryClient.removeQueries({ queryKey: dishKeys.detail(id) });

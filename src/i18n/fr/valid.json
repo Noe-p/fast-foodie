@@ -22,7 +22,9 @@
     },
     "clear": {
       "success": "Plats hebdomadaires supprimés avec succès"
-    }
+    },
+    "updatedSuccess": "Plats hebdomadaires mis à jour avec succès",
+    "clearedSuccess": "Plats hebdomadaires supprimés avec succès"
   },
   "food": {
     "addedSuccess": "Aliment ajouté avec succès",
@@ -37,6 +39,7 @@
   "shoppingList": {
     "update": {
       "success": "Liste de courses mise à jour avec succès"
-    }
+    },
+    "updatedSuccess": "Liste de courses mise à jour avec succès"
   }
 }
