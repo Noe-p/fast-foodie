@@ -66,6 +66,7 @@ export function CreateIngredients(props: CreateIngredientsProps): JSX.Element {
                 onIngredientChange(newIngredients);
               }}
               type='number'
+              step='0.1'
               className='text-xs w-13'
               placeholder={'...'}
             />

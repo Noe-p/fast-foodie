@@ -1,5 +1,8 @@
 {
   "generic": "Une erreur s'est produite",
+  "invalidCredentials": "Identifiants invalides",
+  "unauthorized": "Non autorisé",
+  "serverError": "Erreur du serveur",
   "generics": {
     "internalServerError": "Erreur interne du serveur",
     "connexion": "Erreur de connexion"

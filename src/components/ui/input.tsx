@@ -13,17 +13,37 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, icon, type, isRemovable, onChange, iconSize, isArrow, ...props }, ref) => {
+  (
+    {
+      className,
+      icon,
+      type,
+      isRemovable,
+      onChange,
+      iconSize,
+      isArrow,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div className={`relative ${type === 'number' && 'flex flex-row gap-2 items-center'}`}>
+      <div
+        className={`relative ${
+          type === 'number' && 'flex flex-row gap-2 items-center'
+        }`}
+      >
         {icon && (
           <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
             {icon}
           </div>
         )}
-        {
-          isArrow && <ChevronLeftCircleIcon size={iconSize ?? 40} className='' onClick={()=> onChange((Number(props.value) -1).toString())} />
-        }
+        {isArrow && (
+          <ChevronLeftCircleIcon
+            size={iconSize ?? 40}
+            className=''
+            onClick={() => onChange((Number(props.value) - 1).toString())}
+          />
+        )}
         <input
           type={type}
           className={cn(
@@ -32,6 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type === 'number' && 'text-center',
             className
           )}
+          value={props.value || ''}
           onChange={(e) => {
             const value = e.target.value;
             // Si c'est de type 'number', on supprime les espaces
@@ -47,9 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <button
             type='button'
             className='absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground'
-            onClick={() =>
-              onChange('')
-            }
+            onClick={() => onChange('')}
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -67,9 +86,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             </svg>
           </button>
         )}
-           {
-          isArrow && <ChevronRightCircleIcon onClick={()=> onChange((Number(props.value) +1).toString())} size={iconSize ?? 40} />
-        }
+        {isArrow && (
+          <ChevronRightCircleIcon
+            onClick={() => onChange((Number(props.value) + 1).toString())}
+            size={iconSize ?? 40}
+          />
+        )}
       </div>
     );
   }

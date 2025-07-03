@@ -56,8 +56,26 @@ export default function LoginPage(): React.JSX.Element {
     if (isError) {
       const errorData = error as any;
       console.log('[D] LoginPage', errorData);
+
+      // Gestion plus robuste des erreurs
+      let errorMessage = 'errors.generic';
+
+      if (errorData?.data?.message) {
+        errorMessage = errorData.data.message;
+      } else if (errorData?.data?.response?.message) {
+        errorMessage = errorData.data.response.message;
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
+      } else if (errorData?.status === 400) {
+        errorMessage = 'errors.invalidCredentials';
+      } else if (errorData?.status === 401) {
+        errorMessage = 'errors.unauthorized';
+      } else if (errorData?.status === 500) {
+        errorMessage = 'errors.serverError';
+      }
+
       toast({
-        title: t(errorData?.data?.response.message),
+        title: t(errorMessage),
         variant: 'destructive',
       });
     }

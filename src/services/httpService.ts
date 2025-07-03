@@ -60,7 +60,12 @@ class HTTPService {
     if (response.status >= 400) {
       // eslint-disable-next-line no-console
       console.error('[DEBUG] response', response);
-      throw response;
+      // Créer une erreur avec la structure attendue
+      const error = new Error();
+      (error as any).data = response.data;
+      (error as any).status = response.status;
+      (error as any).statusText = response.statusText;
+      throw error;
     }
 
     return response;
