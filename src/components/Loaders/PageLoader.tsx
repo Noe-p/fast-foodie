@@ -1,6 +1,6 @@
-import tw from 'tailwind-styled-components';
+import { useEffect, useState } from 'react';
 import { InfinitySpin } from 'react-loader-spinner';
-import { useState, useEffect } from 'react';
+import tw from 'tailwind-styled-components';
 
 interface PageLoaderProps {
   className?: string;
@@ -35,5 +35,4 @@ const Main = tw.div`
   justify-center
   h-screen
   w-full
-  bg-background
 `;

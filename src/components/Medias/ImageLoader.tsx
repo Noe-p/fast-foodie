@@ -3,6 +3,7 @@ import Image, { ImageProps } from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import tw from 'tailwind-styled-components';
 import { Progress } from '../ui/progress';
+import { Skeleton } from '../ui/skeleton';
 
 interface ImageLoaderProps
   extends Omit<ImageProps, 'onLoad' | 'onError' | 'width' | 'height' | 'src'> {
@@ -115,6 +116,7 @@ export function ImageLoader(props: ImageLoaderProps): React.JSX.Element {
 
   return (
     <Container $height={height} $width={width} $isLoading={loading || false}>
+      {loading && <Skeleton className='absolute inset-0 w-full h-full z-0' />}
       {loading && showProgress && showLoader && (
         <LoadingOverlay className={overlayClassName}>
           <ProgressContainer>
@@ -151,8 +153,6 @@ const Container = tw.div<ContainerProps>`
   flex
   justify-center
   items-center
-  bg-gray-100
-  dark:bg-gray-800
   rounded-lg
   overflow-hidden
   transition-all

@@ -50,7 +50,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
       ) : (
         <Skeleton className='mt-4 w-2/3 h-10' />
       )}
-      {dish ? (
+      {dish && (
         <WeeklyDishButton
           className={`${
             isWeeklyDish
@@ -70,8 +70,6 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
         >
           <CalendarCheck size={18} />
         </WeeklyDishButton>
-      ) : (
-        <Skeleton className='absolute right-4 bottom-4 h-10 w-10 rounded-full' />
       )}
       <DrawerDetailDish
         isOpen={isOpen}
