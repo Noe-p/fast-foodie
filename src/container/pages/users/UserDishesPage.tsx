@@ -1,23 +1,18 @@
 import {
   Avatar,
   Col,
-  H2,
   Layout,
   Modal,
   ModalRemove,
   P14,
-  P16,
   P18,
   Row,
-  RowBetween,
   RowCenter,
 } from '@/components';
-import { Table } from '@/components/Table';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { DishesCard } from '@/container/components/Dishes/DishesCard';
-import { dishColumns } from '@/container/components/Tables';
 import { useAuthContext } from '@/contexts';
 import { useDishes } from '@/hooks/useDishes';
 import { ROUTES } from '@/routes';
@@ -26,15 +21,7 @@ import { areSimilar } from '@/services/utils';
 import { CollaboratorDto, User } from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import {
-  AlignJustify,
-  ChevronLeft,
-  CircleEllipsisIcon,
-  Grid2X2,
-  Loader2,
-  SearchIcon,
-} from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
@@ -109,22 +96,6 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
 
   return (
     <Layout className='p-0'>
-      <RowBetween className='bg-primary fixed top-0 z-40 w-full items-center px-3 py-5'>
-        <Row
-          className='items-center'
-          onClick={() => router.push(ROUTES.dishes.index)}
-        >
-          <ChevronLeft className='text-background' size={30} />
-          <P16 className='text-background translate-y-0.5'>
-            {t('generics.back')}
-          </P16>
-        </Row>
-        <H2 className='text-background'>{chef?.userName}</H2>
-        <CircleEllipsisIcon
-          onClick={() => setIsEditOpen(true)}
-          className='text-primary-foreground'
-        />
-      </RowBetween>
       <Content>
         <PullToRefresh
           onRefresh={refetch}
@@ -139,7 +110,7 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
             </RowCenter>
           }
         >
-          <Tabs defaultValue='card'>
+          <Col>
             <Row className='items-center gap-3 text_background px-3 py-5 rounded-sm shadow-md'>
               <Avatar className='w-max' user={chef} size={70} />
               <Col className='w-fit'>
@@ -148,78 +119,32 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
                   {t(`collaboratorType.${collab?.type}`)}
                 </P14>
               </Col>
+              <Button
+                className='ml-auto'
+                variant='outline'
+                onClick={() => setIsEditOpen(true)}
+              >
+                {t('generics.update')}
+              </Button>
             </Row>
             <Input
-              icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
               className='w-full mt-5'
               placeholder={t('generics.search')}
               onChange={(v) => setSearch(v)}
             />
 
-            <Row className='justify-end mt-2'>
-              <TabsList>
-                <TabsTrigger value='card'>
-                  <Grid2X2 size={20} />
-                </TabsTrigger>
-                <TabsTrigger value='list'>
-                  <AlignJustify size={20} />
-                </TabsTrigger>
-              </TabsList>
-            </Row>
-
-            <TabsContent value='list'>
-              <motion.div
-                initial={{
-                  x: 100,
-                }}
-                animate={{
-                  x: 0,
-                }}
-                transition={{
-                  duration: 0.2,
-                  type: 'spring',
-                  damping: 13,
-                  stiffness: 150,
-                }}
-              >
-                <Table
-                  columns={dishColumns}
-                  data={filterDishes(search, dishes) ?? []}
-                  redirection={(id) => {
-                    router.push(`${ROUTES.dishes.detail(id)}?user=${colabId}`);
-                  }}
-                />
-              </motion.div>
-            </TabsContent>
-            <TabsContent value='card'>
-              <motion.div
-                initial={{
-                  x: 100,
-                }}
-                animate={{
-                  x: 0,
-                }}
-                transition={{
-                  duration: 0.2,
-                  type: 'spring',
-                  damping: 13,
-                  stiffness: 150,
-                }}
-              >
-                <Col className='items-center gap-5'>
-                  {filterDishes(search, dishes)?.length === 0 ? (
-                    <P14 className='text-primary mt-20 text-center w-full'>
-                      {t('generics.noResults')}
-                    </P14>
-                  ) : (
-                    filterDishes(search, dishes)?.map((dish: Dish) => (
-                      <DishesCard from='user' key={dish.id} dish={dish} />
-                    ))
-                  )}
-                </Col>
-              </motion.div>
-            </TabsContent>
-          </Tabs>
+            <Col className='items-center gap-5 mt-5'>
+              {filterDishes(search, dishes)?.length === 0 ? (
+                <P14 className='text-primary mt-20 text-center w-full'>
+                  {t('generics.noResults')}
+                </P14>
+              ) : (
+                filterDishes(search, dishes)?.map((dish: Dish) => (
+                  <DishesCard from='user' key={dish.id} dish={dish} />
+                ))
+              )}
+            </Col>
+          </Col>
         </PullToRefresh>
       </Content>
       <Modal
@@ -244,5 +169,5 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
 const Content = tw(Col)`
   px-3
   pb-33
-  pt-23
+  pt-3
 `;
