@@ -112,7 +112,7 @@ export function HomePage(): React.JSX.Element {
             <Input
               icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
               className='w-full'
-              isRemovable
+              isRemovable={true}
               placeholder={t('generics.search')}
               onChange={(v) => {
                 setFilters({ ...filters, search: v });

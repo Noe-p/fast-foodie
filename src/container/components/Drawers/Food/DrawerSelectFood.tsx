@@ -100,6 +100,7 @@ export function DrawerSelectFood(props: DrawerSelectFoodProps): JSX.Element {
               icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
               className='w-full'
               isRemovable={true}
+              value={searchFood}
               placeholder={t('generics.search')}
               onChange={(e) => setSearchFood(e)}
             />

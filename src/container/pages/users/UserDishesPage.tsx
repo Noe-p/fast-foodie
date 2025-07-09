@@ -21,7 +21,7 @@ import { areSimilar } from '@/services/utils';
 import { CollaboratorDto, User } from '@/types';
 import { Dish } from '@/types/dto/Dish';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import { Loader2, SearchIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import router from 'next/router';
 import { useEffect, useState } from 'react';
@@ -110,7 +110,7 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
             </RowCenter>
           }
         >
-          <Col>
+          <Col className='gap-5'>
             <Row className='items-center gap-3 text_background px-3 py-5 rounded-sm shadow-md'>
               <Avatar className='w-max' user={chef} size={70} />
               <Col className='w-fit'>
@@ -128,12 +128,15 @@ export function UserDishesPage(props: UserDishesPageProps): React.JSX.Element {
               </Button>
             </Row>
             <Input
-              className='w-full mt-5'
+              icon={<SearchIcon className='h-5 w-5 text-muted-foreground' />}
+              className='w-full'
+              isRemovable={true}
               placeholder={t('generics.search')}
               onChange={(v) => setSearch(v)}
+              value={search}
             />
 
-            <Col className='items-center gap-5 mt-5'>
+            <Col className='items-center gap-5'>
               {filterDishes(search, dishes)?.length === 0 ? (
                 <P14 className='text-primary mt-20 text-center w-full'>
                   {t('generics.noResults')}
