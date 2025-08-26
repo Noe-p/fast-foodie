@@ -1,8 +1,12 @@
 name: CI/CD Fast Foodie
 
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: ["CI Tests"]
+    types:
+      - completed
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -11,6 +15,7 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       GHCR_REGISTRY: ghcr.io
       OWNER: ${{ github.repository_owner }}
@@ -18,6 +23,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Set lowercase owner
         run: echo "OWNER_LC=${OWNER,,}" >> $GITHUB_ENV

@@ -12,14 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 20
-          cache: "npm"
+          bun-version: 1.2.20
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies (bun)
+        run: bun install --no-progress
 
-      - name: Run unit tests (Jest)
-        run: npx jest --ci --coverage
+      - name: Run unit tests (Jest via bun)
+        run: bun x jest --ci --coverage
