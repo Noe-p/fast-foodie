@@ -85,8 +85,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: 'docker-compose.yml'
-          target: '~/fast-foodie/'
+          source: "docker-compose.yml"
+          target: "~/fast-foodie/"
           strip_components: 0
 
       - name: Deploy via SSH (avec login GHCR)
