@@ -1,23 +1,21 @@
-import { ColCenter, H2, ImageLoader } from '@/components';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useSetWeeklyDishes, useWeeklyDishes } from '@/hooks/useWeeklyDishes';
-import { IMAGE_FALLBACK } from '@/static/constants';
-import { Dish } from '@/types/dto/Dish';
-import { CalendarCheck } from 'lucide-react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import tw from 'tailwind-styled-components';
-import { DrawerDetailDish } from '../Drawers';
+import { ColCenter, H2, ImageLoader } from "@/components";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSetWeeklyDishes, useWeeklyDishes } from "@/hooks/useWeeklyDishes";
+import { IMAGE_FALLBACK } from "@/static/constants";
+import { Dish } from "@/types/dto/Dish";
+import { CalendarCheck } from "lucide-react";
+import { useState } from "react";
+import tw from "tailwind-styled-components";
+import { DrawerDetailDish } from "../Drawers";
 
 interface DishesCardProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   dish?: Dish;
-  from?: 'user' | 'weekly' | 'dish';
+  from?: "user" | "weekly" | "dish";
 }
 
 export function DishesCard(props: DishesCardProps): JSX.Element {
-  const { className, dish, from = 'dish' } = props;
-  const { t } = useTranslation();
+  const { className, dish } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { data: weeklyDishes = [] } = useWeeklyDishes();
   const setWeeklyDishes = useSetWeeklyDishes();
@@ -35,7 +33,7 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
       {...props}
     >
       {!dish ? (
-        <Skeleton className='h-[420px] w-full rounded-md' />
+        <Skeleton className="h-[420px] w-full rounded-md" />
       ) : (
         <ImageLoader
           height={420}
@@ -46,16 +44,16 @@ export function DishesCard(props: DishesCardProps): JSX.Element {
         />
       )}
       {dish ? (
-        <H2 className='mt-4 w-3/4 text-center leading-none'>{dish.name}</H2>
+        <H2 className="mt-4 w-3/4 text-center leading-none">{dish.name}</H2>
       ) : (
-        <Skeleton className='mt-4 w-2/3 h-10' />
+        <Skeleton className="mt-4 w-2/3 h-10" />
       )}
       {dish && (
         <WeeklyDishButton
           className={`${
             isWeeklyDish
-              ? 'bg-primary text-background'
-              : 'bg-transparent border border-primary/80 text-primary/80'
+              ? "bg-primary text-background"
+              : "bg-transparent border border-primary/80 text-primary/80"
           }`}
           onClick={(e) => {
             e.stopPropagation();
